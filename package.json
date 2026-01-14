@@ -1,0 +1,27 @@
+{
+    "name": "tesla-landing",
+    "version": "1.0.0",
+    "description": "TESLA Electricidad y Automatización - Landing Page with PILI Chatbot",
+    "main": "index.html",
+    "scripts": {
+        "dev": "vercel dev",
+        "build": "echo 'Static site - no build needed'",
+        "deploy": "vercel --prod"
+    },
+    "dependencies": {
+        "@vercel/kv": "^1.0.1"
+    },
+    "devDependencies": {
+        "vercel": "^33.0.0"
+    },
+    "keywords": [
+        "tesla",
+        "electricidad",
+        "automatizacion",
+        "chatbot",
+        "pili"
+    ],
+    "author": "TESLA Electricidad y Automatización S.A.C.",
+    "license": "UNLICENSED",
+    "private": true
+}

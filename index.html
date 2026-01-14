@@ -377,18 +377,14 @@
             <div style="display:flex; align-items:center; gap:10px;">
                 <img src="assets/pili_avatar.png" alt="Pili Avatar"
                     style="width:40px; height:40px; border-radius:50%; border: 2px solid var(--accent-gold); object-fit: cover;">
-                <span>Hola, soy el asistente técnico <i class="fa-solid fa-bolt"
+                <span>PILI - Asistente Técnica <i class="fa-solid fa-bolt"
                         style="color:var(--accent-gold); font-size:0.8rem;"></i></span>
             </div>
             <button onclick="closeChatbot()"
                 style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">&times;</button>
         </div>
-        <div class="chatbot-body">
-            <div class="message bot">
-                Hola, soy el asistente técnico de TESLA Electricidad y Automatización S.A.C.<br><br>
-                Te ayudaré a evaluar tu proyecto y coordinar una revisión técnica.<br><br>
-                <strong>¿Qué tipo de proyecto estás evaluando?</strong>
-            </div>
+        <div class="chatbot-body" id="chatbot-messages">
+            <!-- Messages will be dynamically inserted here by PILI -->
         </div>
         <div class="chatbot-input">
             <input type="text" placeholder="Escribe tu respuesta...">

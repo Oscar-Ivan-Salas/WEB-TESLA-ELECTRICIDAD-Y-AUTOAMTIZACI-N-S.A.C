@@ -1,113 +1,233 @@
-// Toggle Chatbot Visibility
-function toggleChatbot() {
-    const chat = document.getElementById('chatbot-widget');
+// PILI Chatbot - Frontend Integration
+// Connects existing chatbot UI with PILI backend
 
-    if (chat.classList.contains('chatbot-hidden')) {
-        chat.classList.remove('chatbot-hidden');
-    } else {
-        chat.classList.add('chatbot-hidden');
+// Session management
+function getSessionId() {
+    let sessionId = localStorage.getItem('pili_session_id');
+    if (!sessionId) {
+        sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('pili_session_id', sessionId);
+    }
+    return sessionId;
+}
+
+// Send message to PILI backend
+async function sendMessageToPILI(message) {
+    const sessionId = getSessionId();
+
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: message,
+                sessionId: sessionId
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error comunicándose con PILI:', error);
+        return {
+            message: 'Lo siento, hubo un error de conexión. Por favor intenta nuevamente.',
+            state: 'ERROR',
+            requiresInput: true
+        };
     }
 }
 
-function openChatbot() {
-    const chat = document.getElementById('chatbot-widget');
-    if (chat.classList.contains('chatbot-hidden')) {
-        toggleChatbot();
-    }
-    const input = chat.querySelector('input');
-    if (input) input.focus();
+// Display message in chat
+function displayMessage(message, sender = 'pili') {
+    const chatBody = document.getElementById('chatbot-messages');
+    if (!chatBody) return;
+
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${sender}`;
+
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
+    messageContent.textContent = message;
+
+    messageDiv.appendChild(messageContent);
+    chatBody.appendChild(messageDiv);
+
+    // Scroll to bottom
+    chatBody.scrollTop = chatBody.scrollHeight;
 }
 
-function closeChatbot() {
-    const chat = document.getElementById('chatbot-widget');
-    chat.classList.add('chatbot-hidden');
-}
+// Display options as buttons
+function displayOptions(options) {
+    const chatBody = document.getElementById('chatbot-messages');
+    if (!chatBody || !options || options.length === 0) return;
 
-// WhatsApp Integration
-function sendToWhatsApp() {
-    const input = document.querySelector('.chatbot-input input');
-    const message = input.value.trim();
+    const optionsDiv = document.createElement('div');
+    optionsDiv.className = 'chat-options';
 
-    if (message === "") return;
-
-    // Configuration - Using the number from the user's uploaded image if available, else placeholder
-    const phoneNumber = "51906315961";
-    const encodedMessage = encodeURIComponent(`Hola TESLA, estoy interesado en: ${message}`);
-
-    // UI Update
-    const body = document.querySelector('.chatbot-body');
-    body.innerHTML += `<div class="message user" style="align-self: flex-end; background: var(--accent-gold); color: black; margin-top: 10px; border-radius: 8px; padding: 12px 18px; max-width: 85%;">${message}</div>`;
-    body.scrollTop = body.scrollHeight;
-
-    // Redirect after slight delay
-    setTimeout(() => {
-        window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
-        input.value = "";
-        closeChatbot();
-    }, 1000);
-}
-
-// Event Listeners
-document.addEventListener('DOMContentLoaded', () => {
-    // Chatbot listeners
-    const sendBtn = document.querySelector('.chatbot-input button');
-    const inputFn = document.querySelector('.chatbot-input input');
-
-    if (sendBtn) sendBtn.addEventListener('click', sendToWhatsApp);
-    if (inputFn) inputFn.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendToWhatsApp();
+    options.forEach(option => {
+        const button = document.createElement('button');
+        button.className = 'option-button';
+        button.textContent = option;
+        button.onclick = () => handleOptionClick(option);
+        optionsDiv.appendChild(button);
     });
 
-    // Scroll Animation Observer
-    const observerOptions = {
-        threshold: 0.1
-    };
+    chatBody.appendChild(optionsDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
+// Handle option button click
+async function handleOptionClick(option) {
+    // Remove all option buttons
+    const optionButtons = document.querySelectorAll('.chat-options');
+    optionButtons.forEach(btn => btn.remove());
+
+    // Display user's choice
+    displayMessage(option, 'user');
+
+    // Send to PILI
+    await handleUserMessage(option);
+}
+
+// Handle user message submission
+async function handleUserMessage(message) {
+    if (!message || message.trim() === '') return;
+
+    // Show loading indicator
+    const chatBody = document.getElementById('chatbot-messages');
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat-message pili loading';
+    loadingDiv.innerHTML = '<div class="message-content">...</div>';
+    chatBody.appendChild(loadingDiv);
+
+    // Send to PILI backend
+    const response = await sendMessageToPILI(message);
+
+    // Remove loading indicator
+    loadingDiv.remove();
+
+    // Display PILI's response
+    displayMessage(response.message, 'pili');
+
+    // Display options if provided
+    if (response.options && response.options.length > 0) {
+        displayOptions(response.options);
+    }
+
+    // Handle WhatsApp link if provided
+    if (response.whatsappLink) {
+        displayWhatsAppButton(response.whatsappLink);
+    }
+}
+
+// Display WhatsApp contact button
+function displayWhatsAppButton(link) {
+    const chatBody = document.getElementById('chatbot-messages');
+    if (!chatBody) return;
+
+    const buttonDiv = document.createElement('div');
+    buttonDiv.className = 'chat-whatsapp';
+    buttonDiv.innerHTML = `
+        <a href="${link}" target="_blank" class="whatsapp-button">
+            <i class="fa-brands fa-whatsapp"></i>
+            Contactar por WhatsApp
+        </a>
+    `;
+
+    chatBody.appendChild(buttonDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// Initialize chatbot when opened
+function initializePILI() {
+    const chatBody = document.getElementById('chatbot-messages');
+    if (!chatBody) return;
+
+    // Clear previous messages
+    chatBody.innerHTML = '';
+
+    // Send initial message to trigger INICIO state
+    handleUserMessage('Hola');
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Chatbot toggle
+    const chatbotFab = document.querySelector('.chatbot-fab');
+    const chatbotWidget = document.getElementById('chatbot-widget');
+
+    if (chatbotFab && chatbotWidget) {
+        chatbotFab.addEventListener('click', () => {
+            const isHidden = chatbotWidget.classList.contains('chatbot-hidden');
+
+            if (isHidden) {
+                chatbotWidget.classList.remove('chatbot-hidden');
+                // Initialize PILI on first open
+                if (!chatbotWidget.dataset.initialized) {
+                    initializePILI();
+                    chatbotWidget.dataset.initialized = 'true';
+                }
+            } else {
+                chatbotWidget.classList.add('chatbot-hidden');
             }
         });
-    }, observerOptions);
+    }
 
-    const elementsToAnimate = document.querySelectorAll('.fade-in-up');
-    elementsToAnimate.forEach(el => observer.observe(el));
+    // Send message button
+    const sendButton = document.querySelector('.chatbot-input button');
+    const inputField = document.querySelector('.chatbot-input input');
 
-    // Load saved theme on page load
-    loadTheme();
+    if (sendButton && inputField) {
+        sendButton.addEventListener('click', async () => {
+            const message = inputField.value.trim();
+            if (message) {
+                displayMessage(message, 'user');
+                inputField.value = '';
+                await handleUserMessage(message);
+            }
+        });
+
+        // Enter key to send
+        inputField.addEventListener('keypress', async (e) => {
+            if (e.key === 'Enter') {
+                const message = inputField.value.trim();
+                if (message) {
+                    displayMessage(message, 'user');
+                    inputField.value = '';
+                    await handleUserMessage(message);
+                }
+            }
+        });
+    }
+
+    // Close button
+    const closeButton = document.querySelector('.chatbot-header button');
+    if (closeButton && chatbotWidget) {
+        closeButton.addEventListener('click', () => {
+            chatbotWidget.classList.add('chatbot-hidden');
+        });
+    }
 });
 
-// Theme Toggle Functions - System Aware (Dark Mode Only with Auto-Contrast)
+// Theme toggle functionality (existing code)
 function toggleTheme() {
     const html = document.documentElement;
-    const currentMode = localStorage.getItem('contrastMode') || 'normal';
-    const newMode = currentMode === 'normal' ? 'high' : 'normal';
+    const currentContrast = html.getAttribute('data-contrast') || 'normal';
+    const newContrast = currentContrast === 'normal' ? 'high' : 'normal';
 
-    html.setAttribute('data-contrast', newMode);
-    localStorage.setItem('contrastMode', newMode);
+    html.setAttribute('data-contrast', newContrast);
+    localStorage.setItem('themeMode', newContrast);
 
     // Update icon
     const icon = document.querySelector('#theme-toggle i');
-    if (newMode === 'high') {
-        icon.classList.remove('fa-sun');
-        icon.classList.add('fa-adjust');
-    } else {
-        icon.classList.remove('fa-adjust');
-        icon.classList.add('fa-sun');
-    }
-}
-
-function loadTheme() {
-    const savedMode = localStorage.getItem('contrastMode') || 'normal';
-    const html = document.documentElement;
-    html.setAttribute('data-contrast', savedMode);
-
-    // Update icon based on saved mode
-    const icon = document.querySelector('#theme-toggle i');
     if (icon) {
-        if (savedMode === 'high') {
+        if (newContrast === 'high') {
             icon.classList.remove('fa-sun');
             icon.classList.add('fa-adjust');
         } else {
@@ -116,3 +236,24 @@ function loadTheme() {
         }
     }
 }
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem('themeMode') || 'normal';
+    const html = document.documentElement;
+    html.setAttribute('data-contrast', savedTheme);
+
+    // Update icon based on saved theme
+    const icon = document.querySelector('#theme-toggle i');
+    if (icon) {
+        if (savedTheme === 'high') {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-adjust');
+        } else {
+            icon.classList.remove('fa-adjust');
+            icon.classList.add('fa-sun');
+        }
+    }
+}
+
+// Load theme on page load
+document.addEventListener('DOMContentLoaded', loadTheme);

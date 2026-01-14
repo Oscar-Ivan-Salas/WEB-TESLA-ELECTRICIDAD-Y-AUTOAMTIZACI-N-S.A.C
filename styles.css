@@ -1781,3 +1781,118 @@ img {
     opacity: 0.95;
     filter: contrast(1.1) brightness(1.05) saturate(1.1);
 }
+
+/* PILI Chatbot Messages Styling */
+.chat-message {
+    margin: 15px 0;
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-message.user {
+    justify-content: flex-end;
+}
+
+.chat-message.pili {
+    justify-content: flex-start;
+}
+
+.message-content {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.chat-message.user .message-content {
+    background: var(--accent-gold);
+    color: #000;
+    border-bottom-right-radius: 4px;
+}
+
+.chat-message.pili .message-content {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-white);
+    border-bottom-left-radius: 4px;
+}
+
+.chat-message.loading .message-content {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Option buttons */
+.chat-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 10px 0;
+    padding: 0 10px;
+}
+
+.option-button {
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid var(--accent-gold);
+    color: var(--accent-gold);
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.option-button:hover {
+    background: var(--accent-gold);
+    color: #000;
+    transform: translateY(-2px);
+}
+
+/* WhatsApp button */
+.chat-whatsapp {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.whatsapp-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #25D366;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.whatsapp-button:hover {
+    background: #128C7E;
+    transform: scale(1.05);
+}
+
+.whatsapp-button i {
+    font-size: 1.3rem;
+}
+
+/* Chatbot messages container */
+#chatbot-messages {
+    padding: 20px;
+    overflow-y: auto;
+    max-height: calc(100% - 140px);
+}
+
+#chatbot-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chatbot-messages::-webkit-scrollbar-thumb {
+    background: var(--accent-gold);
+    border-radius: 3px;
+}
