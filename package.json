@@ -1,4 +1,3 @@
-```json
 {
     "name": "tesla-landing",
     "version": "1.0.0",
@@ -12,9 +11,6 @@
     },
     "engines": {
         "node": ">=18.0.0"
-    },
-    "devDependencies": {
-        "vercel": "^33.0.0"
     },
     "keywords": [
         "tesla",
