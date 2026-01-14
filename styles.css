@@ -8,8 +8,8 @@
     /* High Voltage Electric Yellow (Updated from Gold) */
     --accent-gold-bright: #ffd700;
     /* Bright gold for highlights */
-    --bg-black: #050505;
-    --bg-card: rgba(30, 30, 30, 0.6);
+    --bg-black: #1a1a1a;
+    --bg-card: rgba(40, 40, 40, 0.75);
     /* Glass effect base */
     --text-white: #f0f0f0;
     --text-gray: #a0a0a0;
@@ -1105,12 +1105,12 @@ h3 {
     width: 75px;
     /* Slightly larger */
     height: 75px;
-    background: var(--accent-gold);
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 5px 20px rgba(197, 160, 89, 0.4);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.5);
     cursor: pointer;
     z-index: 2001;
     transition: var(--transition);
@@ -1735,7 +1735,7 @@ h3 {
     width: auto;
     max-width: 180px;
     object-fit: contain;
-    
+
     transition: var(--transition);
 }
 
@@ -1768,4 +1768,16 @@ h3 {
 [data-contrast="high"] .partner-text {
     font-size: 1.3rem;
     text-shadow: 0 0 15px currentColor;
+}
+/* HD Image Quality Improvements */
+img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    filter: contrast(1.05) brightness(1.02);
+}
+
+.service-card-visual img,
+.model-card-visual img {
+    opacity: 0.95;
+    filter: contrast(1.1) brightness(1.05) saturate(1.1);
 }
