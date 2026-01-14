@@ -79,39 +79,39 @@ document.addEventListener('DOMContentLoaded', () => {
     loadTheme();
 });
 
-// Theme Toggle Functions
+// Theme Toggle Functions - System Aware (Dark Mode Only with Auto-Contrast)
 function toggleTheme() {
     const html = document.documentElement;
-    const currentTheme = html.getAttribute('data-theme') || 'dark';
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    const currentMode = localStorage.getItem('contrastMode') || 'normal';
+    const newMode = currentMode === 'normal' ? 'high' : 'normal';
 
-    html.setAttribute('data-theme', newTheme);
-    localStorage.setItem('theme', newTheme);
+    html.setAttribute('data-contrast', newMode);
+    localStorage.setItem('contrastMode', newMode);
 
     // Update icon
     const icon = document.querySelector('#theme-toggle i');
-    if (newTheme === 'light') {
+    if (newMode === 'high') {
         icon.classList.remove('fa-sun');
-        icon.classList.add('fa-moon');
+        icon.classList.add('fa-adjust');
     } else {
-        icon.classList.remove('fa-moon');
+        icon.classList.remove('fa-adjust');
         icon.classList.add('fa-sun');
     }
 }
 
 function loadTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedMode = localStorage.getItem('contrastMode') || 'normal';
     const html = document.documentElement;
-    html.setAttribute('data-theme', savedTheme);
+    html.setAttribute('data-contrast', savedMode);
 
-    // Update icon based on saved theme
+    // Update icon based on saved mode
     const icon = document.querySelector('#theme-toggle i');
     if (icon) {
-        if (savedTheme === 'light') {
+        if (savedMode === 'high') {
             icon.classList.remove('fa-sun');
-            icon.classList.add('fa-moon');
+            icon.classList.add('fa-adjust');
         } else {
-            icon.classList.remove('fa-moon');
+            icon.classList.remove('fa-adjust');
             icon.classList.add('fa-sun');
         }
     }
