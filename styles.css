@@ -1,18 +1,31 @@
 :root {
-    /* Palette - Dark Industrial Luxury */
-    --primary-red: #8a0c0c;
-    /* Deeper red */
-    --primary-red-glow: #ff1a1a;
-    /* Bright red for glows */
-    --accent-gold: #ffea00;
-    /* High Voltage Electric Yellow (Updated from Gold) */
-    --accent-gold-bright: #ffd700;
-    /* Bright gold for highlights */
-    --bg-black: #1a1a1a;
-    --bg-card: rgba(40, 40, 40, 0.75);
-    /* Glass effect base */
-    --text-white: #f0f0f0;
-    --text-gray: #a0a0a0;
+    /* TESLA Official Brand Colors */
+    --primary-red: #DC2626;
+    /* Rojo Tesla - Botones principales */
+    --primary-red-dark: #991B1B;
+    /* Rojo oscuro - Fondos oscuros */
+    --primary-red-glow: #EF4444;
+    /* Rojo brillante - Hover effects */
+    --accent-gold: #F59E0B;
+    /* Dorado - Highlights e iconos */
+    --accent-gold-bright: #FBBF24;
+    /* Dorado claro - Hover */
+    --bg-black: #991B1B;
+    /* Fondo oscuro (rojo oscuro en vez de negro) */
+    --bg-darker: #7C1D1D;
+    /* Fondo más oscuro para gradientes */
+    --bg-card: rgba(153, 27, 27, 0.4);
+    /* Tarjetas con tinte rojo */
+    --bg-light: #FEF2F2;
+    /* Fondo claro */
+    --border-light: #FECACA;
+    /* Bordes claros */
+    --text-white: #FFFFFF;
+    /* Texto blanco puro */
+    --text-gray: #E5E7EB;
+    /* Texto gris claro */
+    --text-dark: #1F2937;
+    /* Texto oscuro para fondos claros */
     --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
@@ -55,27 +68,30 @@ ul {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-red) 0%, #4a0000 100%);
+    background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-glow) 100%);
     color: var(--text-white);
-    padding: 14px 35px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px 40px;
+    border: 3px solid var(--accent-gold);
     border-radius: 50px;
-    /* Fully rounded "pill" shape */
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     transition: var(--transition);
     position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(138, 12, 12, 0.3);
+    box-shadow:
+        0 4px 20px rgba(220, 38, 38, 0.5),
+        0 0 0 2px rgba(245, 158, 11, 0.3);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.2);
-    border-color: var(--accent-gold);
-    color: var(--accent-gold-bright);
+    transform: translateY(-3px);
+    box-shadow:
+        0 6px 30px rgba(220, 38, 38, 0.7),
+        0 0 0 3px rgba(245, 158, 11, 0.5);
+    border-color: var(--accent-gold-bright);
+    background: linear-gradient(135deg, var(--primary-red-glow) 0%, #F87171 100%);
 }
 
 .btn-primary::after {
@@ -85,7 +101,7 @@ ul {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transition: 0.5s;
 }
 
@@ -227,7 +243,6 @@ h3 {
 /* --- Hero --- */
 .hero {
     min-height: 100vh;
-    /* Changed from fixed height to min-height */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -235,9 +250,8 @@ h3 {
     position: relative;
     overflow: hidden;
     padding-top: 120px;
-    /* More breathing room from header */
     padding-bottom: 50px;
-    background-color: #000;
+    background: linear-gradient(135deg, var(--bg-black) 0%, var(--bg-darker) 100%);
 }
 
 /* HIGH ENERGY BACKGROUND - Electric/Industrial Vibe */
@@ -251,8 +265,8 @@ h3 {
     background:
         conic-gradient(from 0deg at 50% 50%,
             var(--bg-black) 0deg,
-            rgba(138, 12, 12, 0.4) 120deg,
-            rgba(197, 160, 89, 0.2) 240deg,
+            rgba(220, 38, 38, 0.5) 120deg,
+            rgba(245, 158, 11, 0.3) 240deg,
             var(--bg-black) 360deg);
     animation: rotateEnergy 15s linear infinite;
     opacity: 0.6;
@@ -271,8 +285,8 @@ h3 {
         repeating-linear-gradient(90deg,
             transparent 0,
             transparent 50px,
-            rgba(197, 160, 89, 0.05) 50px,
-            rgba(197, 160, 89, 0.05) 51px);
+            rgba(245, 158, 11, 0.05) 50px,
+            rgba(245, 158, 11, 0.05) 51px);
     z-index: 1;
     pointer-events: none;
 }
