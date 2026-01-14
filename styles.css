@@ -1750,3 +1750,22 @@ h3 {
 [data-contrast="high"] .partner-logo:hover {
     transform: scale\(1.1\);
 }
+
+/* Partner text styling */
+.partner-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px currentColor;
+    transition: var(--transition);
+}
+
+.partner-text:hover {
+    transform: scale(1.15);
+    text-shadow: 0 0 20px currentColor;
+}
+
+[data-contrast="high"] .partner-text {
+    font-size: 1.3rem;
+    text-shadow: 0 0 15px currentColor;
+}
