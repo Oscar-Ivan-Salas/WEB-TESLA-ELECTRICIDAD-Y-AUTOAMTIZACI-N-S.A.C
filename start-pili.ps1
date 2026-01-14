@@ -10,9 +10,9 @@ if (-not (Test-Path "node_modules")) {
 }
 
 Write-Host "`n🌐 Iniciando servidor local..." -ForegroundColor Yellow
-Write-Host "📍 URL: http://localhost:3000" -ForegroundColor Green
+Write-Host "📍 URL: http://localhost:3001" -ForegroundColor Green
 Write-Host "💬 PILI estará disponible en el botón flotante (esquina inferior derecha)" -ForegroundColor Green
 Write-Host "`n⏹️  Presiona Ctrl+C para detener el servidor`n" -ForegroundColor Yellow
 
-# Start Vercel dev server
-vercel dev --listen 3000
+# Start Vercel dev server on port 3001
+vercel dev --listen 3001

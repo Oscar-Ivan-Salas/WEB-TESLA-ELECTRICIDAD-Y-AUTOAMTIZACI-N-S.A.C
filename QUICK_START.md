@@ -33,7 +33,7 @@ vercel dev
 
 Una vez iniciado el servidor:
 
-1. Abre el navegador en: `http://localhost:3000`
+1. Abre el navegador en: `http://localhost:3001`
 2. Click en el botón flotante dorado (esquina inferior derecha)
 3. ¡Conversa con PILI!
 
