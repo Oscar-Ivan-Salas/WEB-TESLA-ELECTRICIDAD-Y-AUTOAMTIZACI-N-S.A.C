@@ -1,12 +1,94 @@
 /**
- * PILI Chatbot - Main API Endpoint
- * Handles all chat interactions with state machine logic
+ * PILI Chatbot - Simplified API for Production
+ * Works without complex imports - standalone version
  */
 
-import { PILIBrain } from '../lib/pili-brain.js';
-import { PILIMemory } from '../lib/pili-memory.js';
+// PILI States
+const STATES = {
+    BIENVENIDA: 'bienvenida',
+    CAPTURA_NOMBRE: 'captura_nombre',
+    TIPO_PROYECTO: 'tipo_proyecto',
+    DETALLES_PROYECTO: 'detalles_proyecto',
+    CAPTURA_TELEFONO: 'captura_telefono',
+    CONFIRMACION: 'confirmacion',
+    DESPEDIDA: 'despedida'
+};
+
+// In-memory session storage (temporary - will reset on cold starts)
+const sessions = new Map();
+
+// Process message through PILI brain
+function processMessage(session, message) {
+    const state = session.estado || STATES.BIENVENIDA;
+
+    switch (state) {
+        case STATES.BIENVENIDA:
+            return {
+                message: "¡Hola! Soy PILI, la asistente técnica de TESLA. 🔌⚡\n\n¿Cómo te llamas?",
+                nextState: STATES.CAPTURA_NOMBRE,
+                requiresInput: true
+            };
+
+        case STATES.CAPTURA_NOMBRE:
+            session.nombre = message;
+            return {
+                message: `¡Mucho gusto, ${message}! 😊\n\n¿En qué tipo de proyecto estás trabajando?`,
+                nextState: STATES.TIPO_PROYECTO,
+                options: [
+                    "Infraestructura Eléctrica",
+                    "Automatización & BMS",
+                    "Detección de Incendios",
+                    "Otro proyecto"
+                ]
+            };
+
+        case STATES.TIPO_PROYECTO:
+            session.tipo_proyecto = message;
+            return {
+                message: `Excelente, ${session.nombre}. Cuéntame más sobre tu proyecto de ${message}.\n\n¿Qué necesitas específicamente?`,
+                nextState: STATES.DETALLES_PROYECTO,
+                requiresInput: true
+            };
+
+        case STATES.DETALLES_PROYECTO:
+            session.detalles = message;
+            return {
+                message: `Perfecto, entiendo que necesitas: "${message}".\n\n¿Cuál es tu número de WhatsApp para enviarte una cotización personalizada?`,
+                nextState: STATES.CAPTURA_TELEFONO,
+                requiresInput: true
+            };
+
+        case STATES.CAPTURA_TELEFONO:
+            session.telefono = message;
+            const whatsappMsg = `Hola, soy ${session.nombre}. Necesito una cotización para: ${session.tipo_proyecto} - ${session.detalles}`;
+            const whatsappLink = `https://wa.me/51906315961?text=${encodeURIComponent(whatsappMsg)}`;
+
+            return {
+                message: `¡Gracias, ${session.nombre}! 🎉\n\nHe registrado tu solicitud:\n📋 Proyecto: ${session.tipo_proyecto}\n📝 Detalles: ${session.detalles}\n📱 WhatsApp: ${session.telefono}\n\nHaz clic abajo para contactarnos directamente:`,
+                nextState: STATES.DESPEDIDA,
+                whatsappLink: whatsappLink
+            };
+
+        default:
+            return {
+                message: "¡Hola! ¿En qué puedo ayudarte?",
+                nextState: STATES.BIENVENIDA,
+                requiresInput: true
+            };
+    }
+}
 
 export default async function handler(req, res) {
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Handle OPTIONS request
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     // Only accept POST requests
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Method not allowed' });
@@ -22,34 +104,30 @@ export default async function handler(req, res) {
             });
         }
 
-        // Initialize PILI components
-        const memory = new PILIMemory();
-        const brain = new PILIBrain(memory);
-
-        // Get or create client session
-        let client = await memory.getClient(sessionId);
-
-        if (!client) {
-            // New client - initialize
-            client = await memory.createClient(sessionId);
+        // Get or create session
+        let session = sessions.get(sessionId);
+        if (!session) {
+            session = {
+                id: sessionId,
+                estado: STATES.BIENVENIDA,
+                conversacion: [],
+                created: new Date().toISOString()
+            };
+            sessions.set(sessionId, session);
         }
 
-        // Process message through PILI brain
-        const response = await brain.processMessage(client, message);
+        // Process message
+        const response = processMessage(session, message);
 
-        // Update client state and conversation history
-        await memory.updateClient(sessionId, {
-            estado: response.nextState,
-            ultima_interaccion: new Date().toISOString(),
-            conversacion: [
-                ...(client.conversacion || []),
-                { role: 'user', message, timestamp: new Date().toISOString() },
-                { role: 'pili', message: response.message, timestamp: new Date().toISOString() }
-            ],
-            ...response.data // Additional data collected (nombre, telefono, etc.)
-        });
+        // Update session
+        session.estado = response.nextState;
+        session.conversacion.push(
+            { role: 'user', message, timestamp: new Date().toISOString() },
+            { role: 'pili', message: response.message, timestamp: new Date().toISOString() }
+        );
+        session.lastUpdate = new Date().toISOString();
 
-        // Return response to frontend
+        // Return response
         return res.status(200).json({
             message: response.message,
             state: response.nextState,
