@@ -74,4 +74,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const elementsToAnimate = document.querySelectorAll('.fade-in-up');
     elementsToAnimate.forEach(el => observer.observe(el));
+
+    // Load saved theme on page load
+    loadTheme();
 });
+
+// Theme Toggle Functions
+function toggleTheme() {
+    const html = document.documentElement;
+    const currentTheme = html.getAttribute('data-theme') || 'dark';
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+
+    // Update icon
+    const icon = document.querySelector('#theme-toggle i');
+    if (newTheme === 'light') {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+    } else {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+    }
+}
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const html = document.documentElement;
+    html.setAttribute('data-theme', savedTheme);
+
+    // Update icon based on saved theme
+    const icon = document.querySelector('#theme-toggle i');
+    if (icon) {
+        if (savedTheme === 'light') {
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        } else {
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+    }
+}
