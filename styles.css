@@ -1728,3 +1728,24 @@ h3 {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+/* Partner logos in marquee */
+.partner-logo {
+    height: 60px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    filter: grayscale(100%) brightness(1.5);
+    transition: var(--transition);
+}
+
+.partner-logo:hover {
+    filter: grayscale(0%) brightness(1);
+}
+
+[data-contrast="high"] .partner-logo {
+    filter: grayscale(100%) brightness(2) contrast(1.2);
+}
+
+[data-contrast="high"] .partner-logo:hover {
+    filter: grayscale(0%) brightness(1.2);
+}
