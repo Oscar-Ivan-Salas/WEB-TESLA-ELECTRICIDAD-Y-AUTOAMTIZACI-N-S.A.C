@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # TESLA Landing Page
 
 High-performance landing page for TESLA Electricidad y Automatización S.A.C.
@@ -14,7 +13,3 @@ docker run -p 3000:80 tesla-landing
 - `src/`: Source code (HTML/CSS/JS)
 - `public/`: Static assets
 - `docs/`: Documentation files
-=======
-# WEB-TESLA-ELECTRICIDAD-Y-AUTOAMTIZACI-N-S.A.C
-WEB ACTUALIZADA CON NUEVOS SERVICIOS
->>>>>>> d3c644811549638cd273fc4c4ffc44100fb0a2ba
