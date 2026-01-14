@@ -1457,6 +1457,7 @@ h3 {
 .marquee-container:hover .marquee-content {
     animation-play-state: paused;
 }
+
 /* ===== THEME TOGGLE BUTTON ===== */
 .theme-toggle {
     background: none;
@@ -1479,86 +1480,91 @@ h3 {
     transform: rotate(180deg) scale(1.1);
 }
 
-/* ===== LIGHT THEME ===== */
-[data-theme="light"] {
-    --bg-black: #ffffff;
-    --bg-card: rgba(255, 255, 255, 0.95);
-    --text-white: #1a1a1a;
-    --text-gray: #4a4a4a;
-    --primary-red: #8a0c0c;
-    --primary-red-glow: #b01010;
+/* ===== HIGH CONTRAST MODE ===== */
+/* Maintains dark theme but increases contrast for better visibility */
+[data-contrast="high"] {
+    --bg-black: #000000;
+    --bg-card: rgba(40, 40, 40, 0.95);
+    --text-white: #ffffff;
+    --text-gray: #e0e0e0;
+    --accent-gold: #ffd700;
+    --primary-red: #ff1a1a;
 }
 
-[data-theme="light"] body {
-    background-color: #f5f5f5;
-    color: #1a1a1a;
+[data-contrast="high"] body {
+    background-color: #000000;
+    color: #ffffff;
 }
 
-[data-theme="light"] .header {
-    background-color: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(138, 12, 12, 0.2);
+[data-contrast="high"] .header {
+    background-color: rgba(0, 0, 0, 0.98);
+    border-bottom: 2px solid var(--accent-gold);
 }
 
-[data-theme="light"] .hero {
-    background-color: #fff;
+[data-contrast="high"] .card {
+    background: rgba(50, 50, 50, 0.95);
+    border: 2px solid var(--accent-gold);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3);
 }
 
-[data-theme="light"] .hero::before {
-    background: conic-gradient(from 0deg at 50% 50%, #f5f5f5 0deg, rgba(138, 12, 12, 0.1) 120deg, rgba(255, 234, 0, 0.1) 240deg, #f5f5f5 360deg);
+[data-contrast="high"] .card:hover {
+    background: rgba(60, 60, 60, 1);
+    border-color: #fff;
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.5);
 }
 
-[data-theme="light"] .card {
-    background: rgba(255, 255, 255, 0.9);
-    border: 2px solid rgba(138, 12, 12, 0.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+[data-contrast="high"] .service-card-visual .overlay,
+[data-contrast="high"] .model-card-visual .overlay {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.98) 20%, rgba(0, 0, 0, 0.85) 60%, rgba(0, 0, 0, 0.4) 100%);
 }
 
-[data-theme="light"] .card:hover {
-    background: rgba(255, 255, 255, 1);
-    border-color: var(--accent-gold);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+[data-contrast="high"] .service-card-visual h3,
+[data-contrast="high"] .model-card-visual h3 {
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 1);
 }
 
-[data-theme="light"] .service-card-visual .overlay,
-[data-theme="light"] .model-card-visual .overlay {
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.95) 10%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0.3) 100%);
+[data-contrast="high"] .service-card-visual p,
+[data-contrast="high"] .model-card-visual p {
+    color: #f0f0f0;
+    text-shadow: 0 1px 5px rgba(0, 0, 0, 1);
 }
 
-[data-theme="light"] .service-card-visual h3,
-[data-theme="light"] .model-card-visual h3,
-[data-theme="light"] .service-card-visual p,
-[data-theme="light"] .model-card-visual p {
-    color: #1a1a1a;
-    text-shadow: none;
+[data-contrast="high"] .section-title {
+    color: #ffffff;
+    text-shadow: 0 0 20px var(--accent-gold);
 }
 
-[data-theme="light"] .problem-section,
-[data-theme="light"] .bg-darker {
-    background-color: #e8e8e8;
+[data-contrast="high"] .btn-primary {
+    border: 2px solid var(--accent-gold);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
 }
 
-[data-theme="light"] .section {
-    background-color: #ffffff;
+[data-contrast="high"] .btn-primary:hover {
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+    background: var(--accent-gold);
+    color: #000;
 }
 
-[data-theme="light"] .chatbot-widget {
-    background: rgba(255, 255, 255, 0.98);
-    border-color: var(--primary-red);
+[data-contrast="high"] .chatbot-widget {
+    background: rgba(0, 0, 0, 0.98);
+    border: 2px solid var(--accent-gold);
 }
 
-[data-theme="light"] .message.bot {
-    background-color: rgba(138, 12, 12, 0.1);
-    border-left-color: var(--primary-red);
-    color: #1a1a1a;
+[data-contrast="high"] .message.bot {
+    background-color: rgba(255, 215, 0, 0.15);
+    border-left: 3px solid var(--accent-gold);
+    color: #ffffff;
 }
 
-[data-theme="light"] .footer {
-    background-color: #f0f0f0;
-    border-top-color: #ddd;
+[data-contrast="high"] .footer {
+    background-color: #000000;
+    border-top: 2px solid var(--accent-gold);
 }
 
 /* ===== IMPROVED MOBILE RESPONSIVENESS ===== */
 @media (max-width: 768px) {
+
     /* Header improvements */
     .header-container {
         flex-direction: column;
