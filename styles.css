@@ -1948,12 +1948,47 @@ img {
 }
 
 /* Date Picker override - Force High Contrast */
+/* Date Picker Override - High Visibility */
+.chat-datepicker-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+.chat-datepicker-label {
+    font-size: 0.9rem;
+    color: #cbd5e0;
+    text-align: center;
+    font-weight: 500;
+}
+
 .chat-datepicker {
     color-scheme: light;
-    /* Force light mode controls */
+    /* Forces white calendar popup */
     background-color: #ffffff !important;
     color: #000000 !important;
     font-weight: bold;
+    font-size: 1.1rem;
+    /* Larger text */
+    padding: 15px;
+    /* Bigger touch target */
+    border-radius: 12px;
+    border: 2px solid #F59E0B;
+    /* Gold border */
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+    font-family: 'Inter', sans-serif;
+}
+
+.chat-datepicker:focus {
+    outline: none;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+    transform: scale(1.02);
+    transition: all 0.2s ease;
 }
 
 /* WhatsApp button */
