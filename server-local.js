@@ -32,22 +32,23 @@ const STATES = {
     END: 'END' // Generic end state
 };
 
-// Helper to format WhatsApp message with DIRECT EMOJIS for better compatibility
+// Helper to format WhatsApp message with SAFE UNICODE EMOJIS
 function generateWhatsAppLink(session) {
-    // Emojis: 🔔 👤 📱 📧 🏗️ 📊 🛠️ 📅
+    // Emojis: 🔔 \uD83D\uDD14, 👤 \uD83D\uDC64, 📱 \uD83D\uDCF1, 📧 \uD83D\uDCE7
+    // 🏗️ \uD83C\uDFD7\uFE0F, 📊 \uD83D\uDCCA, 🛠️ \uD83D\uDEE0\uFE0F, 📅 \uD83D\uDCC5
 
     // Construct the message with explicit line breaks and sections
-    const text = `🔔 *NUEVA SOLICITUD - WEB TESLA* 🔔
+    const text = `\uD83D\uDD14 *NUEVA SOLICITUD - WEB TESLA* \uD83D\uDD14
     
-👤 *Cliente:* ${session.nombre || 'No especificado'}
-📱 *Teléfono:* ${session.telefono || 'No especificado'}
-📧 *Correo:* ${session.correo || 'No especificado'}
+\uD83D\uDC64 *Cliente:* ${session.nombre || 'No especificado'}
+\uD83D\uDCF1 *Teléfono:* ${session.telefono || 'No especificado'}
+\uD83D\uDCE7 *Correo:* ${session.correo || 'No especificado'}
 
-🏗️ *Proyecto:* ${session.tipo_proyecto || '-'}
-📊 *Etapa:* ${session.etapa || '-'}
-🛠️ *Servicios:* ${session.servicios || '-'}
+\uD83C\uDFD7\uFE0F *Proyecto:* ${session.tipo_proyecto || '-'}
+\uD83D\uDCCA *Etapa:* ${session.etapa || '-'}
+\uD83D\uDEE0\uFE0F *Servicios:* ${session.servicios || '-'}
 
-📅 *Cita Sugerida:* ${session.cita || 'Por coordinar'}
+\uD83D\uDCC5 *Cita Sugerida:* ${session.cita || 'Por coordinar'}
 
 Link autogenerado por PILi Chat.`;
 

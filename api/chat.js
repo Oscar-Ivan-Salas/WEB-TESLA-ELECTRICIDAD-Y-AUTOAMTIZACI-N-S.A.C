@@ -1,9 +1,11 @@
-/**
- * PILI Chatbot - Simplified API for Production
- * Works without complex imports - standalone version
- */
+// PILI Chatbot - Serverless API Handler
+// Matches logic from server-local.js (V3)
 
-// PILI States - Full Flow
+// Mock PILI Memory (Ephemereal for Serverless - best effort without DB)
+// Note: In production serverless, this Map resets if the function cold-starts.
+// For a robust solution, use Redis or a Database.
+const globalSessions = new Map();
+
 const STATES = {
     START: 'START',
     ASK_PROJECT_TYPE: 'ASK_PROJECT_TYPE',
@@ -17,30 +19,38 @@ const STATES = {
     END: 'END'
 };
 
-// Helper to format WhatsApp message
+// Helper: Format WhatsApp message with SAFE UNICODE EMOJIS
 function generateWhatsAppLink(session) {
-    const text = `🔔 *NUEVA SOLICITUD - WEB TESLA* 🔔
+    // Emojis: 🔔 \uD83D\uDD14, 👤 \uD83D\uDC64, 📱 \uD83D\uDCF1, 📧 \uD83D\uDCE7
+    // 🏗️ \uD83C\uDFD7\uFE0F, 📊 \uD83D\uDCCA, 🛠️ \uD83D\uDEE0\uFE0F, 📅 \uD83D\uDCC5
+
+    const text = `\uD83D\uDD14 *NUEVA SOLICITUD - WEB TESLA* \uD83D\uDD14
     
-👤 *Cliente:* ${session.nombre || 'No especificado'}
-📱 *Teléfono:* ${session.telefono || 'No especificado'}
-📧 *Correo:* ${session.correo || 'No especificado'}
+\uD83D\uDC64 *Cliente:* ${session.nombre || 'No especificado'}
+\uD83D\uDCF1 *Teléfono:* ${session.telefono || 'No especificado'}
+\uD83D\uDCE7 *Correo:* ${session.correo || 'No especificado'}
 
-🏗️ *Proyecto:* ${session.tipo_proyecto || '-'}
-📊 *Etapa:* ${session.etapa || '-'}
-🛠️ *Servicios:* ${session.servicios || '-'}
+\uD83C\uDFD7\uFE0F *Proyecto:* ${session.tipo_proyecto || '-'}
+\uD83D\uDCCA *Etapa:* ${session.etapa || '-'}
+\uD83D\uDEE0\uFE0F *Servicios:* ${session.servicios || '-'}
 
-📅 *Cita Sugerida:* ${session.cita || 'Por coordinar'}
+\uD83D\uDCC5 *Cita Sugerida:* ${session.cita || 'Por coordinar'}
 
-Link autogenerado por PILI Chat.`;
+Link autogenerado por PILi Chat.`;
 
     return `https://wa.me/51906315961?text=${encodeURIComponent(text)}`;
 }
 
-// Process message through PILI brain
+// Validation Helper
+function isValidOption(input, options) {
+    if (!options || !Array.isArray(options)) return true;
+    const normalizedInput = input.trim().toLowerCase();
+    return options.some(opt => opt.toLowerCase() === normalizedInput);
+}
+
+// Core Logic (Identical to server-local.js V3)
 function processMessage(session, message) {
     const state = session.estado || STATES.START;
-
-    // Normalization helper
     const msg = message ? message.toString().trim() : "";
     const lowerMsg = msg.toLowerCase();
 
@@ -60,44 +70,92 @@ function processMessage(session, message) {
 
         // --- 2. ASK_PROJECT_TYPE ---
         case STATES.ASK_PROJECT_TYPE:
-            session.tipo_proyecto = msg;
-            return {
-                message: `Entendido, proyecto de *${msg}*. \n\n¿En qué etapa se encuentra actualmente?`,
-                nextState: STATES.ASK_STAGE,
-                options: [
+            {
+                const validOptions = [
+                    "Infraestructura Eléctrica",
+                    "Automatización & BMS",
+                    "Detección de Incendios",
+                    "Otro proyecto"
+                ];
+                if (!isValidOption(msg, validOptions)) {
+                    return {
+                        message: "Por favor, selecciona una de las opciones válidas para poder asignarte un especialista adecuado. 👇",
+                        nextState: STATES.ASK_PROJECT_TYPE,
+                        options: validOptions
+                    };
+                }
+                session.tipo_proyecto = msg;
+                return {
+                    message: `Entendido, proyecto de *${msg}*. \n\n¿En qué etapa se encuentra actualmente?`,
+                    nextState: STATES.ASK_STAGE,
+                    options: [
+                        "Idea / Perfil",
+                        "Expediente Técnico",
+                        "En Construcción",
+                        "Mantenimiento / Remodelación"
+                    ]
+                };
+            }
+
+        // --- 3. ASK_STAGE ---
+        case STATES.ASK_STAGE:
+            {
+                const validOptions = [
                     "Idea / Perfil",
                     "Expediente Técnico",
                     "En Construcción",
                     "Mantenimiento / Remodelación"
-                ]
-            };
+                ];
+                if (!isValidOption(msg, validOptions)) {
+                    return {
+                        message: "Para entender mejor tu necesidad, por favor dime en qué etapa está el proyecto. 👇",
+                        nextState: STATES.ASK_STAGE,
+                        options: validOptions
+                    };
+                }
+                session.etapa = msg;
+                return {
+                    message: "¿Qué servicios específicos necesitas evaluar?",
+                    nextState: STATES.ASK_SERVICES,
+                    options: [
+                        "Suministro de Materiales",
+                        "Instalación / Ejecución",
+                        "Ingeniería / Diseño",
+                        "Pruebas y Certificación",
+                        "Solución Llave en Mano (Todo)",
+                        "Consultoría / Asesoría"
+                    ]
+                };
+            }
 
-        // --- 3. ASK_STAGE ---
-        case STATES.ASK_STAGE:
-            session.etapa = msg;
-            return {
-                message: "¿Qué servicios específicos necesitas evaluar?",
-                nextState: STATES.ASK_SERVICES,
-                options: [
+        // --- 4. ASK_SERVICES ---
+        case STATES.ASK_SERVICES:
+            {
+                const validOptions = [
                     "Suministro de Materiales",
                     "Instalación / Ejecución",
                     "Ingeniería / Diseño",
                     "Pruebas y Certificación",
-                    "Solución Llave en Mano (Todo)"
-                ]
-            };
-
-        // --- 4. ASK_SERVICES ---
-        case STATES.ASK_SERVICES:
-            session.servicios = msg;
-            return {
-                message: "Gracias por los detalles. \n\n¿Estás buscando solo información general o deseas una *Evaluación Técnica* formal con un especialista?",
-                nextState: STATES.FILTER_SERIOUS,
-                options: [
-                    "Solicitar Evaluación Técnica",
-                    "Solo información general"
-                ]
-            };
+                    "Solución Llave en Mano (Todo)",
+                    "Consultoría / Asesoría"
+                ];
+                if (!isValidOption(msg, validOptions)) {
+                    return {
+                        message: "Selecciona el servicio principal que requieres. 👇",
+                        nextState: STATES.ASK_SERVICES,
+                        options: validOptions
+                    };
+                }
+                session.servicios = msg;
+                return {
+                    message: "Gracias por los detalles. \n\n¿Estás buscando solo información general o deseas una *Evaluación Técnica* formal con un especialista?",
+                    nextState: STATES.FILTER_SERIOUS,
+                    options: [
+                        "Solicitar Evaluación Técnica",
+                        "Solo información general"
+                    ]
+                };
+            }
 
         // --- 5. FILTER_SERIOUS ---
         case STATES.FILTER_SERIOUS:
@@ -108,7 +166,6 @@ function processMessage(session, message) {
                     requiresInput: false
                 };
             } else {
-                // Serious lead
                 return {
                     message: "¡Excelente decisión! Para coordinar la visita o reunión técnica, necesito registrar tus datos básicos.\n\n¿Cuál es tu *Nombre Completo*?",
                     nextState: STATES.ASK_CONTACT_DATA,
@@ -119,25 +176,21 @@ function processMessage(session, message) {
         // --- 6. ASK_CONTACT_DATA ---
         case STATES.ASK_CONTACT_DATA:
             if (!session.nombre) {
+                if (msg.length < 3) return { message: "Por favor, ingresa tu nombre completo real.", nextState: STATES.ASK_CONTACT_DATA, requiresInput: true };
                 session.nombre = msg;
-                return {
-                    message: `Gracias ${session.nombre}. \n\nPor favor indícame tu número de *Celular/WhatsApp* para contacto:`,
-                    nextState: STATES.ASK_CONTACT_DATA,
-                    requiresInput: true
-                };
+                return { message: `Gracias ${session.nombre}. \n\nPor favor indícame tu número de *Celular/WhatsApp* para contacto:`, nextState: STATES.ASK_CONTACT_DATA, requiresInput: true };
             } else if (!session.telefono) {
+                const phoneRegex = /^[0-9+\s-]{7,15}$/;
+                if (!phoneRegex.test(msg)) return { message: "El número no parece válido. Por favor ingresa un celular (ej. 987654321).", nextState: STATES.ASK_CONTACT_DATA, requiresInput: true };
                 session.telefono = msg;
-                return {
-                    message: "Perfecto. Finalmente, ¿Cuál es tu *Correo Electrónico* corporativo/personal? (O escribe 'omitir')",
-                    nextState: STATES.ASK_CONTACT_DATA,
-                    requiresInput: true
-                };
+                return { message: "Perfecto. Finalmente, ¿Cuál es tu *Correo Electrónico* corporativo/personal? (O escribe 'omitir')", nextState: STATES.ASK_CONTACT_DATA, requiresInput: true };
             } else {
                 session.correo = msg;
                 return {
-                    message: "Datos registrados. 📝\n\n¿Cuándo te gustaría agendar la evaluación técnica? (Día/Hora preferida)",
+                    message: "Datos registrados. 📝\n\nPor favor selecciona la fecha y hora sugerida para la evaluación técnica:",
                     nextState: STATES.ASK_APPOINTMENT,
-                    requiresInput: true
+                    requiresInput: true,
+                    inputType: 'datetime-local'
                 };
             }
 
@@ -147,10 +200,7 @@ function processMessage(session, message) {
             return {
                 message: `Perfecto. Resumen de tu solicitud:\n\n👤 ${session.nombre}\n🏗️ ${session.tipo_proyecto}\n📊 ${session.etapa}\n🛠️ ${session.servicios}\n📅 Cita: ${session.cita}\n\n¿Es correcto?`,
                 nextState: STATES.CONFIRM_APPOINTMENT,
-                options: [
-                    "Sí, confirmar solicitud",
-                    "Corregir datos"
-                ]
+                options: ["Sí, confirmar solicitud", "Corregir datos"]
             };
 
         // --- 8. CONFIRM_APPOINTMENT ---
@@ -158,93 +208,39 @@ function processMessage(session, message) {
             if (lowerMsg.includes("corregir")) {
                 session.nombre = null;
                 session.telefono = null;
-                return {
-                    message: "Entendido. Empecemos de nuevo con tus datos. ¿Cuál es tu Nombre Completo?",
-                    nextState: STATES.ASK_CONTACT_DATA,
-                    requiresInput: true
-                };
+                return { message: "Entendido. Empecemos de nuevo con tus datos. ¿Cuál es tu Nombre Completo?", nextState: STATES.ASK_CONTACT_DATA, requiresInput: true };
             } else {
-                const whatsappLink = generateWhatsAppLink(session);
                 return {
                     message: "¡Excelente! Solicitud generada con éxito. ✅\n\nComo paso final, **haz clic en el botón de abajo** para enviar la ficha a nuestro Ingeniero Especialista vía WhatsApp y confirmar tu cita.",
                     nextState: STATES.LEAD_CONFIRMED,
-                    whatsappLink: whatsappLink
+                    whatsappLink: generateWhatsAppLink(session)
                 };
             }
 
-        // --- Default ---
         default:
-            return {
-                message: "¡Hola! ¿En qué puedo ayudarte?",
-                nextState: STATES.START,
-                requiresInput: true
-            };
+            return { message: "¡Hola! ¿En qué puedo ayudarte?", nextState: STATES.START, requiresInput: true };
     }
 }
 
-export default async function handler(req, res) {
-    // Enable CORS
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    // Handle OPTIONS request
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
-
-    // Only accept POST requests
+// Vercel Serverless Handler
+export default function handler(req, res) {
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
+        res.status(405).json({ message: 'Method Not Allowed' });
+        return;
     }
 
-    try {
-        const { message, sessionId } = req.body;
+    const { message, sessionId } = req.body;
 
-        // Validate input
-        if (!message || !sessionId) {
-            return res.status(400).json({
-                error: 'Missing required fields: message and sessionId'
-            });
-        }
+    if (!globalSessions.has(sessionId)) {
+        globalSessions.set(sessionId, { estado: STATES.START });
+    }
 
-        // Get or create session
-        let session = sessions.get(sessionId);
-        if (!session) {
-            session = {
-                id: sessionId,
-                estado: STATES.BIENVENIDA,
-                conversacion: [],
-                created: new Date().toISOString()
-            };
-            sessions.set(sessionId, session);
-        }
+    const session = globalSessions.get(sessionId);
+    const response = processMessage(session, message);
 
-        // Process message
-        const response = processMessage(session, message);
-
-        // Update session
+    if (response.nextState) {
         session.estado = response.nextState;
-        session.conversacion.push(
-            { role: 'user', message, timestamp: new Date().toISOString() },
-            { role: 'pili', message: response.message, timestamp: new Date().toISOString() }
-        );
-        session.lastUpdate = new Date().toISOString();
-
-        // Return response
-        return res.status(200).json({
-            message: response.message,
-            state: response.nextState,
-            options: response.options || null,
-            requiresInput: response.requiresInput || false,
-            whatsappLink: response.whatsappLink || null
-        });
-
-    } catch (error) {
-        console.error('PILI Chat Error:', error);
-        return res.status(500).json({
-            error: 'Error procesando mensaje',
-            message: 'Lo siento, hubo un error. Por favor intenta nuevamente.'
-        });
     }
+
+    res.status(200).json(response);
 }
