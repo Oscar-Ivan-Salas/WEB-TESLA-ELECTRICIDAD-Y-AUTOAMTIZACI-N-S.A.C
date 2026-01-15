@@ -97,35 +97,60 @@ async function handleOptionClick(option) {
     await handleUserMessage(option);
 }
 
-// Display Visual Solution Card (V4 Feature)
-function displaySolutionCard() {
+// Display Visual Solution Card (V4 Feature - Dynamic)
+function displaySolutionCard(data) {
     const chatBody = document.getElementById('chatbot-messages');
     if (!chatBody) return;
 
+    // Defaults if data is missing (fallback)
+    const serviceTitle = data && data.service ? data.service : 'SOLUCIÓN INTEGRA TESLA';
+    const subTitle = data && data.stage ? `Plan de Acción: ${data.stage}` : 'Garantía Técnica Tesla';
+
     const cardDiv = document.createElement('div');
     cardDiv.className = 'solution-card-container';
-    cardDiv.style.background = 'linear-gradient(135deg, #1f2937, #111827)';
+    // Premium Card Styling
+    cardDiv.style.background = 'linear-gradient(145deg, #1A202C, #000000)';
     cardDiv.style.border = '1px solid #F59E0B';
-    cardDiv.style.borderRadius = '12px';
-    cardDiv.style.padding = '16px';
-    cardDiv.style.marginTop = '10px';
+    cardDiv.style.borderRadius = '16px';
+    cardDiv.style.padding = '20px';
+    cardDiv.style.marginTop = '15px';
     cardDiv.style.textAlign = 'center';
-    cardDiv.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+    cardDiv.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+    cardDiv.style.position = 'relative';
+    cardDiv.style.overflow = 'hidden';
 
-    cardDiv.innerHTML = `
-        <div style="font-size: 2.5rem; margin-bottom: 8px;">⚡</div>
-        <h3 style="color: #F59E0B; font-weight: bold; margin-bottom: 4px; font-size: 1.1rem;">SOLUCIÓN TESLA</h3>
-        <p style="color: #cbd5e0; font-size: 0.85rem; margin-bottom: 12px;">Garantía de Atención Técnica Prioritaria</p>
-        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;"></div>
-        <button class="option-button" style="width:100%; font-size: 0.85rem; min-height: 40px;">💾 Guardar Tarjeta</button>
+    // Gold accent top bar
+    const accent = document.createElement('div');
+    accent.style.position = 'absolute';
+    accent.style.top = '0';
+    accent.style.left = '0';
+    accent.style.width = '100%';
+    accent.style.height = '4px';
+    accent.style.background = 'linear-gradient(90deg, #F59E0B, #FCD34D, #F59E0B)';
+    cardDiv.appendChild(accent);
+
+    cardDiv.innerHTML += `
+        <div style="margin-bottom: 12px; margin-top: 10px;">
+            <img src="assets/logo.png" alt="TESLA" style="height: 35px; object-fit: contain; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));">
+        </div>
+        <h3 style="color: #fff; font-weight: 800; margin-bottom: 5px; font-size: 1.2rem; letter-spacing: 0.5px; text-transform: uppercase;">${serviceTitle}</h3>
+        <p style="color: #cbd5e0; font-size: 0.85rem; margin-bottom: 15px; font-style: italic;">"${subTitle}"</p>
+        
+        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+             <p style="color: #F59E0B; font-size: 0.8rem; margin:0;">✅ Ingeniería Validada</p>
+             <p style="color: #F59E0B; font-size: 0.8rem; margin:0;">✅ Soporte Especializado</p>
+        </div>
+
+        <button class="option-button" style="width:100%; font-size: 0.85rem; min-height: 40px; border: 1px solid #F59E0B;">💾 Guardar Tarjeta</button>
     `;
 
-    // Add functionality to "Download" button (Visual feedback for now)
+    // Add functionality to "Download" button
     const btn = cardDiv.querySelector('button');
     btn.onclick = () => {
-        btn.textContent = '✅ Guardada';
+        btn.textContent = '✅ Guardada en Dispositivo';
         btn.style.background = '#059669'; // Green
         btn.style.borderColor = '#059669';
+        btn.style.color = '#fff';
     };
 
     chatBody.appendChild(cardDiv);
@@ -159,8 +184,12 @@ async function handleUserMessage(message, loadingElement = null) {
     displayMessage(response.message, 'pili');
 
     // CHECK FOR VISUAL CARD TRIGGER (V4)
-    if (response.message && response.message.includes('Tarjeta Digital')) {
-        displaySolutionCard();
+    // If backend sends cardData, use it. Fallback to generic if text triggers it.
+    if (response.cardData) {
+        displaySolutionCard(response.cardData);
+    } else if (response.message && response.message.includes('Tarjeta Digital')) {
+        // Fallback checks
+        displaySolutionCard({ service: 'SOLUCIÓN TESLA', stage: 'Atención Prioritaria' });
     }
 
     // Display options if provided
