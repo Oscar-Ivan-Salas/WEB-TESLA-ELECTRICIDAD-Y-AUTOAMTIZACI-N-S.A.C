@@ -198,15 +198,18 @@ function displaySolutionCard(data) {
             ${info.bullets.map(b => `<p style="color: #cbd5e0; font-size: 0.85rem; margin: 4px 0;">${b}</p>`).join('')}
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;">
-            <a href="https://tesla-landing-self.vercel.app" target="_blank" style="text-decoration: none;">
-                <button class="option-button" style="width:100%; font-size: 0.8rem; background: #374151; border-color: #4B5563;">
-                    🌐 Ver Web
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 12px;">
+            <a href="https://tesla-landing-self.vercel.app" target="_blank" style="text-decoration: none; display: flex;">
+                <button class="option-button" style="width:100%; font-size: 0.9rem; background: #374151; border-color: #4B5563; display: flex; align-items: center; justify-content: center;">
+                    🌐 Web
                 </button>
             </a>
-             <button class="option-button" id="btn-whatsapp-card" style="width:100%; font-size: 0.75rem; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.2;">
-                <span style="font-weight: bold;">💬 WhatsApp</span>
-                <span style="font-size: 0.7rem; opacity: 0.9;">906 315 961</span>
+             <button class="option-button" id="btn-whatsapp-card" style="width:100%; font-size: 0.9rem; background: #25D366; border: none; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 1.2rem;">💬</span>
+                    <span style="font-weight: 800; text-transform: uppercase;">WhatsApp</span>
+                </div>
+                <span style="font-size: 1.1rem; font-weight: 900; margin-top: 2px;">906 315 961</span>
             </button>
         </div>
         
