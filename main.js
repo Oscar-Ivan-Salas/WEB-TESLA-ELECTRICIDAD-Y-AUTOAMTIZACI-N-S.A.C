@@ -97,7 +97,7 @@ async function handleOptionClick(option) {
     await handleUserMessage(option);
 }
 
-// Display Visual Solution Card (V4 Feature - Rich Content)
+// Display Visual Solution Card (V4 Feature - Rich Content + Zoom + Visible Number)
 function displaySolutionCard(data) {
     const chatBody = document.getElementById('chatbot-messages');
     if (!chatBody) return;
@@ -162,12 +162,16 @@ function displaySolutionCard(data) {
     cardDiv.style.position = 'relative';
     cardDiv.style.overflow = 'hidden';
 
-    // Header Image/Gradient
+    // Header Image/Gradient with ZOOM ICON
     const header = document.createElement('div');
     header.style.background = 'linear-gradient(135deg, #991B1B, #7f1d1d)'; // Tesla Red Dark
     header.style.padding = '20px';
     header.style.textAlign = 'center';
+    header.style.position = 'relative'; // For absolute positioning
     header.innerHTML = `
+        <div id="btn-zoom-card" style="position: absolute; top: 10px; right: 10px; cursor: pointer; color: white; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 50%; font-size: 1.2rem;" title="Ampliar Ficha">
+            🔍
+        </div>
         <img src="assets/logo.png" alt="TESLA" style="height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
         <h3 style="color: #fff; margin-top: 10px; font-weight: 800; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase;">FICHA DE ATENCIÓN TÉCNICA</h3>
     `;
@@ -200,8 +204,9 @@ function displaySolutionCard(data) {
                     🌐 Ver Web
                 </button>
             </a>
-             <button class="option-button" id="btn-whatsapp-card" style="width:100%; font-size: 0.8rem;">
-                💬 WhatsApp
+             <button class="option-button" id="btn-whatsapp-card" style="width:100%; font-size: 0.75rem; display: flex; flex-direction: column; justify-content: center; align-items: center; line-height: 1.2;">
+                <span style="font-weight: bold;">💬 WhatsApp</span>
+                <span style="font-size: 0.7rem; opacity: 0.9;">906 315 961</span>
             </button>
         </div>
         
@@ -211,6 +216,57 @@ function displaySolutionCard(data) {
     `;
 
     cardDiv.appendChild(body);
+
+    // -- EVENTS -- 
+
+    // Zoom Logic (Lightbox Overlay)
+    const zoomBtn = header.querySelector('#btn-zoom-card');
+    zoomBtn.onclick = () => {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'rgba(0,0,0,0.85)';
+        overlay.style.zIndex = '9999';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.padding = '20px';
+        overlay.style.backdropFilter = 'blur(5px)';
+
+        // Close on click
+        overlay.onclick = (e) => {
+            if (e.target === overlay) overlay.remove();
+        };
+
+        // Clone card
+        const zoomedCard = cardDiv.cloneNode(true);
+        zoomedCard.style.margin = '0';
+        zoomedCard.style.maxWidth = '600px';
+        zoomedCard.style.width = '100%';
+        zoomedCard.style.maxHeight = '90vh';
+        zoomedCard.style.boxShadow = '0 0 50px rgba(245, 158, 11, 0.3)'; // Gold glow
+        zoomedCard.style.transform = 'scale(1.05)'; // Slight scale up default
+
+        // Hide zoom button in zoomed view
+        const zoomedHeaderBtn = zoomedCard.querySelector('#btn-zoom-card');
+        if (zoomedHeaderBtn) zoomedHeaderBtn.style.display = 'none';
+
+        // Re-attach events for buttons inside zoom? 
+        // Cloning does NOT copy event listeners. 
+        // We need to re-attach them if we want the zoomed card buttons to work.
+        // Currently, it's safer to let user close view to interact. But let's try basic re-attach.
+        const waZ = zoomedCard.querySelector('#btn-whatsapp-card');
+        if (waZ) waZ.onclick = () => window.open(`https://wa.me/51906315961?text=Hola,%20consulta%20sobre%20${encodeURIComponent(info.title)}`, '_blank');
+
+        const downZ = zoomedCard.querySelector('#btn-download-card');
+        if (downZ) downZ.style.display = 'none'; // Maybe hide download button in zoom view to keep it clean? Or keep it. Let's hide it to focus on reading.
+
+        overlay.appendChild(zoomedCard);
+        document.body.appendChild(overlay);
+    };
 
     // WhatsApp Logic
     const waBtn = body.querySelector('#btn-whatsapp-card');
@@ -244,6 +300,10 @@ function displaySolutionCard(data) {
                     return;
                 }
 
+                // Temporary hide zoom btn for screenshot
+                const zBtn = cardDiv.querySelector('#btn-zoom-card');
+                if (zBtn) zBtn.style.display = 'none';
+
                 html2canvas(cardDiv, {
                     scale: 3, // High Quality
                     backgroundColor: null, // Transparent background for rounded corners
@@ -258,12 +318,14 @@ function displaySolutionCard(data) {
                     link.click();
 
                     btn.textContent = '✅ Imagen Guardada';
+                    if (zBtn) zBtn.style.display = 'block'; // Restore
                     btn.disabled = false;
                     setTimeout(() => {
                         btn.textContent = '📸 Guardar Ficha (Imagen)';
                     }, 3000);
                 }).catch(err => {
                     console.error('Error generating card image:', err);
+                    if (zBtn) zBtn.style.display = 'block'; // Restore
                     btn.textContent = '❌ Reintentar';
                     btn.disabled = false;
                 });
