@@ -1889,31 +1889,50 @@ img {
     animation: pulse 1.5s ease-in-out infinite;
 }
 
-/* Option buttons */
+/* Option buttons as Grid (2 Columns) */
 .chat-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 10px 0;
-    padding: 0 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+    padding: 0 5px;
 }
 
 .option-button {
-    background: rgba(255, 215, 0, 0.1);
-    border: 2px solid var(--accent-gold);
-    color: var(--accent-gold);
-    padding: 10px 20px;
-    border-radius: 20px;
+    background: #2D3748;
+    /* Solid dark grey */
+    border: 1px solid var(--accent-gold);
+    color: var(--text-white);
+    padding: 12px 10px;
+    border-radius: 10px;
     cursor: pointer;
     transition: var(--transition);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
+    text-align: center;
+    /* Center text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50px;
+    /* Uniform height */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .option-button:hover {
     background: var(--accent-gold);
     color: #000;
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
+/* Date Picker override - Force High Contrast */
+.chat-datepicker {
+    color-scheme: light;
+    /* Force light mode controls */
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-weight: bold;
 }
 
 /* WhatsApp button */

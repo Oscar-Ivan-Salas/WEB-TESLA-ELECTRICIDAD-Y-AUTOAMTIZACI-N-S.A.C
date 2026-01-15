@@ -3,37 +3,53 @@
  * Works without complex imports - standalone version
  */
 
-// PILI States
+// PILI States - Full Flow
 const STATES = {
-    BIENVENIDA: 'bienvenida',
-    CAPTURA_NOMBRE: 'captura_nombre',
-    TIPO_PROYECTO: 'tipo_proyecto',
-    DETALLES_PROYECTO: 'detalles_proyecto',
-    CAPTURA_TELEFONO: 'captura_telefono',
-    CONFIRMACION: 'confirmacion',
-    DESPEDIDA: 'despedida'
+    START: 'START',
+    ASK_PROJECT_TYPE: 'ASK_PROJECT_TYPE',
+    ASK_STAGE: 'ASK_STAGE',
+    ASK_SERVICES: 'ASK_SERVICES',
+    FILTER_SERIOUS: 'FILTER_SERIOUS',
+    ASK_CONTACT_DATA: 'ASK_CONTACT_DATA',
+    ASK_APPOINTMENT: 'ASK_APPOINTMENT',
+    CONFIRM_APPOINTMENT: 'CONFIRM_APPOINTMENT',
+    LEAD_CONFIRMED: 'LEAD_CONFIRMED',
+    END: 'END'
 };
 
-// In-memory session storage (temporary - will reset on cold starts)
-const sessions = new Map();
+// Helper to format WhatsApp message
+function generateWhatsAppLink(session) {
+    const text = `🔔 *NUEVA SOLICITUD - WEB TESLA* 🔔
+    
+👤 *Cliente:* ${session.nombre || 'No especificado'}
+📱 *Teléfono:* ${session.telefono || 'No especificado'}
+📧 *Correo:* ${session.correo || 'No especificado'}
+
+🏗️ *Proyecto:* ${session.tipo_proyecto || '-'}
+📊 *Etapa:* ${session.etapa || '-'}
+🛠️ *Servicios:* ${session.servicios || '-'}
+
+📅 *Cita Sugerida:* ${session.cita || 'Por coordinar'}
+
+Link autogenerado por PILI Chat.`;
+
+    return `https://wa.me/51906315961?text=${encodeURIComponent(text)}`;
+}
 
 // Process message through PILI brain
 function processMessage(session, message) {
-    const state = session.estado || STATES.BIENVENIDA;
+    const state = session.estado || STATES.START;
+
+    // Normalization helper
+    const msg = message ? message.toString().trim() : "";
+    const lowerMsg = msg.toLowerCase();
 
     switch (state) {
-        case STATES.BIENVENIDA:
+        // --- 1. START ---
+        case STATES.START:
             return {
-                message: "¡Hola! Soy PILI, la asistente técnica de TESLA. 🔌⚡\n\n¿Cómo te llamas?",
-                nextState: STATES.CAPTURA_NOMBRE,
-                requiresInput: true
-            };
-
-        case STATES.CAPTURA_NOMBRE:
-            session.nombre = message;
-            return {
-                message: `¡Mucho gusto, ${message}! 😊\n\n¿En qué tipo de proyecto estás trabajando?`,
-                nextState: STATES.TIPO_PROYECTO,
+                message: "¡Hola! Soy PILi, asistente técnica de TESLA Electricidad y Automatización. ⚡\n\nPuedo ayudarte a evaluar tu proyecto y coordinar una cita técnica.\n\nPara empezar, ¿En qué tipo de proyecto estás trabajando?",
+                nextState: STATES.ASK_PROJECT_TYPE,
                 options: [
                     "Infraestructura Eléctrica",
                     "Automatización & BMS",
@@ -42,37 +58,125 @@ function processMessage(session, message) {
                 ]
             };
 
-        case STATES.TIPO_PROYECTO:
-            session.tipo_proyecto = message;
+        // --- 2. ASK_PROJECT_TYPE ---
+        case STATES.ASK_PROJECT_TYPE:
+            session.tipo_proyecto = msg;
             return {
-                message: `Excelente, ${session.nombre}. Cuéntame más sobre tu proyecto de ${message}.\n\n¿Qué necesitas específicamente?`,
-                nextState: STATES.DETALLES_PROYECTO,
-                requiresInput: true
+                message: `Entendido, proyecto de *${msg}*. \n\n¿En qué etapa se encuentra actualmente?`,
+                nextState: STATES.ASK_STAGE,
+                options: [
+                    "Idea / Perfil",
+                    "Expediente Técnico",
+                    "En Construcción",
+                    "Mantenimiento / Remodelación"
+                ]
             };
 
-        case STATES.DETALLES_PROYECTO:
-            session.detalles = message;
+        // --- 3. ASK_STAGE ---
+        case STATES.ASK_STAGE:
+            session.etapa = msg;
             return {
-                message: `Perfecto, entiendo que necesitas: "${message}".\n\n¿Cuál es tu número de WhatsApp para enviarte una cotización personalizada?`,
-                nextState: STATES.CAPTURA_TELEFONO,
-                requiresInput: true
+                message: "¿Qué servicios específicos necesitas evaluar?",
+                nextState: STATES.ASK_SERVICES,
+                options: [
+                    "Suministro de Materiales",
+                    "Instalación / Ejecución",
+                    "Ingeniería / Diseño",
+                    "Pruebas y Certificación",
+                    "Solución Llave en Mano (Todo)"
+                ]
             };
 
-        case STATES.CAPTURA_TELEFONO:
-            session.telefono = message;
-            const whatsappMsg = `Hola, soy ${session.nombre}. Necesito una cotización para: ${session.tipo_proyecto} - ${session.detalles}`;
-            const whatsappLink = `https://wa.me/51906315961?text=${encodeURIComponent(whatsappMsg)}`;
-
+        // --- 4. ASK_SERVICES ---
+        case STATES.ASK_SERVICES:
+            session.servicios = msg;
             return {
-                message: `¡Gracias, ${session.nombre}! 🎉\n\nHe registrado tu solicitud:\n📋 Proyecto: ${session.tipo_proyecto}\n📝 Detalles: ${session.detalles}\n📱 WhatsApp: ${session.telefono}\n\nHaz clic abajo para contactarnos directamente:`,
-                nextState: STATES.DESPEDIDA,
-                whatsappLink: whatsappLink
+                message: "Gracias por los detalles. \n\n¿Estás buscando solo información general o deseas una *Evaluación Técnica* formal con un especialista?",
+                nextState: STATES.FILTER_SERIOUS,
+                options: [
+                    "Solicitar Evaluación Técnica",
+                    "Solo información general"
+                ]
             };
 
+        // --- 5. FILTER_SERIOUS ---
+        case STATES.FILTER_SERIOUS:
+            if (lowerMsg.includes("información") || lowerMsg.includes("general")) {
+                return {
+                    message: "Entiendo. Te invito a revisar nuestra sección de Servicios en la web para conocer más sobre lo que hacemos.\n\nSi te animas por una evaluación técnica, estaré aquí. ¡Saludos! 👋",
+                    nextState: STATES.END,
+                    requiresInput: false
+                };
+            } else {
+                // Serious lead
+                return {
+                    message: "¡Excelente decisión! Para coordinar la visita o reunión técnica, necesito registrar tus datos básicos.\n\n¿Cuál es tu *Nombre Completo*?",
+                    nextState: STATES.ASK_CONTACT_DATA,
+                    requiresInput: true
+                };
+            }
+
+        // --- 6. ASK_CONTACT_DATA ---
+        case STATES.ASK_CONTACT_DATA:
+            if (!session.nombre) {
+                session.nombre = msg;
+                return {
+                    message: `Gracias ${session.nombre}. \n\nPor favor indícame tu número de *Celular/WhatsApp* para contacto:`,
+                    nextState: STATES.ASK_CONTACT_DATA,
+                    requiresInput: true
+                };
+            } else if (!session.telefono) {
+                session.telefono = msg;
+                return {
+                    message: "Perfecto. Finalmente, ¿Cuál es tu *Correo Electrónico* corporativo/personal? (O escribe 'omitir')",
+                    nextState: STATES.ASK_CONTACT_DATA,
+                    requiresInput: true
+                };
+            } else {
+                session.correo = msg;
+                return {
+                    message: "Datos registrados. 📝\n\n¿Cuándo te gustaría agendar la evaluación técnica? (Día/Hora preferida)",
+                    nextState: STATES.ASK_APPOINTMENT,
+                    requiresInput: true
+                };
+            }
+
+        // --- 7. ASK_APPOINTMENT ---
+        case STATES.ASK_APPOINTMENT:
+            session.cita = msg;
+            return {
+                message: `Perfecto. Resumen de tu solicitud:\n\n👤 ${session.nombre}\n🏗️ ${session.tipo_proyecto}\n📊 ${session.etapa}\n🛠️ ${session.servicios}\n📅 Cita: ${session.cita}\n\n¿Es correcto?`,
+                nextState: STATES.CONFIRM_APPOINTMENT,
+                options: [
+                    "Sí, confirmar solicitud",
+                    "Corregir datos"
+                ]
+            };
+
+        // --- 8. CONFIRM_APPOINTMENT ---
+        case STATES.CONFIRM_APPOINTMENT:
+            if (lowerMsg.includes("corregir")) {
+                session.nombre = null;
+                session.telefono = null;
+                return {
+                    message: "Entendido. Empecemos de nuevo con tus datos. ¿Cuál es tu Nombre Completo?",
+                    nextState: STATES.ASK_CONTACT_DATA,
+                    requiresInput: true
+                };
+            } else {
+                const whatsappLink = generateWhatsAppLink(session);
+                return {
+                    message: "¡Excelente! Solicitud generada con éxito. ✅\n\nComo paso final, **haz clic en el botón de abajo** para enviar la ficha a nuestro Ingeniero Especialista vía WhatsApp y confirmar tu cita.",
+                    nextState: STATES.LEAD_CONFIRMED,
+                    whatsappLink: whatsappLink
+                };
+            }
+
+        // --- Default ---
         default:
             return {
                 message: "¡Hola! ¿En qué puedo ayudarte?",
-                nextState: STATES.BIENVENIDA,
+                nextState: STATES.START,
                 requiresInput: true
             };
     }

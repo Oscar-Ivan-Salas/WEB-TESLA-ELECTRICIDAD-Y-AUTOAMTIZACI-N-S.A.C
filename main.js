@@ -120,10 +120,70 @@ async function handleUserMessage(message) {
         displayOptions(response.options);
     }
 
+    // Handle Date/Time Input Request (New!)
+    if (response.inputType === 'datetime-local') {
+        displayDateTimePicker();
+    }
+
     // Handle WhatsApp link if provided
     if (response.whatsappLink) {
         displayWhatsAppButton(response.whatsappLink);
     }
+}
+
+// Display Date Time Picker Native Control
+function displayDateTimePicker() {
+    const chatBody = document.getElementById('chatbot-messages');
+    if (!chatBody) return;
+
+    const container = document.createElement('div');
+    container.className = 'chat-options'; // Re-use options styling container for alignment
+
+    // Native Date Picker
+    const input = document.createElement('input');
+    input.type = 'datetime-local';
+    input.className = 'chat-datepicker';
+    input.style.width = '100%';
+    input.style.padding = '10px';
+    input.style.borderRadius = '10px';
+    input.style.border = '2px solid var(--accent-gold)';
+    input.style.marginBottom = '10px';
+    input.style.fontSize = '1rem';
+
+    // Confirm Button
+    const btn = document.createElement('button');
+    btn.className = 'option-button'; // Re-use styling
+    btn.textContent = 'Confirmar Cita 📅';
+    btn.style.width = '100%';
+    btn.style.textAlign = 'center';
+    btn.onclick = async () => {
+        if (!input.value) return;
+
+        // Format date prettily
+        const date = new Date(input.value);
+        const formatted = date.toLocaleString('es-PE', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        // Remove picker
+        container.remove();
+
+        // Display choice
+        displayMessage(formatted, 'user');
+
+        // Send to PILI (raw value or formatted? Formatted is better for chat logic)
+        await handleUserMessage(formatted);
+    };
+
+    container.appendChild(input);
+    container.appendChild(btn);
+    chatBody.appendChild(container);
+    chatBody.scrollTop = chatBody.scrollHeight;
 }
 
 // Display WhatsApp contact button
@@ -135,8 +195,8 @@ function displayWhatsAppButton(link) {
     buttonDiv.className = 'chat-whatsapp';
     buttonDiv.innerHTML = `
         <a href="${link}" target="_blank" class="whatsapp-button">
-            <i class="fa-brands fa-whatsapp"></i>
-            Contactar por WhatsApp
+            <i class="fas fa-brands fa-whatsapp"></i>
+            Contactar Ingeniero
         </a>
     `;
 
@@ -179,9 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Send message button
-    const sendButton = document.querySelector('.chatbot-input button');
-    const inputField = document.querySelector('.chatbot-input input');
+    // Send message button - FIX: Use IDs to match WebTesla.html
+    const sendButton = document.getElementById('send-button');
+    const inputField = document.getElementById('chat-input');
 
     if (sendButton && inputField) {
         sendButton.addEventListener('click', async () => {
