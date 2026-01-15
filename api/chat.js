@@ -131,7 +131,12 @@ function processMessage(session, message) {
             return {
                 message: "¡Excelente! Cita agendada. ✅\n\n🎁 **Te dejo esta Tarjeta Digital** con el resumen de la solución para que tengas nuestra garantía a mano.\n\n👇 Haz clic abajo para finalizar y contactar al Especialista por WhatsApp.",
                 nextState: STATES.END,
-                whatsappLink: generateWhatsAppLink(session)
+                whatsappLink: generateWhatsAppLink(session),
+                cardData: {
+                    service: session.necesidad,
+                    projectType: session.tipo_proyecto,
+                    stage: session.etapa
+                }
             };
 
         default:
