@@ -1,4 +1,4 @@
-// PILI Chatbot - Frontend Integration
+// PILI Chatbot - Frontend Integration (V4 Enhanced)
 // Connects existing chatbot UI with PILI backend
 
 // Session management
@@ -53,7 +53,9 @@ function displayMessage(message, sender = 'pili') {
 
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
-    messageContent.textContent = message;
+    // Convert newlines to breaks
+    const formattedMessage = message.replace(/\n/g, '<br>');
+    messageContent.innerHTML = formattedMessage;
 
     messageDiv.appendChild(messageContent);
     chatBody.appendChild(messageDiv);
@@ -84,7 +86,7 @@ function displayOptions(options) {
 
 // Handle option button click
 async function handleOptionClick(option) {
-    // Remove all option buttons
+    // Remove all option buttons to prevent multiple clicks
     const optionButtons = document.querySelectorAll('.chat-options');
     optionButtons.forEach(btn => btn.remove());
 
@@ -95,25 +97,71 @@ async function handleOptionClick(option) {
     await handleUserMessage(option);
 }
 
-// Handle user message submission
-async function handleUserMessage(message) {
-    if (!message || message.trim() === '') return;
-
-    // Show loading indicator
+// Display Visual Solution Card (V4 Feature)
+function displaySolutionCard() {
     const chatBody = document.getElementById('chatbot-messages');
-    const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'chat-message pili loading';
-    loadingDiv.innerHTML = '<div class="message-content">...</div>';
-    chatBody.appendChild(loadingDiv);
+    if (!chatBody) return;
+
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'solution-card-container';
+    cardDiv.style.background = 'linear-gradient(135deg, #1f2937, #111827)';
+    cardDiv.style.border = '1px solid #F59E0B';
+    cardDiv.style.borderRadius = '12px';
+    cardDiv.style.padding = '16px';
+    cardDiv.style.marginTop = '10px';
+    cardDiv.style.textAlign = 'center';
+    cardDiv.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+
+    cardDiv.innerHTML = `
+        <div style="font-size: 2.5rem; margin-bottom: 8px;">⚡</div>
+        <h3 style="color: #F59E0B; font-weight: bold; margin-bottom: 4px; font-size: 1.1rem;">SOLUCIÓN TESLA</h3>
+        <p style="color: #cbd5e0; font-size: 0.85rem; margin-bottom: 12px;">Garantía de Atención Técnica Prioritaria</p>
+        <div style="border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;"></div>
+        <button class="option-button" style="width:100%; font-size: 0.85rem; min-height: 40px;">💾 Guardar Tarjeta</button>
+    `;
+
+    // Add functionality to "Download" button (Visual feedback for now)
+    const btn = cardDiv.querySelector('button');
+    btn.onclick = () => {
+        btn.textContent = '✅ Guardada';
+        btn.style.background = '#059669'; // Green
+        btn.style.borderColor = '#059669';
+    };
+
+    chatBody.appendChild(cardDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+// Handle user message submission
+async function handleUserMessage(message, loadingElement = null) {
+    if (!message && !loadingElement) return;
+
+    // Show loading indicator if not provided
+    const chatBody = document.getElementById('chatbot-messages');
+    let loadingDiv = loadingElement;
+
+    if (!loadingDiv) {
+        loadingDiv = document.createElement('div');
+        loadingDiv.className = 'chat-message pili loading';
+        loadingDiv.innerHTML = '<div class="message-content">...</div>';
+        chatBody.appendChild(loadingDiv);
+    }
 
     // Send to PILI backend
-    const response = await sendMessageToPILI(message);
+    const response = await sendMessageToPILI(message || '');
 
     // Remove loading indicator
-    loadingDiv.remove();
+    if (loadingDiv && loadingDiv.parentNode) {
+        loadingDiv.remove();
+    }
 
     // Display PILI's response
     displayMessage(response.message, 'pili');
+
+    // CHECK FOR VISUAL CARD TRIGGER (V4)
+    if (response.message && response.message.includes('Tarjeta Digital')) {
+        displaySolutionCard();
+    }
 
     // Display options if provided
     if (response.options && response.options.length > 0) {
@@ -131,33 +179,43 @@ async function handleUserMessage(message) {
     }
 }
 
-// Display Date Time Picker Native Control
+// Display Date Time Picker Native Control (Enhanced V4)
 function displayDateTimePicker() {
     const chatBody = document.getElementById('chatbot-messages');
     if (!chatBody) return;
 
+    // Wrapper for better spacing and label
     const container = document.createElement('div');
-    container.className = 'chat-options'; // Re-use options styling container for alignment
+    container.className = 'chat-datepicker-container';
 
-    // Native Date Picker
+    // Helper Label
+    const label = document.createElement('div');
+    label.className = 'chat-datepicker-label';
+    label.textContent = '📅 Selecciona Fecha y Hora sugerida:';
+    container.appendChild(label);
+
+    // Native Date Picker with Enhanced CSS
     const input = document.createElement('input');
     input.type = 'datetime-local';
     input.className = 'chat-datepicker';
-    input.style.width = '100%';
-    input.style.padding = '10px';
-    input.style.borderRadius = '10px';
-    input.style.border = '2px solid var(--accent-gold)';
-    input.style.marginBottom = '10px';
-    input.style.fontSize = '1rem';
+    container.appendChild(input);
 
     // Confirm Button
     const btn = document.createElement('button');
-    btn.className = 'option-button'; // Re-use styling
-    btn.textContent = 'Confirmar Cita 📅';
+    btn.className = 'option-button';
+    btn.textContent = 'Confirmar Cita ✅';
+    btn.style.marginTop = '10px';
     btn.style.width = '100%';
-    btn.style.textAlign = 'center';
+
     btn.onclick = async () => {
-        if (!input.value) return;
+        if (!input.value) {
+            alert("Por favor selecciona una fecha y hora.");
+            return;
+        }
+
+        // Visual feedback
+        btn.disabled = true;
+        btn.textContent = 'Agendando...';
 
         // Format date prettily
         const date = new Date(input.value);
@@ -170,19 +228,24 @@ function displayDateTimePicker() {
             minute: '2-digit'
         });
 
+        // Send formatted date back to PILi
         // Remove picker
         container.remove();
-
-        // Display choice
         displayMessage(formatted, 'user');
 
-        // Send to PILI (raw value or formatted? Formatted is better for chat logic)
-        await handleUserMessage(formatted);
+        // Manual loading indicator handling
+        const loading = document.createElement('div');
+        loading.id = 'loading-indicator';
+        loading.className = 'chat-message pili loading';
+        loading.innerHTML = '<div class="message-content">...</div>';
+        chatBody.appendChild(loading);
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        await handleUserMessage(formatted, loading);
     };
 
-    container.appendChild(input);
     container.appendChild(btn);
-    chatBody.appendChild(container);
+    chatBody.appendChild(container); // Append wrapper
     chatBody.scrollTop = chatBody.scrollHeight;
 }
 
@@ -196,7 +259,7 @@ function displayWhatsAppButton(link) {
     buttonDiv.innerHTML = `
         <a href="${link}" target="_blank" class="whatsapp-button">
             <i class="fas fa-brands fa-whatsapp"></i>
-            Contactar Ingeniero
+            Contactar Especialista
         </a>
     `;
 
@@ -211,6 +274,9 @@ function initializePILI() {
 
     // Clear previous messages
     chatBody.innerHTML = '';
+
+    // Force new session ID for V4 testing logic (remove this in prod if persistence is preferred)
+    // localStorage.removeItem('pili_session_id'); 
 
     // Send initial message to trigger INICIO state
     handleUserMessage('Hola');
@@ -274,46 +340,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
-// Theme toggle functionality (existing code)
-function toggleTheme() {
-    const html = document.documentElement;
-    const currentContrast = html.getAttribute('data-contrast') || 'normal';
-    const newContrast = currentContrast === 'normal' ? 'high' : 'normal';
-
-    html.setAttribute('data-contrast', newContrast);
-    localStorage.setItem('themeMode', newContrast);
-
-    // Update icon
-    const icon = document.querySelector('#theme-toggle i');
-    if (icon) {
-        if (newContrast === 'high') {
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-adjust');
-        } else {
-            icon.classList.remove('fa-adjust');
-            icon.classList.add('fa-sun');
-        }
-    }
-}
-
-function loadTheme() {
-    const savedTheme = localStorage.getItem('themeMode') || 'normal';
-    const html = document.documentElement;
-    html.setAttribute('data-contrast', savedTheme);
-
-    // Update icon based on saved theme
-    const icon = document.querySelector('#theme-toggle i');
-    if (icon) {
-        if (savedTheme === 'high') {
-            icon.classList.remove('fa-sun');
-            icon.classList.add('fa-adjust');
-        } else {
-            icon.classList.remove('fa-adjust');
-            icon.classList.add('fa-sun');
-        }
-    }
-}
-
-// Load theme on page load
-document.addEventListener('DOMContentLoaded', loadTheme);
