@@ -219,6 +219,51 @@ function displaySolutionCard(data) {
 
     // -- EVENTS -- 
 
+    // Helper for capture (shared)
+    function captureDOMElement(element, button) {
+        if (typeof html2canvas === 'undefined') {
+            alert('Librería de imagen no cargada.'); return;
+        }
+
+        if (button) {
+            button.textContent = 'Generando...';
+            button.disabled = true;
+        }
+
+        // Hide overlay controls if zoom
+        const zoomIcon = element.querySelector('#btn-zoom-card');
+        if (zoomIcon) zoomIcon.style.display = 'none';
+
+        html2canvas(element, {
+            scale: 3,
+            backgroundColor: null,
+            useCORS: true,
+            logging: false,
+            allowTaint: true
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Ficha_Tesla_${info.title.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            if (button) {
+                button.textContent = '✅ Guardada';
+                button.disabled = false;
+                setTimeout(() => button.textContent = '📸 Guardar Ficha (Imagen)', 2500);
+            }
+            if (zoomIcon) zoomIcon.style.display = 'block';
+
+        }).catch(err => {
+            console.error(err);
+            if (button) {
+                button.textContent = '❌ Error';
+                button.disabled = false;
+            }
+            if (zoomIcon) zoomIcon.style.display = 'block';
+        });
+    }
+
+
     // Zoom Logic (Lightbox Overlay)
     const zoomBtn = header.querySelector('#btn-zoom-card');
     zoomBtn.onclick = () => {
@@ -236,7 +281,20 @@ function displaySolutionCard(data) {
         overlay.style.padding = '20px';
         overlay.style.backdropFilter = 'blur(5px)';
 
-        // Close on click
+        // Explicit Close Button
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '✕ Cerrar';
+        closeBtn.className = 'option-button';
+        closeBtn.style.position = 'absolute';
+        closeBtn.style.top = '20px';
+        closeBtn.style.right = '20px';
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+        closeBtn.style.maxWidth = '100px';
+        closeBtn.style.fontSize = '0.8rem';
+        closeBtn.onclick = () => overlay.remove();
+        overlay.appendChild(closeBtn);
+
+        // Close on background click
         overlay.onclick = (e) => {
             if (e.target === overlay) overlay.remove();
         };
@@ -244,31 +302,32 @@ function displaySolutionCard(data) {
         // Clone card
         const zoomedCard = cardDiv.cloneNode(true);
         zoomedCard.style.margin = '0';
-        zoomedCard.style.maxWidth = '600px';
+        zoomedCard.style.maxWidth = '600px'; // Limit width nicely
         zoomedCard.style.width = '100%';
-        zoomedCard.style.maxHeight = '90vh';
-        zoomedCard.style.boxShadow = '0 0 50px rgba(245, 158, 11, 0.3)'; // Gold glow
-        zoomedCard.style.transform = 'scale(1.05)'; // Slight scale up default
+        zoomedCard.style.maxHeight = '85vh'; // Make room for close button
+        zoomedCard.style.boxShadow = '0 0 50px rgba(245, 158, 11, 0.3)';
+        zoomedCard.style.overflowY = 'auto'; // Scrollable if tall
 
-        // Hide zoom button in zoomed view
-        const zoomedHeaderBtn = zoomedCard.querySelector('#btn-zoom-card');
-        if (zoomedHeaderBtn) zoomedHeaderBtn.style.display = 'none';
+        // Hide small zoom button in clone
+        const zInner = zoomedCard.querySelector('#btn-zoom-card');
+        if (zInner) zInner.remove(); // Remove icon from zoom view
 
-        // Re-attach events for buttons inside zoom? 
-        // Cloning does NOT copy event listeners. 
-        // We need to re-attach them if we want the zoomed card buttons to work.
-        // Currently, it's safer to let user close view to interact. But let's try basic re-attach.
+        // Re-attach WhatsApp
         const waZ = zoomedCard.querySelector('#btn-whatsapp-card');
         if (waZ) waZ.onclick = () => window.open(`https://wa.me/51906315961?text=Hola,%20consulta%20sobre%20${encodeURIComponent(info.title)}`, '_blank');
 
+        // Re-attach Download (Active in Zoom!)
         const downZ = zoomedCard.querySelector('#btn-download-card');
-        if (downZ) downZ.style.display = 'none'; // Maybe hide download button in zoom view to keep it clean? Or keep it. Let's hide it to focus on reading.
+        if (downZ) {
+            downZ.style.display = 'block'; // Ensure visible
+            downZ.onclick = () => captureDOMElement(zoomedCard, downZ);
+        }
 
         overlay.appendChild(zoomedCard);
         document.body.appendChild(overlay);
     };
 
-    // WhatsApp Logic
+    // WhatsApp Logic (Original Card)
     const waBtn = body.querySelector('#btn-whatsapp-card');
     if (waBtn) {
         waBtn.onclick = () => {
@@ -276,61 +335,10 @@ function displaySolutionCard(data) {
         };
     }
 
-    // Download Logic (html2canvas)
+    // Download Logic (Original Card)
     const btn = body.querySelector('#btn-download-card');
     if (btn) {
-        btn.onclick = () => {
-            btn.textContent = '📸 Generando imagen...';
-            btn.disabled = true;
-
-            // Ensure images are loaded before capturing (Logo)
-            const logo = cardDiv.querySelector('img');
-            if (logo && !logo.complete) {
-                logo.onload = captureCard;
-            } else {
-                captureCard();
-            }
-
-            function captureCard() {
-                // Use global html2canvas
-                if (typeof html2canvas === 'undefined') {
-                    alert('Error: Librería de imagen no cargada. Por favor recarga la página.');
-                    btn.textContent = '❌ Error';
-                    btn.disabled = false;
-                    return;
-                }
-
-                // Temporary hide zoom btn for screenshot
-                const zBtn = cardDiv.querySelector('#btn-zoom-card');
-                if (zBtn) zBtn.style.display = 'none';
-
-                html2canvas(cardDiv, {
-                    scale: 3, // High Quality
-                    backgroundColor: null, // Transparent background for rounded corners
-                    useCORS: true,
-                    logging: false,
-                    allowTaint: true
-                }).then(canvas => {
-                    // Create download link
-                    const link = document.createElement('a');
-                    link.download = `Ficha_Tecnica_TESLA_${info.title.replace(/\s+/g, '_')}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
-
-                    btn.textContent = '✅ Imagen Guardada';
-                    if (zBtn) zBtn.style.display = 'block'; // Restore
-                    btn.disabled = false;
-                    setTimeout(() => {
-                        btn.textContent = '📸 Guardar Ficha (Imagen)';
-                    }, 3000);
-                }).catch(err => {
-                    console.error('Error generating card image:', err);
-                    if (zBtn) zBtn.style.display = 'block'; // Restore
-                    btn.textContent = '❌ Reintentar';
-                    btn.disabled = false;
-                });
-            }
-        };
+        btn.onclick = () => captureDOMElement(cardDiv, btn);
     }
 
     chatBody.appendChild(cardDiv);
