@@ -97,60 +97,124 @@ async function handleOptionClick(option) {
     await handleUserMessage(option);
 }
 
-// Display Visual Solution Card (V4 Feature - Dynamic)
+// Display Visual Solution Card (V4 Feature - Rich Content)
 function displaySolutionCard(data) {
     const chatBody = document.getElementById('chatbot-messages');
     if (!chatBody) return;
 
-    // Defaults if data is missing (fallback)
-    const serviceTitle = data && data.service ? data.service : 'SOLUCIÓN INTEGRA TESLA';
-    const subTitle = data && data.stage ? `Plan de Acción: ${data.stage}` : 'Garantía Técnica Tesla';
+    // Service Content Dictionary
+    const SERVICE_DETAILS = {
+        "Electricidad": {
+            icon: "⚡",
+            title: "ELECTRICIDAD INDUSTRIAL Y COMERCIAL",
+            desc: "Garantizamos un suministro estable y seguro. Nos encargamos desde el diseño de tableros hasta la certificación final.",
+            bullets: ["✔ Tableros Eléctricos", "✔ Pozo a Tierra", "✔ Iluminación LED"]
+        },
+        "Sistemas contra incendios": {
+            icon: "🚨",
+            title: "SISTEMAS CONTRA INCENDIOS",
+            desc: "Protección certificada para tu infraestructura. Cumplimos estrictamente las normativas INDECI y NFPA.",
+            bullets: ["✔ Detección y Alarma", "✔ Red de Agua", "✔ Mantenimiento Preventivo"]
+        },
+        "Automatización / Domótica": {
+            icon: "🤖",
+            title: "AUTOMATIZACIÓN Y DOMÓTICA",
+            desc: "Control total de tu planta o edificio. Optimiza procesos y ahorra energía con tecnología inteligente.",
+            bullets: ["✔ Control de Accesos", "✔ BMS / Scada", "✔ Sensores IoT"]
+        },
+        "Seguridad electrónica": {
+            icon: "🔐",
+            title: "SEGURIDAD ELECTRÓNICA",
+            desc: "Monitoreo avanzado 24/7. Integramos cámaras, accesos y alarmas en una sola plataforma.",
+            bullets: ["✔ CCTV IP", "✔ Video Porteros", "✔ Central de Monitoreo"]
+        },
+        "Acabados técnicos": {
+            icon: "🏗️",
+            title: "ACABADOS TÉCNICOS",
+            desc: "Detalles finales que marcan la diferencia. Drywall, pintura y estructuras metálicas de soporte.",
+            bullets: ["✔ Estructuras Metálicas", "✔ Drywall y Pintura", "✔ Remodelación"]
+        },
+        "Solución integral TESLA": {
+            icon: "🧩",
+            title: "SOLUCIÓN LLAVE EN MANO",
+            desc: "Nos encargamos de TODO. Un solo proveedor para Electricidad, Seguridad y Automatización.",
+            bullets: ["✔ Gestión de Proyecto", "✔ Un solo responsable", "✔ Entrega Lista para Usar"]
+        }
+    };
+
+    // Match service (rough match)
+    let info = SERVICE_DETAILS["Solución integral TESLA"]; // Default
+    if (data && data.service) {
+        // Find best match key
+        const key = Object.keys(SERVICE_DETAILS).find(k => data.service.includes(k) || k.includes(data.service));
+        if (key) info = SERVICE_DETAILS[key];
+    }
 
     const cardDiv = document.createElement('div');
     cardDiv.className = 'solution-card-container';
-    // Premium Card Styling
-    cardDiv.style.background = 'linear-gradient(145deg, #1A202C, #000000)';
-    cardDiv.style.border = '1px solid #F59E0B';
+    cardDiv.style.background = 'linear-gradient(145deg, #111827, #000000)';
+    cardDiv.style.border = '1px solid #F59E0B'; // Gold border
     cardDiv.style.borderRadius = '16px';
-    cardDiv.style.padding = '20px';
-    cardDiv.style.marginTop = '15px';
-    cardDiv.style.textAlign = 'center';
-    cardDiv.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+    cardDiv.style.padding = '0'; // Reset padding for header layout
+    cardDiv.style.marginTop = '20px';
+    cardDiv.style.textAlign = 'left';
+    cardDiv.style.boxShadow = '0 15px 40px rgba(0,0,0,0.6)';
     cardDiv.style.position = 'relative';
     cardDiv.style.overflow = 'hidden';
 
-    // Gold accent top bar
-    const accent = document.createElement('div');
-    accent.style.position = 'absolute';
-    accent.style.top = '0';
-    accent.style.left = '0';
-    accent.style.width = '100%';
-    accent.style.height = '4px';
-    accent.style.background = 'linear-gradient(90deg, #F59E0B, #FCD34D, #F59E0B)';
-    cardDiv.appendChild(accent);
+    // Header Image/Gradient
+    const header = document.createElement('div');
+    header.style.background = 'linear-gradient(135deg, #991B1B, #7f1d1d)'; // Tesla Red Dark
+    header.style.padding = '20px';
+    header.style.textAlign = 'center';
+    header.innerHTML = `
+        <img src="assets/logo.png" alt="TESLA" style="height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+        <h3 style="color: #fff; margin-top: 10px; font-weight: 800; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase;">FICHA DE ATENCIÓN TÉCNICA</h3>
+    `;
+    cardDiv.appendChild(header);
 
-    cardDiv.innerHTML += `
-        <div style="margin-bottom: 12px; margin-top: 10px;">
-            <img src="assets/logo.png" alt="TESLA" style="height: 35px; object-fit: contain; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2));">
+    // Context Data (Ficha Look)
+    const projectType = data && data.projectType ? data.projectType : 'No especificado';
+    const stage = data && data.stage ? data.stage : 'No especificado';
+
+    // Body
+    const body = document.createElement('div');
+    body.style.padding = '20px';
+    body.innerHTML = `
+        <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; margin-bottom: 20px; border-left: 4px solid #F59E0B;">
+            <p style="margin: 0 0 5px 0; font-size: 0.8rem; color: #9ca3af; text-transform: uppercase;">PROYECTO / ETAPA</p>
+            <p style="margin: 0; font-size: 0.95rem; color: #fff; font-weight: 600;">${projectType}</p>
+            <p style="margin: 0; font-size: 0.9rem; color: #d1d5db;">En fase: ${stage}</p>
         </div>
-        <h3 style="color: #fff; font-weight: 800; margin-bottom: 5px; font-size: 1.2rem; letter-spacing: 0.5px; text-transform: uppercase;">${serviceTitle}</h3>
-        <p style="color: #cbd5e0; font-size: 0.85rem; margin-bottom: 15px; font-style: italic;">"${subTitle}"</p>
+
+        <p style="color: #F59E0B; font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">${info.title}</p>
+        <p style="color: #e2e8f0; font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px;">${info.desc}</p>
         
-        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-bottom: 15px;">
-             <p style="color: #F59E0B; font-size: 0.8rem; margin:0;">✅ Ingeniería Validada</p>
-             <p style="color: #F59E0B; font-size: 0.8rem; margin:0;">✅ Soporte Especializado</p>
+        <div style="margin-bottom: 20px;">
+            ${info.bullets.map(b => `<p style="color: #cbd5e0; font-size: 0.85rem; margin: 4px 0;">${b}</p>`).join('')}
         </div>
 
-        <button class="option-button" style="width:100%; font-size: 0.85rem; min-height: 40px; border: 1px solid #F59E0B;">💾 Guardar Tarjeta</button>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <a href="https://tesla-landing-self.vercel.app" target="_blank" style="text-decoration: none;">
+                <button class="option-button" style="width:100%; font-size: 0.8rem; background: #374151; border-color: #4B5563;">
+                    🌐 Ver Web
+                </button>
+            </a>
+             <button class="option-button" id="btn-whatsapp-card" style="width:100%; font-size: 0.8rem;">
+                💬 WhatsApp
+            </button>
+        </div>
     `;
 
-    // Add functionality to "Download" button
-    const btn = cardDiv.querySelector('button');
-    btn.onclick = () => {
-        btn.textContent = '✅ Guardada en Dispositivo';
-        btn.style.background = '#059669'; // Green
-        btn.style.borderColor = '#059669';
-        btn.style.color = '#fff';
+    cardDiv.appendChild(body);
+
+    // Add WhatsApp click handler to button inside card
+    const waBtn = body.querySelector('#btn-whatsapp-card');
+    waBtn.onclick = () => {
+        // Trigger the main whatsapp button logic or open generic
+        // Ideally use the link from the response, but here we can generate a generic one or assume the main flow handles it.
+        // Let's use the one generated by backend if possible, or generic.
+        window.open('https://wa.me/51906315961?text=Hola,%20quisiera%20consultar%20sobre%20la%20solución%20TESLA.', '_blank');
     };
 
     chatBody.appendChild(cardDiv);
