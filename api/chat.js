@@ -20,9 +20,9 @@ const STATES = {
 
 const OPTIONS = {
     PROJECT_TYPE: [
-        "🏗️ Obra en ejecución",
-        "🏢 Proyecto nuevo",
-        "🔧 Mantenimiento / Remodelación"
+        "🏗️ Proyecto en curso",
+        "📋 Evaluación inicial",
+        "� Actualización técnica"
     ],
     STAGE: [
         "Inicio / Planos",
