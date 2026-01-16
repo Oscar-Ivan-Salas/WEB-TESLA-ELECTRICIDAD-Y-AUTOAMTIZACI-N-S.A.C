@@ -1256,179 +1256,146 @@
                 </button>
             </div>
         </div>
-    </aside>
+        <!-- JavaScript -->
+        <script src="main.js"></script>
 
-    <!-- PILI Chatbot FAB Button - Personaje Principal -->
-    <div class="fixed bottom-6 right-6 z-40 flex flex-col items-center gap-2">
-        <button id="chatbot-fab" onclick="toggleChat()"
-            class="w-24 h-24 bg-gradient-to-br from-tesla-red to-tesla-red-glow border-4 border-tesla-gold rounded-full shadow-2xl hover:scale-110 transition-all pulse-pili flex items-center justify-center overflow-hidden">
-            <img src="assets/pili_avatar_03.png" alt="PILI" class="w-full h-full object-cover object-center scale-80">
-        </button>
-        <div class="bg-gray-900/90 px-4 py-1.5 rounded-full border-2 border-tesla-gold backdrop-blur-sm">
-            <span class="text-sm font-bold text-tesla-gold drop-shadow-lg">PILi Chatbot</span>
-        </div>
-    </div>
+        <script>
+            // Toggle site-wide theme (light/dark)
+            function toggleSiteTheme() {
+                const body = document.body;
+                const themeButton = document.getElementById('site-theme-toggle');
+                const icon = themeButton.querySelector('i');
 
-    <!-- JavaScript -->
-    <script src="main.js"></script>
+                // Toggle dark class
+                body.classList.toggle('dark');
 
-    <script>
-        // Chat toggle functions
-        function toggleChat() {
-            const sidebar = document.getElementById('chat-sidebar');
-            const isHidden = sidebar.classList.contains('translate-x-full');
-
-            if (isHidden) {
-                sidebar.classList.remove('translate-x-full');
-                // Initialize PILI on first open
-                if (!sidebar.dataset.initialized) {
-                    initializePILI();
-                    sidebar.dataset.initialized = 'true';
-                }
-            } else {
-                sidebar.classList.add('translate-x-full');
-            }
-        }
-
-        function openChat() {
-            const sidebar = document.getElementById('chat-sidebar');
-            sidebar.classList.remove('translate-x-full');
-            if (!sidebar.dataset.initialized) {
-                initializePILI();
-                sidebar.dataset.initialized = 'true';
-            }
-        }
-
-        function closeChat() {
-            const sidebar = document.getElementById('chat-sidebar');
-            sidebar.classList.add('translate-x-full');
-        }
-
-        // Toggle site-wide theme (light/dark)
-        function toggleSiteTheme() {
-            const body = document.body;
-            const themeButton = document.getElementById('site-theme-toggle');
-            const icon = themeButton.querySelector('i');
-
-            // Toggle dark class
-            body.classList.toggle('dark');
-
-            // Update icon
-            if (body.classList.contains('dark')) {
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-                localStorage.setItem('theme', 'light');
-            }
-        }
-
-        // Load saved theme on page load
-        document.addEventListener('DOMContentLoaded', function () {
-            const savedTheme = localStorage.getItem('theme');
-            const body = document.body;
-            const themeButton = document.getElementById('site-theme-toggle');
-
-            if (savedTheme === 'light') {
-                body.classList.remove('dark');
-                if (themeButton) {
-                    const icon = themeButton.querySelector('i');
+                // Update icon
+                if (body.classList.contains('dark')) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                } else {
                     icon.classList.remove('fa-sun');
                     icon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light');
                 }
             }
-        });
 
-        // Toggle chat theme (light/dark)
-        function toggleChatTheme() {
-            const sidebar = document.getElementById('chat-sidebar');
-            const themeButton = document.getElementById('theme-toggle');
-            const icon = themeButton.querySelector('i');
+            // Accordion toggle function
+            function toggleAccordion(accordionId) {
+                const accordion = document.getElementById(accordionId);
+                const allAccordions = document.querySelectorAll('[id^="accordion-"]');
 
-            // Toggle between dark and light mode
-            if (sidebar.classList.contains('bg-gray-900')) {
-                // Switch to light mode
-                sidebar.classList.remove('bg-gray-900');
-                sidebar.classList.add('bg-gray-100');
-                icon.classList.remove('fa-sun');
-                icon.classList.add('fa-moon');
-
-                // Update messages area
-                const messagesArea = document.getElementById('chatbot-messages');
-                messagesArea.classList.remove('bg-gray-900');
-                messagesArea.classList.add('bg-white');
-
-                // Update input area
-                const inputArea = sidebar.querySelector('.border-gray-800');
-                if (inputArea) {
-                    inputArea.classList.remove('border-gray-800', 'bg-gray-900\\/50');
-                    inputArea.classList.add('border-gray-300', 'bg-gray-50');
-                }
-
-                // Update input field
-                const input = document.getElementById('chat-input');
-                if (input) {
-                    input.classList.remove('bg-gray-800', 'border-gray-700', 'text-white', 'placeholder-gray-500');
-                    input.classList.add('bg-white', 'border-gray-300', 'text-gray-900', 'placeholder-gray-400');
-                }
-            } else {
-                // Switch to dark mode
-                sidebar.classList.remove('bg-gray-100');
-                sidebar.classList.add('bg-gray-900');
-                icon.classList.remove('fa-moon');
-                icon.classList.add('fa-sun');
-
-                // Update messages area
-                const messagesArea = document.getElementById('chatbot-messages');
-                messagesArea.classList.remove('bg-white');
-                messagesArea.classList.add('bg-gray-900');
-
-                // Update input area
-                const inputArea = sidebar.querySelector('.border-gray-300');
-                if (inputArea) {
-                    inputArea.classList.remove('border-gray-300', 'bg-gray-50');
-                    inputArea.classList.add('border-gray-800', 'bg-gray-900\\/50');
-                }
-
-                // Update input field
-                const input = document.getElementById('chat-input');
-                if (input) {
-                    input.classList.remove('bg-white', 'border-gray-300', 'text-gray-900', 'placeholder-gray-400');
-                    input.classList.add('bg-gray-800', 'border-gray-700', 'text-white', 'placeholder-gray-500');
-                }
+                allAccordions.forEach(acc => {
+                    if (acc.id !== accordionId) acc.classList.add('hidden');
+                });
+                accordion.classList.toggle('hidden');
             }
-        }
 
-        // Close chat when clicking outside on mobile
-        document.addEventListener('click', function (event) {
-            const sidebar = document.getElementById('chat-sidebar');
-            const fab = document.getElementById('chatbot-fab');
+            // Load saved theme on page load
+            document.addEventListener('DOMContentLoaded', function () {
+                const savedTheme = localStorage.getItem('theme');
+                const body = document.body;
+                const themeButton = document.getElementById('site-theme-toggle');
 
-            if (!sidebar.contains(event.target) && !fab.contains(event.target)) {
-                if (!sidebar.classList.contains('translate-x-full') && window.innerWidth < 768) {
-                    closeChat();
-                }
-            }
-        });
-
-        // Accordion toggle function
-        function toggleAccordion(accordionId) {
-            const accordion = document.getElementById(accordionId);
-            const allAccordions = document.querySelectorAll('[id^="accordion-"]');
-
-            // Close all other accordions
-            allAccordions.forEach(acc => {
-                if (acc.id !== accordionId) {
-                    acc.classList.add('hidden');
+                if (savedTheme === 'light') {
+                    body.classList.remove('dark');
+                    if (themeButton) {
+                        const icon = themeButton.querySelector('i');
+                        icon.classList.remove('fa-sun');
+                        icon.classList.add('fa-moon');
+                    }
                 }
             });
 
-            // Toggle current accordion
-            accordion.classList.toggle('hidden');
-        }
-    </script>
+            // Toggle chat theme (light/dark)
+            function toggleChatTheme() {
+                const sidebar = document.getElementById('chat-sidebar');
+                const themeButton = document.getElementById('theme-toggle');
+                const icon = themeButton.querySelector('i');
+
+                // Toggle between dark and light mode
+                if (sidebar.classList.contains('bg-gray-900')) {
+                    // Switch to light mode
+                    sidebar.classList.remove('bg-gray-900');
+                    sidebar.classList.add('bg-gray-100');
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+
+                    // Update messages area
+                    const messagesArea = document.getElementById('chatbot-messages');
+                    messagesArea.classList.remove('bg-gray-900');
+                    messagesArea.classList.add('bg-white');
+
+                    // Update input area
+                    const inputArea = sidebar.querySelector('.border-gray-800');
+                    if (inputArea) {
+                        inputArea.classList.remove('border-gray-800', 'bg-gray-900\\/50');
+                        inputArea.classList.add('border-gray-300', 'bg-gray-50');
+                    }
+
+                    // Update input field
+                    const input = document.getElementById('chat-input');
+                    if (input) {
+                        input.classList.remove('bg-gray-800', 'border-gray-700', 'text-white', 'placeholder-gray-500');
+                        input.classList.add('bg-white', 'border-gray-300', 'text-gray-900', 'placeholder-gray-400');
+                    }
+                } else {
+                    // Switch to dark mode
+                    sidebar.classList.remove('bg-gray-100');
+                    sidebar.classList.add('bg-gray-900');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+
+                    // Update messages area
+                    const messagesArea = document.getElementById('chatbot-messages');
+                    messagesArea.classList.remove('bg-white');
+                    messagesArea.classList.add('bg-gray-900');
+
+                    // Update input area
+                    const inputArea = sidebar.querySelector('.border-gray-300');
+                    if (inputArea) {
+                        inputArea.classList.remove('border-gray-300', 'bg-gray-50');
+                        inputArea.classList.add('border-gray-800', 'bg-gray-900\\/50');
+                    }
+
+                    // Update input field
+                    const input = document.getElementById('chat-input');
+                    if (input) {
+                        input.classList.remove('bg-white', 'border-gray-300', 'text-gray-900', 'placeholder-gray-400');
+                        input.classList.add('bg-gray-800', 'border-gray-700', 'text-white', 'placeholder-gray-500');
+                    }
+                }
+            }
+
+            // Close chat when clicking outside on mobile
+            document.addEventListener('click', function (event) {
+                const sidebar = document.getElementById('chat-sidebar');
+                const fab = document.getElementById('chatbot-fab');
+
+                if (!sidebar.contains(event.target) && !fab.contains(event.target)) {
+                    if (!sidebar.classList.contains('translate-x-full') && window.innerWidth < 768) {
+                        closeChat();
+                    }
+                }
+            });
+
+            // Accordion toggle function
+            function toggleAccordion(accordionId) {
+                const accordion = document.getElementById(accordionId);
+                const allAccordions = document.querySelectorAll('[id^="accordion-"]');
+
+                // Close all other accordions
+                allAccordions.forEach(acc => {
+                    if (acc.id !== accordionId) {
+                        acc.classList.add('hidden');
+                    }
+                });
+
+                // Toggle current accordion
+                accordion.classList.toggle('hidden');
+            }
+        </script>
 
 </body>
 
