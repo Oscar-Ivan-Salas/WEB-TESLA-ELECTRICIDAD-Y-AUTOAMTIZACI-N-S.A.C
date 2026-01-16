@@ -499,61 +499,77 @@ function initializePILI() {
     handleUserMessage('Hola');
 }
 
-// Global Toggle Function (Exposed for HTML onclick)
-window.toggleChatbot = function (initialMessage = null) {
-    const chatbotWidget = document.getElementById('chatbot-widget');
-    if (!chatbotWidget) return;
+// --- RESTORED LEGACY SIDEBAR LOGIC (V5 BRAIN) ---
 
-    const isHidden = chatbotWidget.classList.contains('chatbot-hidden');
+// Global Toggle Function (Exposed for HTML onclick)
+// Maps legacy 'toggleChat()' calls to this logic
+window.toggleChat = function (initialMessage = null) {
+    const sidebar = document.getElementById('chat-sidebar'); // Legacy ID
+    if (!sidebar) return;
+
+    const isHidden = sidebar.classList.contains('translate-x-full'); // Legacy class logic
 
     if (isHidden) {
-        chatbotWidget.classList.remove('chatbot-hidden');
+        sidebar.classList.remove('translate-x-full');
         // Initialize PILI on first open
-        if (!chatbotWidget.dataset.initialized) {
+        if (!sidebar.dataset.initialized) {
             initializePILI();
-            chatbotWidget.dataset.initialized = 'true';
+            sidebar.dataset.initialized = 'true';
         }
 
-        // If an initial message is passed (e.g. from service card)
+        // If an initial message is passed
         if (initialMessage) {
-            // Wait for init then send
             setTimeout(() => {
                 handleUserMessage(initialMessage);
             }, 500);
         }
     } else {
-        // If already open and clicked again, maybe just focus or close?
-        // User pattern: Click button -> Open. Click again -> Close logic usually on X button.
-        // Let's keep it simple: Open if hidden. If open, do nothing or focus.
+        sidebar.classList.add('translate-x-full');
     }
 };
+
+// Alias for compatibility if needed
+window.toggleChatbot = window.toggleChat;
+window.openChatbot = window.toggleChat; // For 'Evaluación Técnica' buttons in navbar/hero
+window.openChat = window.toggleChat; // For Modal buttons
+
+// Close function
+window.closeChat = function () {
+    const sidebar = document.getElementById('chat-sidebar');
+    if (sidebar) sidebar.classList.add('translate-x-full');
+}
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
     // Chatbot FAB Click
     const chatbotFab = document.getElementById('chatbot-fab');
     if (chatbotFab) {
-        chatbotFab.addEventListener('click', () => window.toggleChatbot());
+        chatbotFab.addEventListener('click', (e) => {
+            // Prevent default if it's a link (just in case)
+            e.preventDefault();
+            window.toggleChat();
+        });
     }
 
-    // Send message button - FIX: Use IDs to match WebTesla.html
+    // Send message button
     const sendButton = document.getElementById('send-button');
     const inputField = document.getElementById('chat-input');
-    // ... rest of listeners
 
-
+    // ... rest of event listeners ...
     if (sendButton && inputField) {
-        sendButton.addEventListener('click', async () => {
+        // Remove old listeners to avoid duplicates if re-running
+        // (Not strictly necessary in page reload context but good practice)
+
+        sendButton.onclick = async () => {
             const message = inputField.value.trim();
             if (message) {
                 displayMessage(message, 'user');
                 inputField.value = '';
                 await handleUserMessage(message);
             }
-        });
+        };
 
-        // Enter key to send
-        inputField.addEventListener('keypress', async (e) => {
+        inputField.onkeypress = async (e) => {
             if (e.key === 'Enter') {
                 const message = inputField.value.trim();
                 if (message) {
@@ -562,22 +578,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     await handleUserMessage(message);
                 }
             }
-        });
+        };
     }
 
-    // Close button
-    const closeButton = document.querySelector('.chatbot-header button');
-    if (closeButton && chatbotWidget) {
-        closeButton.addEventListener('click', () => {
-            chatbotWidget.classList.add('chatbot-hidden');
-        });
+    // Close button inside sidebar
+    const closeBtn = document.querySelector('#chat-sidebar button[onclick="closeChat()"]');
+    if (closeBtn) {
+        closeBtn.onclick = window.closeChat;
     }
+
 });
 
 // Load theme on page load
 function loadTheme() {
     const savedTheme = localStorage.getItem('themeMode') || 'normal';
-    const html = document.documentElement;
-    html.setAttribute('data-contrast', savedTheme);
+    try {
+        const html = document.documentElement;
+        html.setAttribute('data-contrast', savedTheme);
+    } catch (e) { console.log("Theme err"); }
 }
 document.addEventListener('DOMContentLoaded', loadTheme);
