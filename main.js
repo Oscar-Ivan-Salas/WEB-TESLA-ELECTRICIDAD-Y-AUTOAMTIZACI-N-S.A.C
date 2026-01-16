@@ -505,12 +505,15 @@ function initializePILI() {
 // Maps legacy 'toggleChat()' calls to this logic
 window.toggleChat = function (initialMessage = null) {
     const sidebar = document.getElementById('chat-sidebar'); // Legacy ID
+    const fab = document.getElementById('chatbot-fab');
     if (!sidebar) return;
 
     const isHidden = sidebar.classList.contains('translate-x-full'); // Legacy class logic
 
     if (isHidden) {
         sidebar.classList.remove('translate-x-full');
+        if (fab) fab.style.display = 'none'; // Hide FAB when chat opens
+
         // Initialize PILI on first open
         if (!sidebar.dataset.initialized) {
             initializePILI();
@@ -525,6 +528,7 @@ window.toggleChat = function (initialMessage = null) {
         }
     } else {
         sidebar.classList.add('translate-x-full');
+        if (fab) fab.style.display = 'flex'; // Show FAB when chat closes
     }
 };
 
@@ -536,7 +540,9 @@ window.openChat = window.toggleChat; // For Modal buttons
 // Close function
 window.closeChat = function () {
     const sidebar = document.getElementById('chat-sidebar');
+    const fab = document.getElementById('chatbot-fab');
     if (sidebar) sidebar.classList.add('translate-x-full');
+    if (fab) fab.style.display = 'flex'; // Show FAB when chat closes
 }
 
 // Event listeners
