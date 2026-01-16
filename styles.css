@@ -1164,10 +1164,7 @@ h3 {
     transform: scale(1.1);
 }
 
-50% {
-    transform: translateY(-6px);
-}
-}
+
 
 @keyframes breathe {
 
