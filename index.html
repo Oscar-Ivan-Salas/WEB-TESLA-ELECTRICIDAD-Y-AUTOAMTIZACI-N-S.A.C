@@ -763,19 +763,15 @@
                                         con PILI ahora</button>
                                 </section>
 
-                                <!-- Floating Action Button - PILi (Optimized & Large) -->
-                                <div class="chatbot-fab" id="chatbot-fab"
-                                    style="display: flex; align-items: center; gap: 8px; padding: 0 20px 0 5px; background: rgba(0,0,0,0.8); border: 1px solid #333; border-radius: 60px; cursor: pointer; transform: scale(1.1); transform-origin: bottom right;">
-                                    <div style="position: relative;">
-                                        <img src="assets/pili_avatar.png" alt="PILi"
-                                            onerror="this.src='https://cdn-icons-png.flaticon.com/512/4712/4712035.png'"
-                                            style="width: 55px; height: 55px; border-radius: 50%; border: 2px solid #F59E0B; display: block;">
-                                        <div class="status-dot"
-                                            style="width: 12px; height: 12px; bottom: 2px; right: 2px;"></div>
+                                <!-- Floating Action Button - PILi (Pure Avatar) -->
+                                <div class="chatbot-fab" id="chatbot-fab" onclick="window.toggleChatbot()"
+                                    style="display: flex; align-items: center; justify-content: center; width: 65px; height: 65px; background: rgba(0,0,0,0.8); border: 2px solid #F59E0B; border-radius: 50%; cursor: pointer; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                                    <img src="assets/pili_avatar.png" alt="PILi"
+                                        onerror="this.src='https://cdn-icons-png.flaticon.com/512/4712/4712035.png'"
+                                        style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                                    <div class="status-dot"
+                                        style="position: absolute; width: 14px; height: 14px; bottom: 2px; right: 2px; border: 2px solid #000;">
                                     </div>
-                                    <span
-                                        style="font-weight: 700; color: white; font-size: 1.1rem; letter-spacing: 0.5px;">PILi
-                                        Chat</span>
                                 </div>
 
                                 <!-- SECTION: SERVICES (Previously possibly malformed) -->
