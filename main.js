@@ -505,14 +505,18 @@ function initializePILI() {
 // Maps legacy 'toggleChat()' calls to this logic
 window.toggleChat = function (initialMessage = null) {
     const sidebar = document.getElementById('chat-sidebar'); // Legacy ID
-    const fab = document.getElementById('chatbot-fab');
+    const fabContainer = document.getElementById('fab-container'); // NEW Container ID
     if (!sidebar) return;
 
     const isHidden = sidebar.classList.contains('translate-x-full'); // Legacy class logic
 
     if (isHidden) {
         sidebar.classList.remove('translate-x-full');
-        if (fab) fab.style.display = 'none'; // Hide FAB when chat opens
+        if (fabContainer) {
+            fabContainer.classList.add('opacity-0', 'pointer-events-none'); // Smooth fade out
+            // Fallback for immediate hide if transition fails or matches user preference
+            setTimeout(() => fabContainer.style.display = 'none', 300);
+        }
 
         // Initialize PILI on first open
         if (!sidebar.dataset.initialized) {
@@ -528,7 +532,11 @@ window.toggleChat = function (initialMessage = null) {
         }
     } else {
         sidebar.classList.add('translate-x-full');
-        if (fab) fab.style.display = 'flex'; // Show FAB when chat closes
+        if (fabContainer) {
+            fabContainer.style.display = 'flex'; // Ensure flex first
+            // Small delay to allow display:flex to apply before opacity transition
+            setTimeout(() => fabContainer.classList.remove('opacity-0', 'pointer-events-none'), 10);
+        }
     }
 };
 
@@ -540,9 +548,12 @@ window.openChat = window.toggleChat; // For Modal buttons
 // Close function
 window.closeChat = function () {
     const sidebar = document.getElementById('chat-sidebar');
-    const fab = document.getElementById('chatbot-fab');
+    const fabContainer = document.getElementById('fab-container');
     if (sidebar) sidebar.classList.add('translate-x-full');
-    if (fab) fab.style.display = 'flex'; // Show FAB when chat closes
+    if (fabContainer) {
+        fabContainer.style.display = 'flex';
+        setTimeout(() => fabContainer.classList.remove('opacity-0', 'pointer-events-none'), 10);
+    }
 }
 
 // Event listeners
