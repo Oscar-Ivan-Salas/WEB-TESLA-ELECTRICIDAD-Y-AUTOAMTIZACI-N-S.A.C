@@ -499,32 +499,48 @@ function initializePILI() {
     handleUserMessage('Hola');
 }
 
+// Global Toggle Function (Exposed for HTML onclick)
+window.toggleChatbot = function (initialMessage = null) {
+    const chatbotWidget = document.getElementById('chatbot-widget');
+    if (!chatbotWidget) return;
+
+    const isHidden = chatbotWidget.classList.contains('chatbot-hidden');
+
+    if (isHidden) {
+        chatbotWidget.classList.remove('chatbot-hidden');
+        // Initialize PILI on first open
+        if (!chatbotWidget.dataset.initialized) {
+            initializePILI();
+            chatbotWidget.dataset.initialized = 'true';
+        }
+
+        // If an initial message is passed (e.g. from service card)
+        if (initialMessage) {
+            // Wait for init then send
+            setTimeout(() => {
+                handleUserMessage(initialMessage);
+            }, 500);
+        }
+    } else {
+        // If already open and clicked again, maybe just focus or close?
+        // User pattern: Click button -> Open. Click again -> Close logic usually on X button.
+        // Let's keep it simple: Open if hidden. If open, do nothing or focus.
+    }
+};
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    // Chatbot toggle
-    const chatbotFab = document.querySelector('.chatbot-fab');
-    const chatbotWidget = document.getElementById('chatbot-widget');
-
-    if (chatbotFab && chatbotWidget) {
-        chatbotFab.addEventListener('click', () => {
-            const isHidden = chatbotWidget.classList.contains('chatbot-hidden');
-
-            if (isHidden) {
-                chatbotWidget.classList.remove('chatbot-hidden');
-                // Initialize PILI on first open
-                if (!chatbotWidget.dataset.initialized) {
-                    initializePILI();
-                    chatbotWidget.dataset.initialized = 'true';
-                }
-            } else {
-                chatbotWidget.classList.add('chatbot-hidden');
-            }
-        });
+    // Chatbot FAB Click
+    const chatbotFab = document.getElementById('chatbot-fab');
+    if (chatbotFab) {
+        chatbotFab.addEventListener('click', () => window.toggleChatbot());
     }
 
     // Send message button - FIX: Use IDs to match WebTesla.html
     const sendButton = document.getElementById('send-button');
     const inputField = document.getElementById('chat-input');
+    // ... rest of listeners
+
 
     if (sendButton && inputField) {
         sendButton.addEventListener('click', async () => {
