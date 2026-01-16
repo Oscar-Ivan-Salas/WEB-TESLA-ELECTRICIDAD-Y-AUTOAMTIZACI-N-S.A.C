@@ -159,36 +159,49 @@ function processMessage(session, message) {
         // --- 8. ASK_LOCATION (Replaces Email) ---
         case STATES.ASK_LOCATION:
             session.ubicacion = msg;
+            // V5 STRATEGY: Soft Contact Preference instead of Appointment
+            session.estado = STATES.ASK_APPOINTMENT;
             return {
-                message: "Datos completos. 📝\n\nPor favor selecciona la fecha y hora sugerida para la visita o reunión técnica:",
+                message: "Perfecto. 📝\n\nUn especialista de TESLA se comunicará contigo para revisar tu proyecto.\n\n¿En qué horario prefieres que te contactemos?",
                 nextState: STATES.ASK_APPOINTMENT,
-                requiresInput: true,
-                inputType: 'datetime-local' // The DatePicker!
+                options: ["🕘 Mañana", "🕑 Tarde", "🕖 Noche"]
             };
 
-        // --- 9. ASK_APPOINTMENT ---
-        case STATES.ASK_APPOINTMENT:
+        case STATES.ASK_APPOINTMENT: // Now serves as PREFERENCE
+            // msg contains "Mañana", "Tarde", or "Noche"
             session.cita = msg;
+            session.estado = STATES.CONFIRM;
             return {
-                message: `Resumen de Solicitud:\n\n👤 ${session.nombre}\n📍 ${session.ubicacion}\n⚡ ${session.necesidad}\n📅 ${session.cita}\n\n¿Confirmamos?`,
+                message: `Resumen de tu solicitud:\n\n👤 ${session.nombre}\n📍 ${session.ubicacion}\n⚡ ${session.necesidad}\n🕒 Horario preferido: ${session.cita}\n\n¿Confirmamos el contacto con el especialista?`,
                 nextState: STATES.CONFIRM,
-                options: ["✅ Confirmar Solicitud", "✏️ Corregir"]
+                options: ["✅ Confirmar", "✏️ Corregir datos"]
             };
 
         // --- 10. CONFIRM & CARD DELIVERY ---
         case STATES.CONFIRM:
-            if (msg.toLowerCase().includes("corregir")) {
-                return { message: "¿Cuál es tu nombre correcto?", nextState: STATES.ASK_NAME, requiresInput: true };
-            }
+            if (msg.includes('Confirmar') || msg.toLowerCase() === 'sí' || msg.toLowerCase() === 'si') {
+                const whatsappLink = generateWhatsAppLink(session);
+                session.estado = STATES.END;
 
-            const waLink = generateWhatsAppLink(session);
-            // Here is the "CARD" Logic - simple text/link for now as placeholder
-            return {
-                message: "¡Excelente! Cita agendada. ✅\n\n🎁 **Te dejo esta Tarjeta Digital** con el resumen de la solución para que tengas nuestra garantía a mano.\n\n👇 Haz clic abajo para finalizar y contactar al Especialista por WhatsApp.",
-                nextState: STATES.END,
-                whatsappLink: waLink,
-                // In future: cardLink: "https://..." 
-            };
+                // V5 STRATEGY: Professional Closing + Card Receipt
+                return {
+                    message: "¡Perfecto! ✅\n\nUn **especialista técnico de TESLA** continuará la atención contigo.\n\nTe dejo además una **tarjeta digital del servicio** para que tengas nuestra información siempre a mano.\n\n👇 Haz clic abajo para continuar por WhatsApp.",
+                    nextState: STATES.END,
+                    whatsappLink: whatsappLink,
+                    cardData: {
+                        service: session.necesidad,
+                        projectType: session.tipo_proyecto,
+                        stage: session.etapa
+                    }
+                };
+            } else {
+                session.estado = STATES.ASK_NAME;
+                return {
+                    message: "Entendido, empecemos de nuevo. ¿Cuál es tu nombre?",
+                    nextState: STATES.ASK_NAME,
+                    options: []
+                };
+            }
 
         default:
             return { message: "Reset...", nextState: STATES.START };

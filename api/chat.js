@@ -111,33 +111,46 @@ function processMessage(session, message) {
 
         case STATES.ASK_LOCATION:
             session.ubicacion = msg;
+            // V5 STRATEGY: Soft Contact Preference
+            session.estado = STATES.ASK_APPOINTMENT; // Update session state
             return {
-                message: "Datos completos. 📝\n\nPor favor selecciona la fecha y hora sugerida para la visita o reunión técnica:",
-                nextState: STATES.ASK_APPOINTMENT,
-                requiresInput: true,
-                inputType: 'datetime-local'
+                message: "Perfecto. 📝\n\nUn especialista de TESLA se comunicará contigo para revisar tu proyecto.\n\n¿En qué horario prefieres que te contactemos?",
+                options: ["🕘 Mañana", "🕑 Tarde", "🕖 Noche"],
+                nextState: STATES.ASK_APPOINTMENT // Explicitly set next state for clarity
             };
 
         case STATES.ASK_APPOINTMENT:
             session.cita = msg;
+            session.estado = STATES.CONFIRM; // Update session state
             return {
-                message: `Resumen de Solicitud:\n\n👤 ${session.nombre}\n📍 ${session.ubicacion}\n⚡ ${session.necesidad}\n📅 ${session.cita}\n\n¿Confirmamos?`,
-                nextState: STATES.CONFIRM,
-                options: ["✅ Confirmar Solicitud", "✏️ Corregir"]
+                message: `Resumen de tu solicitud:\n\n👤 ${session.nombre}\n📍 ${session.ubicacion}\n⚡ ${session.necesidad}\n🕒 Horario preferido: ${session.cita}\n\n¿Confirmamos el contacto con el especialista?`,
+                options: ["✅ Confirmar", "✏️ Corregir datos"],
+                nextState: STATES.CONFIRM // Explicitly set next state for clarity
             };
 
         case STATES.CONFIRM:
-            if (msg.toLowerCase().includes("corregir")) return { message: "¿Cuál es tu nombre correcto?", nextState: STATES.ASK_NAME, requiresInput: true };
-            return {
-                message: "¡Excelente! Cita agendada. ✅\n\n🎁 **Te dejo esta Tarjeta Digital** con el resumen de la solución para que tengas nuestra garantía a mano.\n\n👇 Haz clic abajo para finalizar y contactar al Especialista por WhatsApp.",
-                nextState: STATES.END,
-                whatsappLink: generateWhatsAppLink(session),
-                cardData: {
-                    service: session.necesidad,
-                    projectType: session.tipo_proyecto,
-                    stage: session.etapa
-                }
-            };
+            if (msg.includes('Confirmar') || msg.toLowerCase() === 'sí' || msg.toLowerCase() === 'si') {
+                const whatsappLink = generateWhatsAppLink(session);
+                session.estado = STATES.END; // Update session state
+
+                return {
+                    message: "¡Perfecto! ✅\n\nUn **especialista técnico de TESLA** continuará la atención contigo.\n\nTe dejo además una **tarjeta digital del servicio** para que tengas nuestra información siempre a mano.\n\n👇 Haz clic abajo para continuar por WhatsApp.",
+                    whatsappLink: whatsappLink,
+                    cardData: {
+                        service: session.necesidad,
+                        projectType: session.tipo_proyecto,
+                        stage: session.etapa
+                    },
+                    nextState: STATES.END // Explicitly set next state for clarity
+                };
+            } else {
+                session.estado = STATES.ASK_NAME; // Update session state
+                return {
+                    message: "Entendido, empecemos de nuevo. ¿Cuál es tu nombre?",
+                    options: [],
+                    nextState: STATES.ASK_NAME // Explicitly set next state for clarity
+                };
+            }
 
         default:
             return { message: "Reset...", nextState: STATES.START };
