@@ -1,15 +1,11 @@
-// PILI Chatbot V4 - Serverless API Handler
-// Matches logic from server-local.js (Conversion Flow)
-// FORCE UPDATE V4.1 - REBUILD PLEASE
-
-const globalSessions = new Map();
+// PILI V4 - Serverless Function (Vercel)
+// Handles chat interactions with session management
 
 const STATES = {
     START: 'START',
     ASK_PROJECT_TYPE: 'ASK_PROJECT_TYPE',
     ASK_STAGE: 'ASK_STAGE',
     ASK_NEED: 'ASK_NEED',
-    VALIDATION: 'VALIDATION',
     ASK_NAME: 'ASK_NAME',
     ASK_PHONE: 'ASK_PHONE',
     ASK_LOCATION: 'ASK_LOCATION',
@@ -40,27 +36,18 @@ const OPTIONS = {
 };
 
 function generateWhatsAppLink(session) {
-    // WhatsApp-compatible emoji encoding
-    const bell = String.fromCodePoint(0x1F514);
-    const person = String.fromCodePoint(0x1F464);
-    const phone = String.fromCodePoint(0x1F4F1);
-    const pin = String.fromCodePoint(0x1F4CD);
-    const building = String.fromCodePoint(0x1F3D7);
-    const chart = String.fromCodePoint(0x1F4CA);
-    const tools = String.fromCodePoint(0x1F6E0);
-    const calendar = String.fromCodePoint(0x1F4C5);
-
-    const text = `${bell} *SOLICITUD PILi V4* ${bell}
+    // Direct emoji literals for WhatsApp compatibility
+    const text = `🔔 *SOLICITUD PILi V4* 🔔
     
-${person} *Cliente:* ${session.nombre || '-'}
-${phone} *WhatsApp:* ${session.telefono || '-'}
-${pin} *Ubicación:* ${session.ubicacion || '-'}
+👤 *Cliente:* ${session.nombre || '-'}
+📱 *WhatsApp:* ${session.telefono || '-'}
+📍 *Ubicación:* ${session.ubicacion || '-'}
 
-${building} *Proyecto:* ${session.tipo_proyecto || '-'}
-${chart} *Etapa:* ${session.etapa || '-'}
-${tools} *Necesidad:* ${session.necesidad || '-'}
+🏗️ *Proyecto:* ${session.tipo_proyecto || '-'}
+📊 *Etapa:* ${session.etapa || '-'}
+🛠️ *Necesidad:* ${session.necesidad || '-'}
 
-${calendar} *Cita:* ${session.cita || 'Por coordinar'}
+📅 *Cita:* ${session.cita || 'Por coordinar'}
 
 Link autogenerado por PILi Chat.`;
 
@@ -86,93 +73,124 @@ function processMessage(session, message) {
             };
 
         case STATES.ASK_PROJECT_TYPE:
-            if (!isValidOption(msg, OPTIONS.PROJECT_TYPE)) return { message: "Por favor, selecciona una opción del menú. 👇", nextState: STATES.ASK_PROJECT_TYPE, options: OPTIONS.PROJECT_TYPE };
+            if (!isValidOption(msg, OPTIONS.PROJECT_TYPE)) {
+                return {
+                    message: "Por favor, selecciona una opción del menú.",
+                    nextState: STATES.ASK_PROJECT_TYPE,
+                    options: OPTIONS.PROJECT_TYPE
+                };
+            }
             session.tipo_proyecto = msg;
-            return { message: "¿En qué etapa se encuentra actualmente?", nextState: STATES.ASK_STAGE, options: OPTIONS.STAGE };
+            return {
+                message: "Perfecto.\n\n¿En qué etapa se encuentra actualmente?",
+                nextState: STATES.ASK_STAGE,
+                options: OPTIONS.STAGE
+            };
 
         case STATES.ASK_STAGE:
-            if (!isValidOption(msg, OPTIONS.STAGE)) return { message: "Selecciona la etapa del proyecto. 👇", nextState: STATES.ASK_STAGE, options: OPTIONS.STAGE };
+            if (!isValidOption(msg, OPTIONS.STAGE)) {
+                return {
+                    message: "Por favor, selecciona una opción del menú.",
+                    nextState: STATES.ASK_STAGE,
+                    options: OPTIONS.STAGE
+                };
+            }
             session.etapa = msg;
-            return { message: "¿Qué necesitas resolver principalmente ahora? 👇", nextState: STATES.ASK_NEED, options: OPTIONS.NEED };
+            return {
+                message: "Entendido.\n\n¿Qué necesitas resolver principalmente ahora? 👇",
+                nextState: STATES.ASK_NEED,
+                options: OPTIONS.NEED
+            };
 
         case STATES.ASK_NEED:
-            if (!isValidOption(msg, OPTIONS.NEED)) return { message: "Selecciona una especialidad. 👇", nextState: STATES.ASK_NEED, options: OPTIONS.NEED };
+            if (!isValidOption(msg, OPTIONS.NEED)) {
+                return {
+                    message: "Por favor, selecciona una opción del menú.",
+                    nextState: STATES.ASK_NEED,
+                    options: OPTIONS.NEED
+                };
+            }
             session.necesidad = msg;
             return {
-                message: `Perfecto. \nProyecto en *${session.etapa}* con necesidad de *${session.necesidad}*. Entendido.\n\nPara coordinar la evaluación técnica, indícame tu *Nombre Completo*:`,
-                nextState: STATES.ASK_NAME,
-                requiresInput: true
+                message: `Perfecto.\nProyecto en *${session.etapa}* con necesidad de *${session.necesidad}*. Entendido.\n\nPara coordinar la evaluación técnica, indícame tu *Nombre Completo*:`,
+                nextState: STATES.ASK_NAME
             };
 
         case STATES.ASK_NAME:
-            if (msg.length < 3) return { message: "Por favor, ingresa tu nombre real.", nextState: STATES.ASK_NAME, requiresInput: true };
+            if (!msg || msg.length < 3) {
+                return {
+                    message: "Por favor, ingresa tu nombre completo.",
+                    nextState: STATES.ASK_NAME
+                };
+            }
             session.nombre = msg;
-            return { message: `Gracias ${session.nombre}. \n\nIndícame tu número de *Celular / WhatsApp*:`, nextState: STATES.ASK_PHONE, requiresInput: true };
+            return {
+                message: `Gracias ${msg}.\n\n¿Cuál es tu número de *WhatsApp*? (para confirmación de evaluación técnica)`,
+                nextState: STATES.ASK_PHONE
+            };
 
         case STATES.ASK_PHONE:
-            const phoneRegex = /^[0-9+\s-]{7,15}$/;
-            if (!phoneRegex.test(msg)) return { message: "Ingresa un número válido (ej. 987654321).", nextState: STATES.ASK_PHONE, requiresInput: true };
+            if (!msg || msg.length < 9) {
+                return {
+                    message: "Por favor, ingresa un número de WhatsApp válido.",
+                    nextState: STATES.ASK_PHONE
+                };
+            }
             session.telefono = msg;
             return {
-                message: "Finalmente, ¿En qué **Lugar / Distrito** se ubica el proyecto? (Esto ayuda al ingeniero a planificar la visita).",
-                nextState: STATES.ASK_LOCATION,
-                requiresInput: true
+                message: "Perfecto.\n\n¿En qué *ciudad o región* se ubica el proyecto? (ejemplo: Huancayo, Lima, Junín)",
+                nextState: STATES.ASK_LOCATION
             };
 
         case STATES.ASK_LOCATION:
+            if (!msg || msg.length < 3) {
+                return {
+                    message: "Por favor, ingresa la ubicación del proyecto.",
+                    nextState: STATES.ASK_LOCATION
+                };
+            }
             session.ubicacion = msg;
-            // V5 STRATEGY: Soft Contact Preference
-            session.estado = STATES.ASK_APPOINTMENT; // Update session state
             return {
-                message: "Perfecto. 📝\n\nUn especialista de TESLA se comunicará contigo para revisar tu proyecto.\n\n¿En qué horario prefieres que te contactemos?",
-                options: ["🕘 Mañana", "🕑 Tarde", "🕖 Noche"],
-                nextState: STATES.ASK_APPOINTMENT // Explicitly set next state for clarity
+                message: "¿Cuándo prefieres que te contactemos para coordinar la evaluación técnica?",
+                nextState: STATES.ASK_APPOINTMENT,
+                options: ["🌅 Mañana", "🕐 Tarde", "📅 Fin de semana"]
             };
 
         case STATES.ASK_APPOINTMENT:
             session.cita = msg;
-            session.estado = STATES.CONFIRM; // Update session state
+            const whatsappLink = generateWhatsAppLink(session);
             return {
-                message: `Resumen de tu solicitud:\n\n👤 ${session.nombre}\n📍 ${session.ubicacion}\n⚡ ${session.necesidad}\n🕒 Horario preferido: ${session.cita}\n\n¿Confirmamos el contacto con el especialista?`,
-                options: ["✅ Confirmar", "✏️ Corregir datos"],
-                nextState: STATES.CONFIRM // Explicitly set next state for clarity
+                message: `Excelente, ${session.nombre}.\n\n✅ *Resumen de tu solicitud:*\n• Proyecto: ${session.tipo_proyecto}\n• Etapa: ${session.etapa}\n• Necesidad: ${session.necesidad}\n• Ubicación: ${session.ubicacion}\n• Contacto: ${session.telefono}\n• Cita preferida: ${session.cita}\n\n*Próximos pasos:*\n1️⃣ Confirma enviando este mensaje a WhatsApp\n2️⃣ Un especialista técnico te contactará en las próximas 24 horas\n3️⃣ Coordinaremos la evaluación técnica en tu proyecto\n\n¡Gracias por confiar en TESLA! ⚡`,
+                nextState: STATES.END,
+                whatsappLink: whatsappLink
             };
 
-        case STATES.CONFIRM:
-            if (msg.includes('Confirmar') || msg.toLowerCase() === 'sí' || msg.toLowerCase() === 'si') {
-                const whatsappLink = generateWhatsAppLink(session);
-                session.estado = STATES.END; // Update session state
-
-                return {
-                    message: "¡Perfecto! ✅\n\nUn **especialista técnico de TESLA** continuará la atención contigo.\n\nTe dejo además una **tarjeta digital del servicio** para que tengas nuestra información siempre a mano.\n\n👇 Haz clic abajo para continuar por WhatsApp.",
-                    whatsappLink: whatsappLink,
-                    cardData: {
-                        service: session.necesidad,
-                        projectType: session.tipo_proyecto,
-                        stage: session.etapa
-                    },
-                    nextState: STATES.END // Explicitly set next state for clarity
-                };
-            } else {
-                session.estado = STATES.ASK_NAME; // Update session state
-                return {
-                    message: "Entendido, empecemos de nuevo. ¿Cuál es tu nombre?",
-                    options: [],
-                    nextState: STATES.ASK_NAME // Explicitly set next state for clarity
-                };
-            }
-
         default:
-            return { message: "Reset...", nextState: STATES.START };
+            return {
+                message: "¡Hola! Soy PILi. ¿En qué puedo ayudarte?",
+                nextState: STATES.START
+            };
     }
 }
 
-export default function handler(req, res) {
-    if (req.method !== 'POST') { res.status(405).json({ message: 'Method Not Allowed' }); return; }
+const sessions = new Map();
+
+export default async function handler(req, res) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
     const { message, sessionId } = req.body;
-    if (!globalSessions.has(sessionId)) globalSessions.set(sessionId, { estado: STATES.START });
-    const session = globalSessions.get(sessionId);
+
+    if (!sessionId) {
+        return res.status(400).json({ error: 'Session ID required' });
+    }
+
+    let session = sessions.get(sessionId) || { estado: STATES.START };
     const response = processMessage(session, message);
-    if (response.nextState) session.estado = response.nextState;
-    res.status(200).json(response);
+
+    session.estado = response.nextState;
+    sessions.set(sessionId, session);
+
+    return res.status(200).json(response);
 }

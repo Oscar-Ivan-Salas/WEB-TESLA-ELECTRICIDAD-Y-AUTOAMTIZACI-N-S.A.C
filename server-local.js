@@ -56,27 +56,18 @@ const OPTIONS = {
 
 // Helper: Format WhatsApp message (V4 Structure)
 function generateWhatsAppLink(session) {
-    // WhatsApp-compatible emoji encoding
-    const bell = String.fromCodePoint(0x1F514);
-    const person = String.fromCodePoint(0x1F464);
-    const phone = String.fromCodePoint(0x1F4F1);
-    const pin = String.fromCodePoint(0x1F4CD);
-    const building = String.fromCodePoint(0x1F3D7);
-    const chart = String.fromCodePoint(0x1F4CA);
-    const tools = String.fromCodePoint(0x1F6E0);
-    const calendar = String.fromCodePoint(0x1F4C5);
-
-    const text = `${bell} *SOLICITUD PILi V4* ${bell}
+    // Direct emoji literals for WhatsApp compatibility
+    const text = `🔔 *SOLICITUD PILi V4* 🔔
     
-${person} *Cliente:* ${session.nombre || '-'}
-${phone} *WhatsApp:* ${session.telefono || '-'}
-${pin} *Ubicación:* ${session.ubicacion || '-'}
+👤 *Cliente:* ${session.nombre || '-'}
+📱 *WhatsApp:* ${session.telefono || '-'}
+📍 *Ubicación:* ${session.ubicacion || '-'}
 
-${building} *Proyecto:* ${session.tipo_proyecto || '-'}
-${chart} *Etapa:* ${session.etapa || '-'}
-${tools} *Necesidad:* ${session.necesidad || '-'}
+🏗️ *Proyecto:* ${session.tipo_proyecto || '-'}
+📊 *Etapa:* ${session.etapa || '-'}
+🛠️ *Necesidad:* ${session.necesidad || '-'}
 
-${calendar} *Cita:* ${session.cita || 'Por coordinar'}
+📅 *Cita:* ${session.cita || 'Por coordinar'}
 
 Link autogenerado por PILi Chat.`;
 
@@ -99,7 +90,7 @@ function processMessage(session, message) {
         // --- 1. START ---
         case STATES.START:
             return {
-                message: "¡Hola! Soy PILi, asistente técnica de TESLA Electricidad y Automatización. ⚡\n\nTe ayudo a identificar la mejor solución para tu proyecto y a coordinar una evaluación técnica.\n\nPara empezar, selecciona el tipo de proyecto:",
+                message: "¡Hola! Soy PILi, asistente técnica de TESLA Electricidad y Automatización. ⚡\\n\\nTe ayudo a identificar la mejor solución para tu proyecto y a coordinar una evaluación técnica.\\n\\nPara empezar, selecciona el tipo de proyecto:",
                 nextState: STATES.ASK_PROJECT_TYPE,
                 options: OPTIONS.PROJECT_TYPE
             };
@@ -107,11 +98,15 @@ function processMessage(session, message) {
         // --- 2. ASK_PROJECT_TYPE ---
         case STATES.ASK_PROJECT_TYPE:
             if (!isValidOption(msg, OPTIONS.PROJECT_TYPE)) {
-                return { message: "Por favor, selecciona una opción del menú. 👇", nextState: STATES.ASK_PROJECT_TYPE, options: OPTIONS.PROJECT_TYPE };
+                return {
+                    message: "Por favor, selecciona una opción del menú.",
+                    nextState: STATES.ASK_PROJECT_TYPE,
+                    options: OPTIONS.PROJECT_TYPE
+                };
             }
             session.tipo_proyecto = msg;
             return {
-                message: "¿En qué etapa se encuentra actualmente?",
+                message: "Perfecto.\\n\\n¿En qué etapa se encuentra actualmente?",
                 nextState: STATES.ASK_STAGE,
                 options: OPTIONS.STAGE
             };
@@ -119,114 +114,114 @@ function processMessage(session, message) {
         // --- 3. ASK_STAGE ---
         case STATES.ASK_STAGE:
             if (!isValidOption(msg, OPTIONS.STAGE)) {
-                return { message: "Selecciona la etapa del proyecto. 👇", nextState: STATES.ASK_STAGE, options: OPTIONS.STAGE };
+                return {
+                    message: "Por favor, selecciona una opción del menú.",
+                    nextState: STATES.ASK_STAGE,
+                    options: OPTIONS.STAGE
+                };
             }
             session.etapa = msg;
             return {
-                message: "¿Qué necesitas resolver principalmente ahora? 👇",
+                message: "Entendido.\\n\\n¿Qué necesitas resolver principalmente ahora? 👇",
                 nextState: STATES.ASK_NEED,
                 options: OPTIONS.NEED
             };
 
-        // --- 4. ASK_NEED (New Categories) ---
+        // --- 4. ASK_NEED ---
         case STATES.ASK_NEED:
             if (!isValidOption(msg, OPTIONS.NEED)) {
-                return { message: "Selecciona una especialidad. 👇", nextState: STATES.ASK_NEED, options: OPTIONS.NEED };
+                return {
+                    message: "Por favor, selecciona una opción del menú.",
+                    nextState: STATES.ASK_NEED,
+                    options: OPTIONS.NEED
+                };
             }
-            session.necesidad = msg; // Renamed from 'servicios' to 'necesidad' for V4 semantics
-
-            // --- 5. VALIDATION (Auto-Reply) ---
-            // We transition immediately to ASK_NAME but first send the validation msg logic
-            // In a real chat interaction, this might be split, but here we combine the "Perfecto" with the Question
+            session.necesidad = msg;
             return {
-                message: `Perfecto. \nProyecto en *${session.etapa}* con necesidad de *${session.necesidad}*. Entendido.\n\nPara coordinar la evaluación técnica, indícame tu *Nombre Completo*:`,
-                nextState: STATES.ASK_NAME,
-                requiresInput: true
+                message: `Perfecto.\\nProyecto en *${session.etapa}* con necesidad de *${session.necesidad}*. Entendido.\\n\\nPara coordinar la evaluación técnica, indícame tu *Nombre Completo*:`,
+                nextState: STATES.ASK_NAME
             };
 
-        // --- 6. ASK_NAME ---
+        // --- 5. ASK_NAME ---
         case STATES.ASK_NAME:
-            if (msg.length < 3) return { message: "Por favor, ingresa tu nombre real.", nextState: STATES.ASK_NAME, requiresInput: true };
+            if (!msg || msg.length < 3) {
+                return {
+                    message: "Por favor, ingresa tu nombre completo.",
+                    nextState: STATES.ASK_NAME
+                };
+            }
             session.nombre = msg;
             return {
-                message: `Gracias ${session.nombre}. \n\nIndícame tu número de *Celular / WhatsApp*:`,
-                nextState: STATES.ASK_PHONE,
-                requiresInput: true
+                message: `Gracias ${msg}.\\n\\n¿Cuál es tu número de *WhatsApp*? (para confirmación de evaluación técnica)`,
+                nextState: STATES.ASK_PHONE
             };
 
-        // --- 7. ASK_PHONE ---
+        // --- 6. ASK_PHONE ---
         case STATES.ASK_PHONE:
-            const phoneRegex = /^[0-9+\s-]{7,15}$/;
-            if (!phoneRegex.test(msg)) return { message: "Ingresa un número válido (ej. 987654321).", nextState: STATES.ASK_PHONE, requiresInput: true };
-            session.telefono = msg;
-            return {
-                message: "Finalmente, ¿En qué **Lugar / Distrito** se ubica el proyecto? (Esto ayuda al ingeniero a planificar la visita).",
-                nextState: STATES.ASK_LOCATION, // New Step
-                requiresInput: true
-            };
-
-        // --- 8. ASK_LOCATION (Replaces Email) ---
-        case STATES.ASK_LOCATION:
-            session.ubicacion = msg;
-            // V5 STRATEGY: Soft Contact Preference instead of Appointment
-            session.estado = STATES.ASK_APPOINTMENT;
-            return {
-                message: "Perfecto. 📝\n\nUn especialista de TESLA se comunicará contigo para revisar tu proyecto.\n\n¿En qué horario prefieres que te contactemos?",
-                nextState: STATES.ASK_APPOINTMENT,
-                options: ["🕘 Mañana", "🕑 Tarde", "🕖 Noche"]
-            };
-
-        case STATES.ASK_APPOINTMENT: // Now serves as PREFERENCE
-            // msg contains "Mañana", "Tarde", or "Noche"
-            session.cita = msg;
-            session.estado = STATES.CONFIRM;
-            return {
-                message: `Resumen de tu solicitud:\n\n👤 ${session.nombre}\n📍 ${session.ubicacion}\n⚡ ${session.necesidad}\n🕒 Horario preferido: ${session.cita}\n\n¿Confirmamos el contacto con el especialista?`,
-                nextState: STATES.CONFIRM,
-                options: ["✅ Confirmar", "✏️ Corregir datos"]
-            };
-
-        // --- 10. CONFIRM & CARD DELIVERY ---
-        case STATES.CONFIRM:
-            if (msg.includes('Confirmar') || msg.toLowerCase() === 'sí' || msg.toLowerCase() === 'si') {
-                const whatsappLink = generateWhatsAppLink(session);
-                session.estado = STATES.END;
-
-                // V5 STRATEGY: Professional Closing + Card Receipt
+            if (!msg || msg.length < 9) {
                 return {
-                    message: "¡Perfecto! ✅\n\nUn **especialista técnico de TESLA** continuará la atención contigo.\n\nTe dejo además una **tarjeta digital del servicio** para que tengas nuestra información siempre a mano.\n\n👇 Haz clic abajo para continuar por WhatsApp.",
-                    nextState: STATES.END,
-                    whatsappLink: whatsappLink,
-                    cardData: {
-                        service: session.necesidad,
-                        projectType: session.tipo_proyecto,
-                        stage: session.etapa
-                    }
-                };
-            } else {
-                session.estado = STATES.ASK_NAME;
-                return {
-                    message: "Entendido, empecemos de nuevo. ¿Cuál es tu nombre?",
-                    nextState: STATES.ASK_NAME,
-                    options: []
+                    message: "Por favor, ingresa un número de WhatsApp válido.",
+                    nextState: STATES.ASK_PHONE
                 };
             }
+            session.telefono = msg;
+            return {
+                message: "Perfecto.\\n\\n¿En qué *ciudad o región* se ubica el proyecto? (ejemplo: Huancayo, Lima, Junín)",
+                nextState: STATES.ASK_LOCATION
+            };
+
+        // --- 7. ASK_LOCATION ---
+        case STATES.ASK_LOCATION:
+            if (!msg || msg.length < 3) {
+                return {
+                    message: "Por favor, ingresa la ubicación del proyecto.",
+                    nextState: STATES.ASK_LOCATION
+                };
+            }
+            session.ubicacion = msg;
+            return {
+                message: "¿Cuándo prefieres que te contactemos para coordinar la evaluación técnica?",
+                nextState: STATES.ASK_APPOINTMENT,
+                options: ["🌅 Mañana", "🕐 Tarde", "📅 Fin de semana"]
+            };
+
+        // --- 8. ASK_APPOINTMENT ---
+        case STATES.ASK_APPOINTMENT:
+            session.cita = msg;
+            const whatsappLink = generateWhatsAppLink(session);
+            return {
+                message: `Excelente, ${session.nombre}.\\n\\n✅ *Resumen de tu solicitud:*\\n• Proyecto: ${session.tipo_proyecto}\\n• Etapa: ${session.etapa}\\n• Necesidad: ${session.necesidad}\\n• Ubicación: ${session.ubicacion}\\n• Contacto: ${session.telefono}\\n• Cita preferida: ${session.cita}\\n\\n*Próximos pasos:*\\n1️⃣ Confirma enviando este mensaje a WhatsApp\\n2️⃣ Un especialista técnico te contactará en las próximas 24 horas\\n3️⃣ Coordinaremos la evaluación técnica en tu proyecto\\n\\n¡Gracias por confiar en TESLA! ⚡`,
+                nextState: STATES.END,
+                whatsappLink: whatsappLink
+            };
 
         default:
-            return { message: "Reset...", nextState: STATES.START };
+            return {
+                message: "¡Hola! Soy PILi. ¿En qué puedo ayudarte?",
+                nextState: STATES.START
+            };
     }
 }
 
 // API Endpoint
 app.post('/api/chat', (req, res) => {
     const { message, sessionId } = req.body;
-    if (!sessions.has(sessionId)) sessions.set(sessionId, { estado: STATES.START });
-    const session = sessions.get(sessionId);
+
+    if (!sessionId) {
+        return res.status(400).json({ error: 'Session ID required' });
+    }
+
+    let session = sessions.get(sessionId) || { estado: STATES.START };
     const response = processMessage(session, message);
-    if (response.nextState) session.estado = response.nextState;
+
+    session.estado = response.nextState;
+    sessions.set(sessionId, session);
+
     res.json(response);
 });
 
+// Start server
 app.listen(PORT, () => {
-    console.log(`Server V4 running at http://localhost:${PORT}`);
+    console.log(`🚀 PILI V4 Local Server running on http://localhost:${PORT}`);
+    console.log(`📱 Test the chatbot at http://localhost:${PORT}`);
 });
