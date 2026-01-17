@@ -51,7 +51,7 @@ function generateWhatsAppLink(session) {
 
 Link autogenerado por PILi Chat.`;
 
-    return `https://wa.me/51906315961?text=${encodeURIComponent(text)}`;
+    return `https://api.whatsapp.com/send?phone=51906315961&text=${encodeURIComponent(text)}`;
 }
 
 function isValidOption(input, options) {

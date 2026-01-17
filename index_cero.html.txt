@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TESLA Electricidad y Automatización S.A.C | Integradores Estratégicos</title>
+    <meta name="description"
+        content="Diseño, suministro, instalación e integración de sistemas eléctricos y automatización. Un solo integrador, tranquilidad total.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://tesla-landing-self.vercel.app/">
+    <meta property="og:title" content="TESLA Electricidad y Automatización S.A.C | Integradores Estratégicos">
+    <meta property="og:description"
+        content="Diseño, suministro, instalación e integración de sistemas eléctricos y automatización. Un solo integrador, tranquilidad total.">
+    <meta property="og:image" content="https://tesla-landing-self.vercel.app/assets/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://tesla-landing-self.vercel.app/">
+    <meta property="twitter:title" content="TESLA Electricidad y Automatización S.A.C | Integradores Estratégicos">
+    <meta property="twitter:description"
+        content="Diseño, suministro, instalación e integración de sistemas eléctricos y automatización. Un solo integrador, tranquilidad total.">
+    <meta property="twitter:image" content="https://tesla-landing-self.vercel.app/assets/og-image.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="assets/logo.png" alt="TESLA Logo">
+                <span class="logo-text">TESLA <span class="highlight">Electricidad y Automatización S.A.C</span></span>
+            </div>
+            <nav class="nav">
+                <a href="#solucion">Solución</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#experiencia">Experiencia</a>
+                <button id="theme-toggle" class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
+                <a href="#" class="btn-primary" onclick="openChatbot()">Evaluación Técnica</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title" data-aos="fade-up">Integrador estratégico de proyectos técnicos</h1>
+            <p class="hero-subtitle mb-3" data-aos="fade-up" data-aos-delay="200">
+                Electricidad, automatización, seguridad y acabados bajo un solo responsable.
+            </p>
+            <p class="hero-text mb-4" data-aos="fade-up" data-aos-delay="300">
+                Diseñamos, suministramos, instalamos e integramos todos los sistemas técnicos de tu proyecto, eliminando
+                la necesidad de coordinar múltiples proveedores y reduciendo riesgos técnicos, costos ocultos y
+                retrasos.
+            </p>
+            <a href="https://wa.me/51906315961?text=Hola,%20me%20interesa%20una%20revisión%20técnica%20de%20mi%20proyecto."
+                target="_blank" class="btn btn-primary pulse-btn" data-aos="zoom-in" data-aos-delay="400"
+                onclick="openChatbot()">SOLICITAR EVALUACIÓN TÉCNICA</a>
+        </div>
+    </section>
+
+    <!-- MODELO TESLA SECTION -->
+    <section id="solucion" class="section bg-darker problem-section">
+        <div class="container text-center">
+            <h2 class="section-title fade-in-up">El Modelo TESLA</h2>
+            <p class="section-subtitle fade-in-up">Un solo integrador. Un solo contrato. Tranquilidad total.</p>
+
+            <div class="content-block fade-in-up" style="max-width: 800px; margin: 0 auto 50px auto;">
+                <p>Más que proveedores, somos su socio estratégico. Centralizamos ingeniería, suministros, ejecución y
+                    acabados en un solo frente de responsabilidad, garantizando tiempos, costos y calidad.</p>
+            </div>
+
+            <div class="grid-4 fade-in-up">
+                <!-- Ingeniería -->
+                <div class="model-card-visual" style="background-image: url('assets/model_engineering.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-brain" style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Ingeniería Especializada</h3>
+                        <p>Contamos con un equipo multidisciplinario de expertos. Desarrollamos diseños integrales que
+                            fusionan la estricta funcionalidad técnica con la estética arquitectónica.</p>
+                    </div>
+                </div>
+
+                <!-- Suministro (Strategic Partners) -->
+                <div class="model-card-visual" style="background-image: url('assets/model_supply.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-box-open" style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Suministro Estratégico</h3>
+                        <p>Alianzas con <strong>Indeco, Celsa, Opalux, Schneider, Legrand y BTicino</strong>.
+                            Proveedores top en detección de incendios (Simplex, Bosch). Garantía de fábrica y stock
+                            inmediato.</p>
+                    </div>
+                </div>
+
+                <!-- Ejecución -->
+                <div class="model-card-visual" style="background-image: url('assets/model_installation.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-helmet-safety"
+                                style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Ejecución Total</h3>
+                        <p>Desde infraestructura eléctrica hasta <strong>obras civiles y acabados</strong>. Personal
+                            propio, homologado y comprometido con la excelencia técnica.</p>
+                    </div>
+                </div>
+
+                <!-- Integración -->
+                <div class="model-card-visual" style="background-image: url('assets/model_integration.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-rocket" style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Tranquilidad Absoluta</h3>
+                        <p>Entrega llave en mano de un sistema probado y certificado. Asumimos la complejidad operativa
+                            para que usted solo disfrute un proyecto funcional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PARTNERS & CLIENTS SECTION (Marquee) -->
+    <section class="section bg-black" style="padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container pb-4 text-center">
+            <h3 class="section-subtitle mb-4 text-center" style="color: var(--text-gray);">Aliados Tecnológicos</h3>
+        </div>
+
+        <!-- Partners Marquee -->
+        <div class="marquee-container">
+            <div class="marquee-content">
+                <span class="partner-text" style="color: #3DCD58;">SCHNEIDER ELECTRIC</span>
+                <span class="partner-text" style="color: #00A859;">INDECO</span>
+                <span class="partner-text" style="color: #0066CC;">CELSA</span>
+                <span class="partner-text" style="color: #FFD700;">OPALUX</span>
+                <span class="partner-text" style="color: #EE3124;">BTICINO</span>
+                <span class="partner-text" style="color: #D52B1E;">LEGRAND</span>
+                <span class="partner-text" style="color: #009999;">SIEMENS</span>
+                <span class="partner-text" style="color: #EA0016;">BOSCH</span>
+                <span class="partner-text" style="color: #CC0000;">SIMPLEX</span>
+                <span class="partner-text" style="color: #EC1C24;">HONEYWELL</span>
+                <!-- Duplicate for seamless scroll -->
+                <span class="partner-text" style="color: #3DCD58;">SCHNEIDER ELECTRIC</span>
+                <span class="partner-text" style="color: #00A859;">INDECO</span>
+                <span class="partner-text" style="color: #0066CC;">CELSA</span>
+                <span class="partner-text" style="color: #FFD700;">OPALUX</span>
+                <span class="partner-text" style="color: #EE3124;">BTICINO</span>
+                <span class="partner-text" style="color: #D52B1E;">LEGRAND</span>
+                <span class="partner-text" style="color: #009999;">SIEMENS</span>
+                <span class="partner-text" style="color: #EA0016;">BOSCH</span>
+                <span class="partner-text" style="color: #CC0000;">SIMPLEX</span>
+                <span class="partner-text" style="color: #EC1C24;">HONEYWELL</span>
+            </div>
+        </div>
+
+        <div class="container pt-5 pb-4 text-center">
+            <h3 class="section-subtitle mb-4 text-center" style="color: var(--text-gray);">Confían en Nosotros</h3>
+        </div>
+
+        <!-- Clients Marquee (Placeholders for Lima Real Estate) -->
+        <div class="marquee-container" style="opacity: 0.8;">
+            <div class="marquee-content reverse-scroll client-text">
+                <span>INMOBILIARIA LIMA TOP</span>
+                <span>CONSTRUCTORA ELITE</span>
+                <span>GRUPO CENTENARIO</span>
+                <span>EDIFICIOS CORPORATIVOS SAN ISIDRO</span>
+                <span>DESARROLLADORA FUTURA</span>
+                <span>VIVA GYM</span>
+                <span>BESCO</span>
+                <span>IMAGINA</span>
+                <!-- Duplicate -->
+                <span>INMOBILIARIA LIMA TOP</span>
+                <span>CONSTRUCTORA ELITE</span>
+                <span>GRUPO CENTENARIO</span>
+                <span>EDIFICIOS CORPORATIVOS SAN ISIDRO</span>
+                <span>DESARROLLADORA FUTURA</span>
+                <span>VIVA GYM</span>
+                <span>BESCO</span>
+                <span>IMAGINA</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="servicios" class="section services-section-visual">
+        <div class="container">
+            <h2 class="section-title text-center fade-in-up">Nuestras Capacidades</h2>
+            <p class="section-subtitle text-center fade-in-up">Soluciones técnicas de alto nivel, integradas desde el
+                diseño.</p>
+
+            <div class="services-grid-visual fade-in-up">
+                <!-- Electricidad -->
+                <div class="service-card-visual" style="background-image: url('assets/service_electricity.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h3><i class="fa-solid fa-bolt"
+                                style="color:var(--accent-gold); margin-right:10px;"></i>Infraestructura Eléctrica</h3>
+                        <p>Soluciones de energía críticas para entornos industriales y comerciales. Garantizamos
+                            continuidad operativa, seguridad y eficiencia energética desde la media tensión hasta el
+                            tomacorriente final.</p>
+                        <ul class="service-features">
+                            <li><i class="fa-solid fa-check"></i> Subestaciones y Media Tensión</li>
+                            <li><i class="fa-solid fa-check"></i> Tableros Certificados IEC/NEMA</li>
+                            <li><i class="fa-solid fa-check"></i> Sistemas de Puesta a Tierra y SPAT</li>
+                            <li><i class="fa-solid fa-check"></i> Calidad de Energía y Respaldo</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Automatización -->
+                <div class="service-card-visual" style="background-image: url('assets/service_automation.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h3><i class="fa-solid fa-robot"
+                                style="color:var(--accent-gold); margin-right:10px;"></i>Automatización & BMS</h3>
+                        <p>Control inteligente para maximizar la productividad y reducir costos operativos. Integramos
+                            procesos industriales y gestión de edificios en una plataforma unificada.</p>
+                        <ul class="service-features">
+                            <li><i class="fa-solid fa-check"></i> Programación de PLC y SCADA</li>
+                            <li><i class="fa-solid fa-check"></i> Gestión de Edificios (BMS)</li>
+                            <li><i class="fa-solid fa-check"></i> Instrumentación y Control Industrial</li>
+                            <li><i class="fa-solid fa-check"></i> Eficiencia Energética Automatizada</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Seguridad Incendios -->
+                <div class="service-card-visual" style="background-image: url('assets/service_fire_safety.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h3><i class="fa-solid fa-fire-extinguisher"
+                                style="color:var(--accent-gold); margin-right:10px;"></i>Detección de Incendios</h3>
+                        <p>Protección avanzada de vidas y activos. Diseñamos sistemas de detección y alarma bajo
+                            normativa NFPA/RNE, asegurando una respuesta temprana y confiable.</p>
+                        <ul class="service-features">
+                            <li><i class="fa-solid fa-check"></i> Paneles de Detección Inteligente</li>
+                            <li><i class="fa-solid fa-check"></i> Dispositivos Direccionables</li>
+                            <li><i class="fa-solid fa-check"></i> Integración con Evacuación</li>
+                            <li><i class="fa-solid fa-check"></i> Mantenimiento y Certificación</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Seguridad Electrónica -->
+                <div class="service-card-visual" style="background-image: url('assets/service_security.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h3><i class="fa-solid fa-shield-halved"
+                                style="color:var(--accent-gold); margin-right:10px;"></i>Seguridad Electrónica</h3>
+                        <p>Vigilancia y control con tecnología de punta. Implementamos ecosistemas de seguridad
+                            integrados que permiten un monitoreo proactivo y gestión de accesos segura.</p>
+                        <ul class="service-features">
+                            <li><i class="fa-solid fa-check"></i> CCTV con Analítica de Video</li>
+                            <li><i class="fa-solid fa-check"></i> Control de Accesos Biométrico</li>
+                            <li><i class="fa-solid fa-check"></i> Intrusión y Perímetro</li>
+                            <li><i class="fa-solid fa-check"></i> Centros de Control (C4)</li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Acabados Técnicos -->
+                <div class="service-card-visual" style="background-image: url('assets/service_finishes.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <h3><i class="fa-solid fa-layer-group"
+                                style="color:var(--accent-gold); margin-right:10px;"></i>Acabados Técnicos</h3>
+                        <p>Estética funcional para espacios tecnológicos. Suministramos e instalamos acabados
+                            especializados que complementan la infraestructura técnica sin sacrificar diseño.</p>
+                        <ul class="service-features">
+                            <li><i class="fa-solid fa-check"></i> Pisos Técnicos Elevados</li>
+                            <li><i class="fa-solid fa-check"></i> Falsos Cielos Registrables</li>
+                            <li><i class="fa-solid fa-check"></i> Mobiliario para Salas de Control</li>
+                            <li><i class="fa-solid fa-check"></i> Drywall y Tabiquería Técnica</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE SECTION -->
+    <section id="experiencia" class="section bg-darker">
+        <div class="container text-center">
+            <h2 class="section-title fade-in-up">Proyectos Realizados</h2>
+            <p class="section-subtitle fade-in-up">Experiencia comprobada en proyectos técnicos de alta complejidad.</p>
+
+            <div class="content-block fade-in-up" style="max-width: 800px; margin: 0 auto 50px auto;">
+                <p>Más de 10 años ejecutando proyectos eléctricos, automatización y sistemas técnicos en entornos
+                    industriales y de edificación. Nuestra experiencia nos permite anticipar problemas, coordinar
+                    correctamente los sistemas y entregar proyectos funcionales desde el primer día de operación.</p>
+            </div>
+
+            <div class="grid-4 fade-in-up">
+                <!-- Proyecto 1: Infraestructura Eléctrica Industrial -->
+                <div class="model-card-visual" style="background-image: url('assets/project_industrial.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-industry" style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Infraestructura Eléctrica Industrial</h3>
+                        <p>Diseño e instalación de sistemas eléctricos de media y baja tensión para plantas
+                            industriales. Tableros certificados, sistemas de puesta a tierra y distribución de potencia
+                            con alta disponibilidad.</p>
+                    </div>
+                </div>
+
+                <!-- Proyecto 2: Automatización BMS -->
+                <div class="model-card-visual" style="background-image: url('assets/project_bms.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-building" style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Automatización BMS Edificios Corporativos</h3>
+                        <p>Implementación de sistemas de gestión de edificios (BMS) con control centralizado de HVAC,
+                            iluminación y energía. Monitoreo en tiempo real y optimización de consumos.</p>
+                    </div>
+                </div>
+
+                <!-- Proyecto 3: Detección de Incendios -->
+                <div class="model-card-visual" style="background-image: url('assets/project_fire.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-fire-extinguisher"
+                                style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Sistemas de Detección de Incendios</h3>
+                        <p>Diseño e instalación de sistemas de detección y alarma bajo normativa NFPA. Paneles
+                            inteligentes, detectores direccionables y dispositivos de notificación certificados.</p>
+                    </div>
+                </div>
+
+                <!-- Proyecto 4: Integración Completa -->
+                <div class="model-card-visual" style="background-image: url('assets/project_integration.png');">
+                    <div class="overlay"></div>
+                    <div class="content">
+                        <div class="icon-box">
+                            <i class="fa-solid fa-puzzle-piece" style="font-size: 2rem; color: var(--accent-gold);"></i>
+                        </div>
+                        <h3>Integración Completa de Sistemas</h3>
+                        <p>Proyectos llave en mano integrando electricidad, automatización, detección de incendios y
+                            acabados técnicos. Un solo responsable, coordinación perfecta, entrega funcional.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TARGET AUDIENCE SECTION (New) -->
+    <section class="section"
+        style="border-top: 1px solid rgba(255,234,0,0.1); background: linear-gradient(180deg, #050505 0%, #111 100%);">
+        <div class="container text-center">
+            <h2 class="section-title fade-in-up">¿Este modelo es para ti?</h2>
+            <p class="section-subtitle fade-in-up">El Modelo TESLA está diseñado para proyectos donde la integración
+                técnica, la confiabilidad y la responsabilidad son críticas.</p>
+
+            <div class="target-grid fade-in-up"
+                style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; margin-top:40px;">
+                <div
+                    style="flex:1; min-width:300px; text-align: left; padding: 30px; background: rgba(255,255,255,0.03); border-left: 4px solid var(--accent-gold); border-radius: 8px;">
+                    <h3 style="color:var(--text-white); margin-bottom:20px; font-size: 1.5rem;">Ideal para:</h3>
+                    <ul style="list-style: none; padding: 0; font-size: 1.1rem;">
+                        <li style="margin-bottom: 15px;"><i class="fa-solid fa-check"
+                                style="color:var(--accent-gold); margin-right:10px;"></i> <strong>Constructoras</strong>
+                        </li>
+                        <li style="margin-bottom: 15px;"><i class="fa-solid fa-check"
+                                style="color:var(--accent-gold); margin-right:10px;"></i> <strong>Inversionistas
+                                Inmobiliarios</strong></li>
+                        <li style="margin-bottom: 15px;"><i class="fa-solid fa-check"
+                                style="color:var(--accent-gold); margin-right:10px;"></i> <strong>Empresas con proyectos
+                                técnicos</strong></li>
+                        <li style="margin-bottom: 15px;"><i class="fa-solid fa-check"
+                                style="color:var(--accent-gold); margin-right:10px;"></i> <strong>Edificios, colegios,
+                                clínicas e industria</strong></li>
+                    </ul>
+                </div>
+                <div
+                    style="flex:1; min-width:300px; text-align: left; padding: 30px; background: rgba(138, 12, 12, 0.1); border-left: 4px solid var(--primary-red); border-radius: 8px;">
+                    <h3 style="color:var(--text-white); margin-bottom:20px; font-size: 1.5rem;">No es para ti si:</h3>
+                    <p style="font-size: 1.1rem;">Buscas un proveedor aislado sin visión integral.</p>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 20px 0;">
+                    <p style="font-size: 1.2rem; color: var(--accent-gold);"><strong>Si buscas un integrador que se
+                            encargue de todo, conversemos.</strong></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS SECTION -->
+    <!-- Redundant section removed -->
+
+    <!-- FINAL CTA -->
+    <section class="section text-center"
+        style="background: linear-gradient(180deg, #000 0%, #110000 100%); padding: 100px 0;">
+        <div class="container hover-scale">
+            <h2 class="section-title mb-4" style="font-size: 2.5rem;">¿Tienes un proyecto en evaluación?</h2>
+            <p class="mb-5" style="font-size: 1.2rem; color: #ccc; margin-bottom: 60px !important;">Agenda una
+                evaluación técnica y conversemos sobre la
+                mejor forma de integrar correctamente todos los sistemas desde el inicio.</p>
+            <a href="https://wa.me/51906315961?text=Hola,%20quisiera%20agendar%20una%20evaluación%20técnica."
+                target="_blank" class="btn btn-primary pulse-btn" onclick="openChatbot()">SOLICITAR EVALUACIÓN
+                TÉCNICA</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <!-- Logo text removed as requested -->
+            <p class="mb-2"><strong>Integradores estratégicos de sistemas técnicos</strong></p>
+            <p>Urb. Los Jardines de San Carlos - Calle Los Narcisos MZ H Lote 04<br>Huancayo – Junín – Perú</p>
+            <p class="mt-3"><i class="fa-brands fa-whatsapp" style="color:var(--accent-gold); font-size: 1.2rem;"></i>
+                <span style="font-size: 1.2rem;">906 315 961</span>
+            </p>
+            <p class="copyright mt-5" style="opacity: 0.5; font-size: 0.8rem;">&copy; 2026 TESLA Electricidad y
+                Automatización S.A.C.</p>
+
+            <!-- GatoMichuy Credit -->
+            <div class="mt-4"
+                style="display: flex; align-items: center; justify-content: center; gap: 10px; opacity: 0.8;">
+                <span style="font-size: 0.9rem; color: var(--text-gray);">Dpto. de Diseño:</span>
+                <span
+                    style="font-weight: bold; color: #00e5ff; text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);">GatoMichuy</span>
+                <i class="fa-solid fa-cat"
+                    style="color: #00e5ff; font-size: 1.2rem; filter: drop-shadow(0 0 5px #00e5ff);"></i>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div id="chatbot-widget" class="chatbot-hidden">
+        <div class="chatbot-header">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <img src="assets/pili_avatar.png" alt="Pili Avatar"
+                    style="width:40px; height:40px; border-radius:50%; border: 2px solid var(--accent-gold); object-fit: cover;">
+                <span>PILI - Asistente Técnica <i class="fa-solid fa-bolt"
+                        style="color:var(--accent-gold); font-size:0.8rem;"></i></span>
+            </div>
+            <button onclick="closeChatbot()"
+                style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;">&times;</button>
+        </div>
+        <div class="chatbot-body" id="chatbot-messages">
+            <!-- Messages will be dynamically inserted here by PILI -->
+        </div>
+        <div class="chatbot-input">
+            <input type="text" placeholder="Escribe tu respuesta...">
+            <button><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- FAB Removed by User Request -->
+
+    <script src="main.js"></script>
+</body>
+
+</html>

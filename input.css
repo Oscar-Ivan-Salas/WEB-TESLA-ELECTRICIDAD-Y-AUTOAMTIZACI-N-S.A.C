@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom PILi Chat Styles */
+@layer components {
+    .chat-options {
+        @apply grid grid-cols-2 gap-2 my-3 px-1;
+    }
+
+    .option-button {
+        @apply bg-gradient-to-br from-gray-700 to-gray-900 border border-yellow-600/40 text-white px-3 py-3.5 rounded-xl cursor-pointer transition-all duration-300 text-sm font-semibold text-center flex items-center justify-center min-h-[56px] shadow-md relative overflow-hidden hover:from-yellow-500 hover:to-yellow-600 hover:text-black hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg hover:shadow-yellow-500/30 hover:font-extrabold active:scale-95;
+    }
+}
