@@ -56,18 +56,17 @@ const OPTIONS = {
 
 // Helper: Format WhatsApp message (V4 Structure)
 function generateWhatsAppLink(session) {
-    // Emojis Safe: 🔔 👤 📱 📍 🏗️ 📊 🛠️ 📅 
-    const text = `\uD83D\uDD14 *SOLICITUD PILI V4* \uD83D\uDD14
+    const text = `🔔 *SOLICITUD PILi V4* 🔔
     
-\uD83D\uDC64 *Cliente:* ${session.nombre || '-'}
-\uD83D\uDCF1 *Whatsapp:* ${session.telefono || '-'}
-\uD83D\uDCCD *Ubicación:* ${session.ubicacion || '-'}
+👤 *Cliente:* ${session.nombre || '-'}
+📱 *WhatsApp:* ${session.telefono || '-'}
+📍 *Ubicación:* ${session.ubicacion || '-'}
 
-\uD83C\uDFD7\uFE0F *Proyecto:* ${session.tipo_proyecto || '-'}
-\uD83D\uDCCA *Etapa:* ${session.etapa || '-'}
-\uD83D\uDEE0\uFE0F *Necesidad:* ${session.necesidad || '-'}
+🏗️ *Proyecto:* ${session.tipo_proyecto || '-'}
+📊 *Etapa:* ${session.etapa || '-'}
+🛠️ *Necesidad:* ${session.necesidad || '-'}
 
-\uD83D\uDCC5 *Cita:* ${session.cita || 'Por coordinar'}
+📅 *Cita:* ${session.cita || 'Por coordinar'}
 
 Link autogenerado por PILi Chat.`;
 
