@@ -20,9 +20,9 @@ const STATES = {
 
 const OPTIONS = {
     PROJECT_TYPE: [
-        "🏗️ Proyecto en curso",
-        "📋 Evaluación inicial",
-        "� Actualización técnica"
+        "🏗️ Obra en ejecución",
+        "🏢 Proyecto nuevo",
+        "🔧 Mantenimiento / Remodelación"
     ],
     STAGE: [
         "Inicio / Planos",
@@ -70,7 +70,7 @@ function processMessage(session, message) {
     switch (state) {
         case STATES.START:
             return {
-                message: "¡Hola! 👋 Soy PILi, la asistente técnica de TESLA Electricidad y Automatización.\n\nEstoy aquí para ayudarte a evaluar tu proyecto y coordinar una reunión técnica con nuestro equipo.\n\n¿En qué tipo de proyecto estás trabajando?",
+                message: "¡Hola! Soy PILi, asistente técnica de TESLA Electricidad y Automatización. ⚡\n\nTe ayudo a identificar la mejor solución para tu proyecto y a coordinar una evaluación técnica.\n\nPara empezar, selecciona el tipo de proyecto:",
                 nextState: STATES.ASK_PROJECT_TYPE,
                 options: OPTIONS.PROJECT_TYPE
             };
@@ -78,18 +78,18 @@ function processMessage(session, message) {
         case STATES.ASK_PROJECT_TYPE:
             if (!isValidOption(msg, OPTIONS.PROJECT_TYPE)) return { message: "Por favor, selecciona una opción del menú. 👇", nextState: STATES.ASK_PROJECT_TYPE, options: OPTIONS.PROJECT_TYPE };
             session.tipo_proyecto = msg;
-            return { message: "Entendido. ¿En qué etapa se encuentra tu proyecto actualmente?", nextState: STATES.ASK_STAGE, options: OPTIONS.STAGE };
+            return { message: "¿En qué etapa se encuentra actualmente?", nextState: STATES.ASK_STAGE, options: OPTIONS.STAGE };
 
         case STATES.ASK_STAGE:
             if (!isValidOption(msg, OPTIONS.STAGE)) return { message: "Selecciona la etapa del proyecto. 👇", nextState: STATES.ASK_STAGE, options: OPTIONS.STAGE };
             session.etapa = msg;
-            return { message: "Para darte una evaluación precisa, ¿qué sistemas necesitas integrar en tu proyecto? 👇", nextState: STATES.ASK_NEED, options: OPTIONS.NEED };
+            return { message: "¿Qué necesitas resolver principalmente ahora? 👇", nextState: STATES.ASK_NEED, options: OPTIONS.NEED };
 
         case STATES.ASK_NEED:
             if (!isValidOption(msg, OPTIONS.NEED)) return { message: "Selecciona una especialidad. 👇", nextState: STATES.ASK_NEED, options: OPTIONS.NEED };
             session.necesidad = msg;
             return {
-                message: `Entendido. Proyecto en *${session.etapa}* que requiere *${session.necesidad}*.\n\nPara coordinar la evaluación técnica, ¿cuál es tu *Nombre Completo*?`,
+                message: `Perfecto. \nProyecto en *${session.etapa}* con necesidad de *${session.necesidad}*. Entendido.\n\nPara coordinar la evaluación técnica, indícame tu *Nombre Completo*:`,
                 nextState: STATES.ASK_NAME,
                 requiresInput: true
             };
@@ -97,14 +97,14 @@ function processMessage(session, message) {
         case STATES.ASK_NAME:
             if (msg.length < 3) return { message: "Por favor, ingresa tu nombre real.", nextState: STATES.ASK_NAME, requiresInput: true };
             session.nombre = msg;
-            return { message: `Gracias ${session.nombre}.\n\n¿A qué número de WhatsApp podemos enviarte la confirmación de la evaluación técnica?`, nextState: STATES.ASK_PHONE, requiresInput: true };
+            return { message: `Gracias ${session.nombre}. \n\nIndícame tu número de *Celular / WhatsApp*:`, nextState: STATES.ASK_PHONE, requiresInput: true };
 
         case STATES.ASK_PHONE:
             const phoneRegex = /^[0-9+\s-]{7,15}$/;
             if (!phoneRegex.test(msg)) return { message: "Ingresa un número válido (ej. 987654321).", nextState: STATES.ASK_PHONE, requiresInput: true };
             session.telefono = msg;
             return {
-                message: "¿En qué ciudad o región se ejecutará el proyecto?\n(Ejemplo: Huancayo, Lima, Junín)",
+                message: "Finalmente, ¿En qué **Lugar / Distrito** se ubica el proyecto? (Esto ayuda al ingeniero a planificar la visita).",
                 nextState: STATES.ASK_LOCATION,
                 requiresInput: true
             };
@@ -134,7 +134,7 @@ function processMessage(session, message) {
                 session.estado = STATES.END; // Update session state
 
                 return {
-                    message: `✅ Perfecto, ${session.nombre}.\n\nHemos registrado tu solicitud de evaluación técnica para tu proyecto en ${session.ubicacion}.\n\n**Próximos pasos:**\n1️⃣ Un ingeniero de TESLA revisará tu caso en las próximas 24 horas\n2️⃣ Te contactaremos vía WhatsApp para coordinar una visita técnica\n3️⃣ Recibirás una propuesta técnica personalizada\n\n📲 Confirmación enviada a: ${session.telefono}\n\n👇 Haz clic abajo para continuar.`,
+                    message: "¡Perfecto! ✅\n\nUn **especialista técnico de TESLA** continuará la atención contigo.\n\nTe dejo además una **tarjeta digital del servicio** para que tengas nuestra información siempre a mano.\n\n👇 Haz clic abajo para continuar por WhatsApp.",
                     whatsappLink: whatsappLink,
                     cardData: {
                         service: session.necesidad,
