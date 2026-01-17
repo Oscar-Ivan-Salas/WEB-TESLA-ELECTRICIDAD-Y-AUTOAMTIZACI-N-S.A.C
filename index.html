@@ -62,6 +62,69 @@
     <link rel="stylesheet" href="styles.css?v=force7">
     <!-- html2canvas for Solution Card Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- CRITICAL: PILi Button Styles - Inline to bypass Vercel cache -->
+    <style>
+        /* Chat Options Container */
+        .chat-options {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 8px !important;
+            margin: 12px 0 !important;
+            padding: 0 5px !important;
+        }
+
+        /* Option Buttons */
+        .option-button {
+            background: linear-gradient(135deg, #2D3748 0%, #1A202C 100%) !important;
+            border: 1px solid rgba(245, 158, 11, 0.4) !important;
+            color: #fff !important;
+            padding: 14px 12px !important;
+            border-radius: 12px !important;
+            cursor: pointer !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            text-align: center !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 56px !important;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+            position: relative !important;
+            overflow: hidden !important;
+        }
+
+        /* Shine Effect */
+        .option-button::before {
+            content: '' !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: -100% !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent) !important;
+            transition: 0.5s !important;
+        }
+
+        .option-button:hover::before {
+            left: 100% !important;
+        }
+
+        .option-button:hover {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+            border-color: #FCD34D !important;
+            color: #000 !important;
+            transform: translateY(-3px) scale(1.02) !important;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3) !important;
+            font-weight: 800 !important;
+        }
+
+        .option-button:active {
+            transform: scale(0.98) !important;
+        }
+    </style>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;

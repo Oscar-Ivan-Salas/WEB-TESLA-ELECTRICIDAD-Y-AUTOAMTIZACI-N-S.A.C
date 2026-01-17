@@ -56,17 +56,27 @@ const OPTIONS = {
 
 // Helper: Format WhatsApp message (V4 Structure)
 function generateWhatsAppLink(session) {
-    const text = `🔔 *SOLICITUD PILi V4* 🔔
+    // WhatsApp-compatible emoji encoding
+    const bell = String.fromCodePoint(0x1F514);
+    const person = String.fromCodePoint(0x1F464);
+    const phone = String.fromCodePoint(0x1F4F1);
+    const pin = String.fromCodePoint(0x1F4CD);
+    const building = String.fromCodePoint(0x1F3D7);
+    const chart = String.fromCodePoint(0x1F4CA);
+    const tools = String.fromCodePoint(0x1F6E0);
+    const calendar = String.fromCodePoint(0x1F4C5);
+
+    const text = `${bell} *SOLICITUD PILi V4* ${bell}
     
-👤 *Cliente:* ${session.nombre || '-'}
-📱 *WhatsApp:* ${session.telefono || '-'}
-📍 *Ubicación:* ${session.ubicacion || '-'}
+${person} *Cliente:* ${session.nombre || '-'}
+${phone} *WhatsApp:* ${session.telefono || '-'}
+${pin} *Ubicación:* ${session.ubicacion || '-'}
 
-🏗️ *Proyecto:* ${session.tipo_proyecto || '-'}
-📊 *Etapa:* ${session.etapa || '-'}
-🛠️ *Necesidad:* ${session.necesidad || '-'}
+${building} *Proyecto:* ${session.tipo_proyecto || '-'}
+${chart} *Etapa:* ${session.etapa || '-'}
+${tools} *Necesidad:* ${session.necesidad || '-'}
 
-📅 *Cita:* ${session.cita || 'Por coordinar'}
+${calendar} *Cita:* ${session.cita || 'Por coordinar'}
 
 Link autogenerado por PILi Chat.`;
 
