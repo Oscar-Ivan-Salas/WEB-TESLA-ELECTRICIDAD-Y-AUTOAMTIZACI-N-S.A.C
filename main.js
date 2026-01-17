@@ -70,11 +70,13 @@ function displayOptions(options) {
     if (!chatBody || !options || options.length === 0) return;
 
     const optionsDiv = document.createElement('div');
-    optionsDiv.className = 'chat-options';
+    // Tailwind CSS classes for grid layout
+    optionsDiv.className = 'grid grid-cols-2 gap-2 my-3 px-1';
 
     options.forEach(option => {
         const button = document.createElement('button');
-        button.className = 'option-button';
+        // Tailwind CSS classes for button styling
+        button.className = 'bg-gradient-to-br from-gray-700 to-gray-900 border border-yellow-600/40 text-white px-3 py-3.5 rounded-xl cursor-pointer transition-all duration-300 text-sm font-semibold text-center flex items-center justify-center min-h-[56px] shadow-md hover:from-yellow-500 hover:to-yellow-600 hover:text-black hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg hover:shadow-yellow-500/30 hover:font-extrabold active:scale-95 relative overflow-hidden';
         button.textContent = option;
         button.onclick = () => handleOptionClick(option);
         optionsDiv.appendChild(button);
