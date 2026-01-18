@@ -162,7 +162,12 @@ function processMessage(session, message) {
             return {
                 message: `Excelente, ${session.nombre}.\n\n✅ *Resumen de tu solicitud:*\n• Proyecto: ${session.tipo_proyecto}\n• Etapa: ${session.etapa}\n• Necesidad: ${session.necesidad}\n• Ubicación: ${session.ubicacion}\n• Contacto: ${session.telefono}\n• Cita preferida: ${session.cita}\n\n*Próximos pasos:*\n1️⃣ Confirma enviando este mensaje a WhatsApp\n2️⃣ Un especialista técnico te contactará en las próximas 24 horas\n3️⃣ Coordinaremos la evaluación técnica en tu proyecto\n\n¡Gracias por confiar en TESLA! ⚡`,
                 nextState: STATES.END,
-                whatsappLink: whatsappLink
+                whatsappLink: whatsappLink,
+                cardData: {
+                    service: session.necesidad || 'Solución TESLA',
+                    projectType: session.tipo_proyecto,
+                    stage: session.etapa
+                }
             };
 
         default:

@@ -1,4 +1,4 @@
-﻿// PILI Chatbot - Frontend Integration (V4 Enhanced)
+// PILI Chatbot - Frontend Integration (V4 Enhanced)
 // Connects existing chatbot UI with PILI backend
 
 // Session management
@@ -34,9 +34,9 @@ async function sendMessageToPILI(message) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error('Error comunic├índose con PILI:', error);
+        console.error('Error comunicándose con PILI:', error);
         return {
-            message: 'Lo siento, hubo un error de conexi├│n. Por favor intenta nuevamente.',
+            message: 'Lo siento, hubo un error de conexión. Por favor intenta nuevamente.',
             state: 'ERROR',
             requiresInput: true
         };
@@ -70,11 +70,13 @@ function displayOptions(options) {
     if (!chatBody || !options || options.length === 0) return;
 
     const optionsDiv = document.createElement('div');
-    optionsDiv.className = 'chat-options';
+    // Tailwind CSS classes for grid layout
+    optionsDiv.className = 'grid grid-cols-2 gap-2 my-3 px-1';
 
     options.forEach(option => {
         const button = document.createElement('button');
-        button.className = 'option-button';
+        // Tailwind CSS classes for button styling
+        button.className = 'bg-gradient-to-br from-gray-700 to-gray-900 border border-yellow-600/40 text-white px-3 py-3.5 rounded-xl cursor-pointer transition-all duration-300 text-sm font-semibold text-center flex items-center justify-center min-h-[56px] shadow-md hover:from-yellow-500 hover:to-yellow-600 hover:text-black hover:-translate-y-1 hover:scale-[1.02] hover:shadow-lg hover:shadow-yellow-500/30 hover:font-extrabold active:scale-95 relative overflow-hidden';
         button.textContent = option;
         button.onclick = () => handleOptionClick(option);
         optionsDiv.appendChild(button);
@@ -105,45 +107,45 @@ function displaySolutionCard(data) {
     // Service Content Dictionary
     const SERVICE_DETAILS = {
         "Electricidad": {
-            icon: "ÔÜí",
+            icon: "⚡",
             title: "ELECTRICIDAD INDUSTRIAL Y COMERCIAL",
-            desc: "Garantizamos un suministro estable y seguro. Nos encargamos desde el dise├▒o de tableros hasta la certificaci├│n final.",
-            bullets: ["Ô£ö Tableros El├®ctricos", "Ô£ö Pozo a Tierra", "Ô£ö Iluminaci├│n LED"]
+            desc: "Garantizamos un suministro estable y seguro. Nos encargamos desde el diseño de tableros hasta la certificación final.",
+            bullets: ["✔ Tableros Eléctricos", "✔ Pozo a Tierra", "✔ Iluminación LED"]
         },
         "Sistemas contra incendios": {
-            icon: "­ƒÜ¿",
+            icon: "🚨",
             title: "SISTEMAS CONTRA INCENDIOS",
-            desc: "Protecci├│n certificada para tu infraestructura. Cumplimos estrictamente las normativas INDECI y NFPA.",
-            bullets: ["Ô£ö Detecci├│n y Alarma", "Ô£ö Red de Agua", "Ô£ö Mantenimiento Preventivo"]
+            desc: "Protección certificada para tu infraestructura. Cumplimos estrictamente las normativas INDECI y NFPA.",
+            bullets: ["✔ Detección y Alarma", "✔ Red de Agua", "✔ Mantenimiento Preventivo"]
         },
-        "Automatizaci├│n / Dom├│tica": {
-            icon: "­ƒñû",
-            title: "AUTOMATIZACI├ôN Y DOM├ôTICA",
-            desc: "Control total de tu planta o edificio. Optimiza procesos y ahorra energ├¡a con tecnolog├¡a inteligente.",
-            bullets: ["Ô£ö Control de Accesos", "Ô£ö BMS / Scada", "Ô£ö Sensores IoT"]
+        "Automatización / Domótica": {
+            icon: "🤖",
+            title: "AUTOMATIZACIÓN Y DOMÓTICA",
+            desc: "Control total de tu planta o edificio. Optimiza procesos y ahorra energía con tecnología inteligente.",
+            bullets: ["✔ Control de Accesos", "✔ BMS / Scada", "✔ Sensores IoT"]
         },
-        "Seguridad electr├│nica": {
-            icon: "­ƒöÉ",
-            title: "SEGURIDAD ELECTR├ôNICA",
-            desc: "Monitoreo avanzado 24/7. Integramos c├ímaras, accesos y alarmas en una sola plataforma.",
-            bullets: ["Ô£ö CCTV IP", "Ô£ö Video Porteros", "Ô£ö Central de Monitoreo"]
+        "Seguridad electrónica": {
+            icon: "🔐",
+            title: "SEGURIDAD ELECTRÓNICA",
+            desc: "Monitoreo avanzado 24/7. Integramos cámaras, accesos y alarmas en una sola plataforma.",
+            bullets: ["✔ CCTV IP", "✔ Video Porteros", "✔ Central de Monitoreo"]
         },
-        "Acabados t├®cnicos": {
-            icon: "­ƒÅù´©Å",
-            title: "ACABADOS T├ëCNICOS",
-            desc: "Detalles finales que marcan la diferencia. Drywall, pintura y estructuras met├ílicas de soporte.",
-            bullets: ["Ô£ö Estructuras Met├ílicas", "Ô£ö Drywall y Pintura", "Ô£ö Remodelaci├│n"]
+        "Acabados técnicos": {
+            icon: "🏗️",
+            title: "ACABADOS TÉCNICOS",
+            desc: "Detalles finales que marcan la diferencia. Drywall, pintura y estructuras metálicas de soporte.",
+            bullets: ["✔ Estructuras Metálicas", "✔ Drywall y Pintura", "✔ Remodelación"]
         },
-        "Soluci├│n integral TESLA": {
-            icon: "­ƒº®",
-            title: "SOLUCI├ôN LLAVE EN MANO",
-            desc: "Nos encargamos de TODO. Un solo proveedor para Electricidad, Seguridad y Automatizaci├│n.",
-            bullets: ["Ô£ö Gesti├│n de Proyecto", "Ô£ö Un solo responsable", "Ô£ö Entrega Lista para Usar"]
+        "Solución integral TESLA": {
+            icon: "🧩",
+            title: "SOLUCIÓN LLAVE EN MANO",
+            desc: "Nos encargamos de TODO. Un solo proveedor para Electricidad, Seguridad y Automatización.",
+            bullets: ["✔ Gestión de Proyecto", "✔ Un solo responsable", "✔ Entrega Lista para Usar"]
         }
     };
 
     // Match service (rough match)
-    let info = SERVICE_DETAILS["Soluci├│n integral TESLA"]; // Default
+    let info = SERVICE_DETAILS["Solución integral TESLA"]; // Default
     if (data && data.service) {
         // Find best match key
         const key = Object.keys(SERVICE_DETAILS).find(k => data.service.includes(k) || k.includes(data.service));
@@ -170,10 +172,10 @@ function displaySolutionCard(data) {
     header.style.position = 'relative'; // For absolute positioning
     header.innerHTML = `
         <div id="btn-zoom-card" style="position: absolute; top: 10px; right: 10px; cursor: pointer; color: white; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 50%; font-size: 1.2rem;" title="Ampliar Ficha">
-            ­ƒöì
+            🔍
         </div>
         <img src="assets/logo.png" alt="TESLA" style="height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
-        <h3 style="color: #fff; margin-top: 10px; font-weight: 800; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase;">FICHA DE ATENCI├ôN T├ëCNICA</h3>
+        <h3 style="color: #fff; margin-top: 10px; font-weight: 800; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase;">FICHA DE ATENCIÓN TÉCNICA</h3>
     `;
     cardDiv.appendChild(header);
 
@@ -201,12 +203,12 @@ function displaySolutionCard(data) {
         <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 12px;">
             <a href="https://tesla-landing-self.vercel.app" target="_blank" style="text-decoration: none; display: flex;">
                 <button class="option-button" style="width:100%; font-size: 0.9rem; background: #374151; border-color: #4B5563; display: flex; align-items: center; justify-content: center;">
-                    ­ƒîÉ Web
+                    🌐 Web
                 </button>
             </a>
              <button class="option-button" id="btn-whatsapp-card" style="width:100%; font-size: 0.9rem; background: #25D366; border: none; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);">
                 <div style="display: flex; align-items: center; gap: 6px;">
-                    <span style="font-size: 1.2rem;">­ƒÆ¼</span>
+                    <span style="font-size: 1.2rem;">💬</span>
                     <span style="font-weight: 800; text-transform: uppercase;">WhatsApp</span>
                 </div>
                 <span style="font-size: 1.1rem; font-weight: 900; margin-top: 2px;">906 315 961</span>
@@ -214,7 +216,7 @@ function displaySolutionCard(data) {
         </div>
         
         <button class="option-button" id="btn-download-card" style="width:100%; font-size: 0.9rem; border: 1px solid #F59E0B; background: rgba(245, 158, 11, 0.1);">
-            ­ƒô© Guardar Ficha (Imagen)
+            📸 Guardar Ficha (Imagen)
         </button>
     `;
 
@@ -225,7 +227,7 @@ function displaySolutionCard(data) {
     // Helper for capture (shared)
     function captureDOMElement(element, button) {
         if (typeof html2canvas === 'undefined') {
-            alert('Librer├¡a de imagen no cargada.'); return;
+            alert('Librería de imagen no cargada.'); return;
         }
 
         if (button) {
@@ -250,16 +252,16 @@ function displaySolutionCard(data) {
             link.click();
 
             if (button) {
-                button.textContent = 'Ô£à Guardada';
+                button.textContent = '✅ Guardada';
                 button.disabled = false;
-                setTimeout(() => button.textContent = '­ƒô© Guardar Ficha (Imagen)', 2500);
+                setTimeout(() => button.textContent = '📸 Guardar Ficha (Imagen)', 2500);
             }
             if (zoomIcon) zoomIcon.style.display = 'block';
 
         }).catch(err => {
             console.error(err);
             if (button) {
-                button.textContent = 'ÔØî Error';
+                button.textContent = '❌ Error';
                 button.disabled = false;
             }
             if (zoomIcon) zoomIcon.style.display = 'block';
@@ -286,7 +288,7 @@ function displaySolutionCard(data) {
 
         // Explicit Close Button
         const closeBtn = document.createElement('button');
-        closeBtn.innerHTML = 'Ô£ò Cerrar';
+        closeBtn.innerHTML = '✕ Cerrar';
         closeBtn.className = 'option-button';
         closeBtn.style.position = 'absolute';
         closeBtn.style.top = '20px';
@@ -380,7 +382,7 @@ async function handleUserMessage(message, loadingElement = null) {
         displaySolutionCard(response.cardData);
     } else if (response.message && response.message.includes('Tarjeta Digital')) {
         // Fallback check
-        displaySolutionCard({ service: 'SOLUCI├ôN TESLA', stage: 'Atenci├│n Prioritaria' });
+        displaySolutionCard({ service: 'SOLUCIÓN TESLA', stage: 'Atención Prioritaria' });
     }
 
     // Display options if provided
@@ -411,7 +413,7 @@ function displayDateTimePicker() {
     // Helper Label
     const label = document.createElement('div');
     label.className = 'chat-datepicker-label';
-    label.textContent = '­ƒôà Selecciona Fecha y Hora sugerida:';
+    label.textContent = '📅 Selecciona Fecha y Hora sugerida:';
     container.appendChild(label);
 
     // Native Date Picker with Enhanced CSS
@@ -423,7 +425,7 @@ function displayDateTimePicker() {
     // Confirm Button
     const btn = document.createElement('button');
     btn.className = 'option-button';
-    btn.textContent = 'Confirmar Cita Ô£à';
+    btn.textContent = 'Confirmar Cita ✅';
     btn.style.marginTop = '10px';
     btn.style.width = '100%';
 
@@ -542,7 +544,7 @@ window.toggleChat = function (initialMessage = null) {
 
 // Alias for compatibility if needed
 window.toggleChatbot = window.toggleChat;
-window.openChatbot = window.toggleChat; // For 'Evaluaci├│n T├®cnica' buttons in navbar/hero
+window.openChatbot = window.toggleChat; // For 'Evaluación Técnica' buttons in navbar/hero
 window.openChat = window.toggleChat; // For Modal buttons
 
 // Close function
