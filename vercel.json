@@ -1,6 +1,7 @@
 {
     "buildCommand": "npm install && npm run build:css",
     "outputDirectory": ".",
+    "framework": null,
     "routes": [
         {
             "src": "/styles-tailwind.css",
