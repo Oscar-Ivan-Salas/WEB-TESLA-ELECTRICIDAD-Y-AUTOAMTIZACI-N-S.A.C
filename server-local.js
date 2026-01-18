@@ -90,7 +90,7 @@ function processMessage(session, message) {
         // --- 1. START ---
         case STATES.START:
             return {
-                message: "¡Hola! Soy PILi, asistente técnica de TESLA Electricidad y Automatización. ⚡\\n\\nTe ayudo a identificar la mejor solución para tu proyecto y a coordinar una evaluación técnica.\\n\\nPara empezar, selecciona el tipo de proyecto:",
+                message: "Hola 👋\nSoy **PILI**, asistente técnica de **TESLA Electricidad y Automatización**.\nTe ayudaré a evaluar tu proyecto y orientarte correctamente.\n\nPara empezar, selecciona el tipo de proyecto:",
                 nextState: STATES.ASK_PROJECT_TYPE,
                 options: OPTIONS.PROJECT_TYPE
             };
@@ -105,8 +105,25 @@ function processMessage(session, message) {
                 };
             }
             session.tipo_proyecto = msg;
+
+            // Mensaje de especialista según servicio
+            let specialistMessage = "";
+            if (msg.includes("Obra en ejecución") || msg.includes("eléctrica")) {
+                specialistMessage = "Entendido. En proyectos eléctricos, los problemas suelen aparecer al final: protecciones mal calculadas, tableros sin criterio o instalaciones que no quedaron operativas.\\n\\n";
+            } else if (msg.includes("incendios")) {
+                specialistMessage = "Entendido. En sistemas contra incendios, el mayor riesgo es instalar sin criterio normativo y descubrir observaciones cuando la obra ya está avanzada.\\n\\n";
+            } else if (msg.includes("Automatización") || msg.includes("Domótica")) {
+                specialistMessage = "Entendido. En automatización, muchas veces se instalan equipos que luego no se integran ni se aprovechan correctamente.\\n\\n";
+            } else if (msg.includes("Mantenimiento") || msg.includes("Remodelación")) {
+                specialistMessage = "Entendido. En mantenimiento técnico, el problema común es corregir síntomas sin resolver la causa real de la falla.\\n\\n";
+            } else if (msg.includes("Acabados")) {
+                specialistMessage = "Entendido. En acabados, los mayores retrabajos ocurren cuando no se coordinan correctamente las instalaciones técnicas.\\n\\n";
+            } else if (msg.includes("integral") || msg.includes("TESLA")) {
+                specialistMessage = "Entendido. Esta solución es ideal cuando no se quiere coordinar múltiples proveedores ni asumir riesgos técnicos.\\n\\n";
+            }
+
             return {
-                message: "Perfecto.\\n\\n¿En qué etapa se encuentra actualmente?",
+                message: specialistMessage + "¿En qué etapa se encuentra actualmente?",
                 nextState: STATES.ASK_STAGE,
                 options: OPTIONS.STAGE
             };
@@ -121,8 +138,26 @@ function processMessage(session, message) {
                 };
             }
             session.etapa = msg;
+
+            // Validación técnica según servicio
+            let technicalContext = "";
+            const projectType = session.tipo_proyecto || "";
+            if (projectType.includes("eléctrica") || projectType.includes("Obra")) {
+                technicalContext = "Perfecto. En estos casos revisamos carga, protecciones, puesta a tierra y el estado real de la instalación para evitar reprocesos.\\n\\n";
+            } else if (projectType.includes("incendios")) {
+                technicalContext = "Perfecto. En estos casos revisamos normativa INDECI, diseño de red y certificación para evitar observaciones.\\n\\n";
+            } else if (projectType.includes("Automatización") || projectType.includes("Domótica")) {
+                technicalContext = "Perfecto. En estos casos revisamos integración de sistemas, protocolos y configuración para garantizar aprovechamiento completo.\\n\\n";
+            } else if (projectType.includes("Mantenimiento") || projectType.includes("Remodelación")) {
+                technicalContext = "Perfecto. En estos casos realizamos diagnóstico de causa raíz y plan preventivo para soluciones duraderas.\\n\\n";
+            } else if (projectType.includes("Acabados")) {
+                technicalContext = "Perfecto. En estos casos coordinamos instalaciones técnicas y acabado final para evitar retrabajos.\\n\\n";
+            } else if (projectType.includes("integral") || projectType.includes("TESLA")) {
+                technicalContext = "Perfecto. En estos casos gestionamos el proyecto completo con un solo responsable técnico.\\n\\n";
+            }
+
             return {
-                message: "Entendido.\\n\\n¿Qué necesitas resolver principalmente ahora? 👇",
+                message: technicalContext + "¿Qué necesitas resolver principalmente ahora? 👇",
                 nextState: STATES.ASK_NEED,
                 options: OPTIONS.NEED
             };
@@ -138,7 +173,7 @@ function processMessage(session, message) {
             }
             session.necesidad = msg;
             return {
-                message: `Perfecto.\\nProyecto en *${session.etapa}* con necesidad de *${session.necesidad}*. Entendido.\\n\\nPara coordinar la evaluación técnica, indícame tu *Nombre Completo*:`,
+                message: "Para que un especialista revise tu caso con este contexto técnico, necesito registrar tus datos.\\nNo es una cotización automática, es una revisión real.\\n\\n¿Cuál es tu nombre completo?",
                 nextState: STATES.ASK_NAME
             };
 
@@ -190,7 +225,7 @@ function processMessage(session, message) {
             session.cita = msg;
             const whatsappLink = generateWhatsAppLink(session);
             return {
-                message: `Excelente, ${session.nombre}.\\n\\n✅ *Resumen de tu solicitud:*\\n• Proyecto: ${session.tipo_proyecto}\\n• Etapa: ${session.etapa}\\n• Necesidad: ${session.necesidad}\\n• Ubicación: ${session.ubicacion}\\n• Contacto: ${session.telefono}\\n• Cita preferida: ${session.cita}\\n\\n*Próximos pasos:*\\n1️⃣ Confirma enviando este mensaje a WhatsApp\\n2️⃣ Un especialista técnico te contactará en las próximas 24 horas\\n3️⃣ Coordinaremos la evaluación técnica en tu proyecto\\n\\n¡Gracias por confiar en TESLA! ⚡`,
+                message: `Listo ✅\\n\\n*Resumen de tu solicitud:*\\n• Proyecto: ${session.tipo_proyecto}\\n• Etapa: ${session.etapa}\\n• Necesidad: ${session.necesidad}\\n• Ubicación: ${session.ubicacion}\\n• Contacto: ${session.telefono}\\n• Cita preferida: ${session.cita}\\n\\nUn especialista del equipo TESLA continuará el seguimiento con esta información.\\nSi tienes otra consulta técnica, aquí estaré.`,
                 nextState: STATES.END,
                 whatsappLink: whatsappLink,
                 cardData: {
