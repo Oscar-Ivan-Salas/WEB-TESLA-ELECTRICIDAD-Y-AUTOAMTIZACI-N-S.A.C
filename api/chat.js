@@ -67,7 +67,7 @@ function processMessage(session, message) {
     switch (state) {
         case STATES.START:
             return {
-                message: "Hola 👋\nSoy **PILI**, asistente técnica de **TESLA Electricidad y Automatización**.\nTe ayudaré a evaluar tu proyecto y orientarte correctamente.\n\nPara empezar, selecciona el tipo de proyecto:",
+                message: "Hola, soy PILI, asistente técnica de TESLA Electricidad y Automatización.\nTe ayudo a evaluar tu proyecto y orientarte con la mejor solución técnica, sin que tengas que coordinar múltiples proveedores.\n\nPara comenzar, dime en qué área necesitas apoyo:",
                 nextState: STATES.ASK_PROJECT_TYPE,
                 options: OPTIONS.PROJECT_TYPE
             };
@@ -147,7 +147,7 @@ function processMessage(session, message) {
             }
             session.necesidad = msg;
             return {
-                message: "Para que un especialista revise tu caso con este contexto técnico, necesito registrar tus datos.\nNo es una cotización automática, es una revisión real.\n\n¿Cuál es tu nombre completo?",
+                message: "Con esta información podemos orientarte correctamente y evitar reprocesos o sobrecostos.\nPara continuar, necesito registrar tus datos y que un especialista continúe el proceso.\n\n¿Cuál es tu nombre completo?",
                 nextState: STATES.ASK_NAME
             };
 
@@ -195,7 +195,7 @@ function processMessage(session, message) {
             session.cita = msg;
             const whatsappLink = generateWhatsAppLink(session);
             return {
-                message: `Listo ✅\n\n*Resumen de tu solicitud:*\n• Proyecto: ${session.tipo_proyecto}\n• Etapa: ${session.etapa}\n• Necesidad: ${session.necesidad}\n• Ubicación: ${session.ubicacion}\n• Contacto: ${session.telefono}\n• Cita preferida: ${session.cita}\n\nUn especialista del equipo TESLA continuará el seguimiento con esta información.\nSi tienes otra consulta técnica, aquí estaré.`,
+                message: `Gracias. Un especialista de TESLA continuará contigo para definir la mejor solución.\n\n*Resumen de tu solicitud:*\n• Proyecto: ${session.tipo_proyecto}\n• Etapa: ${session.etapa}\n• Necesidad: ${session.necesidad}\n• Ubicación: ${session.ubicacion}\n• Contacto: ${session.telefono}\n• Cita preferida: ${session.cita}\n\nEstás en buenas manos.`,
                 nextState: STATES.END,
                 whatsappLink: whatsappLink,
                 cardData: {
