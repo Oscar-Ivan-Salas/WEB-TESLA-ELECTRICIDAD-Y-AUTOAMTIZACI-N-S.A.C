@@ -210,4 +210,40 @@ function processMessage(session, message) {
     }
 }
 
-module.exports = { processMessage, STATES, OPTIONS };
+// Almacenamiento temporal de sesiones (en memoria)
+const sessions = new Map();
+
+// Vercel Serverless Function Handler
+module.exports = async (req, res) => {
+    // Enable CORS
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    try {
+        const { sessionId, message } = req.body;
+
+        if (!sessionId) {
+            return res.status(400).json({ error: 'sessionId es requerido' });
+        }
+
+        let session = sessions.get(sessionId) || { estado: STATES.START };
+        const response = processMessage(session, message);
+
+        session.estado = response.nextState;
+        sessions.set(sessionId, session);
+
+        return res.status(200).json(response);
+    } catch (error) {
+        console.error('Error en /api/chat:', error);
+        return res.status(500).json({ error: 'Error interno del servidor', details: error.message });
+    }
+};
