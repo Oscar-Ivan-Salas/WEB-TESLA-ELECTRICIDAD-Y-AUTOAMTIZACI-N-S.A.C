@@ -376,11 +376,7 @@
                 </nav>
 
                 <!-- Mobile Menu Button -->
-                <a href="https://wa.me/51906315961?text=Hola%20TESLA%2C%20quiero%20una%20evaluaci%C3%B3n%20t%C3%A9cnica%20para%20mi%20proyecto."
-                    target="_blank"
-                    class="md:hidden px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full text-xs font-bold inline-flex items-center">
-                    <i class="fab fa-whatsapp mr-1"></i> WhatsApp
-                </a>
+                <!-- Mobile Menu Button removed in favor of Sticky Bottom WhatsApp -->
             </div>
         </div>
     </header>
@@ -1234,7 +1230,7 @@
                     Urb. Los Jardines de San Carlos - Calle Los Narcisos MZ H Lote 04<br>
                     Huancayo – Junín – Perú
                 </p>
-                <p class="mb-6">
+                <p class="mb-6 hidden md:block">
                     <i class="fab fa-whatsapp text-tesla-gold text-xl mr-2"></i>
                     <span class="text-lg">906 315 961</span>
                 </p>
@@ -1251,6 +1247,14 @@
             </div>
         </footer>
     </main>
+
+    <!-- Sticky WhatsApp Button (Mobile Only) - PROMPTS 1-20 -->
+    <a href="https://wa.me/51906315961" target="_blank"
+        class="md:hidden fixed bottom-4 left-4 z-50 flex items-center gap-3 px-5 py-3 bg-[#25D366] text-white rounded-full shadow-lg hover:brightness-110 transition-all font-bold text-sm"
+        style="box-shadow: 0 4px 14px rgba(37, 211, 102, 0.5);" aria-label="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp text-2xl"></i>
+        <span>Contactar por WhatsApp</span>
+    </a>
 
     <!-- PILI Chat Sidebar (Hidden by default, slides in from right) -->
     <aside id="chat-sidebar"
@@ -1478,163 +1482,166 @@
         }
     </script>
 
-</body>
 
-<!-- Modal Ingeniería -->
-<div id="modal-ingenieria"
-    class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
-        <div
-            class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="text-tesla-gold text-4xl electric-icon">
-                    <i class="fas fa-brain"></i>
+
+    <!-- Modal Ingeniería -->
+    <div id="modal-ingenieria"
+        class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
+            <div
+                class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="text-tesla-gold text-4xl electric-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Ingeniería Técnica Especializada</h3>
                 </div>
-                <h3 class="text-2xl font-bold">Ingeniería Técnica Especializada</h3>
+                <button onclick="closeModal('modal-ingenieria')"
+                    class="text-white hover:text-tesla-gold transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
             </div>
-            <button onclick="closeModal('modal-ingenieria')" class="text-white hover:text-tesla-gold transition-colors">
-                <i class="fas fa-times text-2xl"></i>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <p class="text-lg text-gray-300">
-                Diseñamos todos los sistemas desde el inicio para evitar interferencias, retrabajos y sobrecostos
-                durante la ejecución.
-            </p>
-            <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
-                <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
-                <ul class="text-gray-300 space-y-2">
-                    <li>• Diseño integral desde el inicio</li>
-                    <li>• Evita interferencias entre sistemas</li>
-                    <li>• Reduce retrabajos y sobrecostos</li>
-                    <li>• Fusiona funcionalidad técnica con estética</li>
-                </ul>
+            <div class="p-6 space-y-4">
+                <p class="text-lg text-gray-300">
+                    Diseñamos todos los sistemas desde el inicio para evitar interferencias, retrabajos y sobrecostos
+                    durante la ejecución.
+                </p>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
+                    <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>• Diseño integral desde el inicio</li>
+                        <li>• Evita interferencias entre sistemas</li>
+                        <li>• Reduce retrabajos y sobrecostos</li>
+                        <li>• Fusiona funcionalidad técnica con estética</li>
+                    </ul>
+                </div>
+                <button onclick="openChat()"
+                    class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
+                    Solicitar Evaluación Técnica
+                </button>
             </div>
-            <button onclick="openChat()"
-                class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
-                Solicitar Evaluación Técnica
-            </button>
         </div>
     </div>
-</div>
 
-<!-- Modal Suministro -->
-<div id="modal-suministro"
-    class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
-        <div
-            class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="text-tesla-gold text-4xl electric-icon">
-                    <i class="fas fa-boxes"></i>
+    <!-- Modal Suministro -->
+    <div id="modal-suministro"
+        class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
+            <div
+                class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="text-tesla-gold text-4xl electric-icon">
+                        <i class="fas fa-boxes"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Suministro con Materiales Certificados</h3>
                 </div>
-                <h3 class="text-2xl font-bold">Suministro con Materiales Certificados</h3>
+                <button onclick="closeModal('modal-suministro')"
+                    class="text-white hover:text-tesla-gold transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
             </div>
-            <button onclick="closeModal('modal-suministro')" class="text-white hover:text-tesla-gold transition-colors">
-                <i class="fas fa-times text-2xl"></i>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <p class="text-lg text-gray-300">
-                Gestionamos la compra y logística de materiales técnicos certificados y compatibles, desde opciones
-                estándar hasta soluciones de alta gama, con marcas de prestigio.
-            </p>
-            <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
-                <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
-                <ul class="text-gray-300 space-y-2">
-                    <li>• Materiales certificados y compatibles</li>
-                    <li>• Desde opciones económicas hasta alta gama</li>
-                    <li>• Marcas de prestigio reconocidas</li>
-                    <li>• Gestión completa de compra y logística</li>
-                </ul>
+            <div class="p-6 space-y-4">
+                <p class="text-lg text-gray-300">
+                    Gestionamos la compra y logística de materiales técnicos certificados y compatibles, desde opciones
+                    estándar hasta soluciones de alta gama, con marcas de prestigio.
+                </p>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
+                    <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>• Materiales certificados y compatibles</li>
+                        <li>• Desde opciones económicas hasta alta gama</li>
+                        <li>• Marcas de prestigio reconocidas</li>
+                        <li>• Gestión completa de compra y logística</li>
+                    </ul>
+                </div>
+                <button onclick="openChat()"
+                    class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
+                    Solicitar Evaluación Técnica
+                </button>
             </div>
-            <button onclick="openChat()"
-                class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
-                Solicitar Evaluación Técnica
-            </button>
         </div>
     </div>
-</div>
 
-<!-- Modal Ejecución -->
-<div id="modal-ejecucion"
-    class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
-        <div
-            class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="text-tesla-gold text-4xl electric-icon">
-                    <i class="fas fa-hard-hat"></i>
+    <!-- Modal Ejecución -->
+    <div id="modal-ejecucion"
+        class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
+            <div
+                class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="text-tesla-gold text-4xl electric-icon">
+                        <i class="fas fa-hard-hat"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Ejecución Técnica Controlada</h3>
                 </div>
-                <h3 class="text-2xl font-bold">Ejecución Técnica Controlada</h3>
+                <button onclick="closeModal('modal-ejecucion')"
+                    class="text-white hover:text-tesla-gold transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
             </div>
-            <button onclick="closeModal('modal-ejecucion')" class="text-white hover:text-tesla-gold transition-colors">
-                <i class="fas fa-times text-2xl"></i>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <p class="text-lg text-gray-300">
-                Realizamos la instalación con personal propio especializado, siguiendo protocolos de calidad y
-                seguridad para minimizar errores y optimizar tiempos.
-            </p>
-            <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
-                <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
-                <ul class="text-gray-300 space-y-2">
-                    <li>• Personal propio especializado</li>
-                    <li>• Protocolos de calidad y seguridad</li>
-                    <li>• Minimiza errores de ejecución</li>
-                    <li>• Optimiza tiempos de instalación</li>
-                </ul>
+            <div class="p-6 space-y-4">
+                <p class="text-lg text-gray-300">
+                    Realizamos la instalación con personal propio especializado, siguiendo protocolos de calidad y
+                    seguridad para minimizar errores y optimizar tiempos.
+                </p>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
+                    <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>• Personal propio especializado</li>
+                        <li>• Protocolos de calidad y seguridad</li>
+                        <li>• Minimiza errores de ejecución</li>
+                        <li>• Optimiza tiempos de instalación</li>
+                    </ul>
+                </div>
+                <button onclick="openChat()"
+                    class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
+                    Solicitar Evaluación Técnica
+                </button>
             </div>
-            <button onclick="openChat()"
-                class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
-                Solicitar Evaluación Técnica
-            </button>
         </div>
     </div>
-</div>
 
-<!-- Modal Integración -->
-<div id="modal-integracion"
-    class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
-        <div
-            class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="text-tesla-gold text-4xl electric-icon">
-                    <i class="fas fa-network-wired"></i>
+    <!-- Modal Integración -->
+    <div id="modal-integracion"
+        class="modal-overlay hidden fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-gray-900 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border-2 border-tesla-gold">
+            <div
+                class="sticky top-0 bg-gradient-to-r from-tesla-red to-tesla-red-dark p-6 border-b border-tesla-gold/30 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="text-tesla-gold text-4xl electric-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold">Integración Efectiva de Sistemas</h3>
                 </div>
-                <h3 class="text-2xl font-bold">Integración Efectiva de Sistemas</h3>
+                <button onclick="closeModal('modal-integracion')"
+                    class="text-white hover:text-tesla-gold transition-colors">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
             </div>
-            <button onclick="closeModal('modal-integracion')"
-                class="text-white hover:text-tesla-gold transition-colors">
-                <i class="fas fa-times text-2xl"></i>
-            </button>
-        </div>
-        <div class="p-6 space-y-4">
-            <p class="text-lg text-gray-300">
-                Coordinamos y sincronizamos todos los sistemas técnicos, probando su operación integrada y
-                entregando soluciones listas para funcionar desde el primer día.
-            </p>
-            <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
-                <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
-                <ul class="text-gray-300 space-y-2">
-                    <li>• Coordinación total de sistemas</li>
-                    <li>• Pruebas de operación integrada</li>
-                    <li>• Entrega lista para funcionar</li>
-                    <li>• Funcionamiento desde el primer día</li>
-                </ul>
+            <div class="p-6 space-y-4">
+                <p class="text-lg text-gray-300">
+                    Coordinamos y sincronizamos todos los sistemas técnicos, probando su operación integrada y
+                    entregando soluciones listas para funcionar desde el primer día.
+                </p>
+                <div class="bg-gray-800/50 p-4 rounded-lg border border-tesla-gold/30">
+                    <h4 class="text-tesla-gold font-bold mb-2">✓ Beneficios</h4>
+                    <ul class="text-gray-300 space-y-2">
+                        <li>• Coordinación total de sistemas</li>
+                        <li>• Pruebas de operación integrada</li>
+                        <li>• Entrega lista para funcionar</li>
+                        <li>• Funcionamiento desde el primer día</li>
+                    </ul>
+                </div>
+                <button onclick="openChat()"
+                    class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
+                    Solicitar Evaluación Técnica
+                </button>
             </div>
-            <button onclick="openChat()"
-                class="w-full px-6 py-3 bg-gradient-to-r from-tesla-red to-tesla-red-glow border-2 border-tesla-gold rounded-full font-bold hover:scale-105 transition-all">
-                Solicitar Evaluación Técnica
-            </button>
         </div>
     </div>
-</div>
 
-<!-- Main JS (PILI - V3) -->
-<script src="main.js?v=force3"></script>
+    <!-- Main JS (PILI - V3) -->
+    <script src="main.js?v=force3"></script>
 </body>
 
 </html>
