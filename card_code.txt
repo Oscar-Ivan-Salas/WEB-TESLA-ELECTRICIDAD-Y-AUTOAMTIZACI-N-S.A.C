@@ -1,0 +1,200 @@
+﻿// Display Visual Solution Card (V4 Feature - Rich Content + Zoom + Visible Number)
+function displaySolutionCard(data) {
+    const chatBody = document.getElementById('chatbot-messages');
+    if (!chatBody) return;
+
+    // Service Content Dictionary
+    const SERVICE_DETAILS = {
+        "Electricidad": {
+            icon: "ÔÜí",
+            title: "ELECTRICIDAD INDUSTRIAL Y COMERCIAL",
+            desc: "Garantizamos un suministro estable y seguro. Nos encargamos desde el dise├▒o de tableros hasta la certificaci├│n final.",
+            bullets: ["Ô£ö Tableros El├®ctricos", "Ô£ö Pozo a Tierra", "Ô£ö Iluminaci├│n LED"]
+        },
+        "Sistemas contra incendios": {
+            icon: "­ƒÜ¿",
+            title: "SISTEMAS CONTRA INCENDIOS",
+            desc: "Protecci├│n certificada para tu infraestructura. Cumplimos estrictamente las normativas INDECI y NFPA.",
+            bullets: ["Ô£ö Detecci├│n y Alarma", "Ô£ö Red de Agua", "Ô£ö Mantenimiento Preventivo"]
+        },
+        "Automatizaci├│n / Dom├│tica": {
+            icon: "­ƒñû",
+            title: "AUTOMATIZACI├ôN Y DOM├ôTICA",
+            desc: "Control total de tu planta o edificio. Optimiza procesos y ahorra energ├¡a con tecnolog├¡a inteligente.",
+            bullets: ["Ô£ö Control de Accesos", "Ô£ö BMS / Scada", "Ô£ö Sensores IoT"]
+        },
+        "Seguridad electr├│nica": {
+            icon: "­ƒöÉ",
+            title: "SEGURIDAD ELECTR├ôNICA",
+            desc: "Monitoreo avanzado 24/7. Integramos c├ímaras, accesos y alarmas en una sola plataforma.",
+            bullets: ["Ô£ö CCTV IP", "Ô£ö Video Porteros", "Ô£ö Central de Monitoreo"]
+        },
+        "Acabados t├®cnicos": {
+            icon: "­ƒÅù´©Å",
+            title: "ACABADOS T├ëCNICOS",
+            desc: "Detalles finales que marcan la diferencia. Drywall, pintura y estructuras met├ílicas de soporte.",
+            bullets: ["Ô£ö Estructuras Met├ílicas", "Ô£ö Drywall y Pintura", "Ô£ö Remodelaci├│n"]
+        },
+        "Soluci├│n integral TESLA": {
+            icon: "­ƒº®",
+            title: "SOLUCI├ôN LLAVE EN MANO",
+            desc: "Nos encargamos de TODO. Un solo proveedor para Electricidad, Seguridad y Automatizaci├│n.",
+            bullets: ["Ô£ö Gesti├│n de Proyecto", "Ô£ö Un solo responsable", "Ô£ö Entrega Lista para Usar"]
+        }
+    };
+
+    // Match service (rough match)
+    let info = SERVICE_DETAILS["Soluci├│n integral TESLA"]; // Default
+    if (data && data.service) {
+        // Find best match key
+        const key = Object.keys(SERVICE_DETAILS).find(k => data.service.includes(k) || k.includes(data.service));
+        if (key) info = SERVICE_DETAILS[key];
+    }
+
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'solution-card-container';
+    cardDiv.style.background = 'linear-gradient(145deg, #111827, #000000)';
+    cardDiv.style.border = '1px solid #F59E0B'; // Gold border
+    cardDiv.style.borderRadius = '16px';
+    cardDiv.style.padding = '0'; // Reset padding for header layout
+    cardDiv.style.marginTop = '20px';
+    cardDiv.style.textAlign = 'left';
+    cardDiv.style.boxShadow = '0 15px 40px rgba(0,0,0,0.6)';
+    cardDiv.style.position = 'relative';
+    cardDiv.style.overflow = 'hidden';
+
+    // Header Image/Gradient with ZOOM ICON
+    const header = document.createElement('div');
+    header.style.background = 'linear-gradient(135deg, #991B1B, #7f1d1d)'; // Tesla Red Dark
+    header.style.padding = '20px';
+    header.style.textAlign = 'center';
+    header.style.position = 'relative'; // For absolute positioning
+    header.innerHTML = `
+        <div id="btn-zoom-card" style="position: absolute; top: 10px; right: 10px; cursor: pointer; color: white; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 50%; font-size: 1.2rem;" title="Ampliar Ficha">
+            ­ƒöì
+        </div>
+        <img src="assets/logo.png" alt="TESLA" style="height: 45px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
+        <h3 style="color: #fff; margin-top: 10px; font-weight: 800; font-size: 1rem; letter-spacing: 1px; text-transform: uppercase;">FICHA DE ATENCI├ôN T├ëCNICA</h3>
+    `;
+    cardDiv.appendChild(header);
+
+    // Context Data (Ficha Look)
+    const projectType = data && data.projectType ? data.projectType : 'No especificado';
+    const stage = data && data.stage ? data.stage : 'No especificado';
+
+    // Body
+    const body = document.createElement('div');
+    body.style.padding = '20px';
+    body.innerHTML = `
+        <div style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; margin-bottom: 20px; border-left: 4px solid #F59E0B;">
+            <p style="margin: 0 0 5px 0; font-size: 0.8rem; color: #9ca3af; text-transform: uppercase;">PROYECTO / ETAPA</p>
+            <p style="margin: 0; font-size: 0.95rem; color: #fff; font-weight: 600;">${projectType}</p>
+            <p style="margin: 0; font-size: 0.9rem; color: #d1d5db;">En fase: ${stage}</p>
+        </div>
+
+        <p style="color: #F59E0B; font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">${info.title}</p>
+        <p style="color: #e2e8f0; font-size: 0.9rem; line-height: 1.5; margin-bottom: 15px;">${info.desc}</p>
+        
+        <div style="margin-bottom: 20px;">
+            ${info.bullets.map(b => `<p style="color: #cbd5e0; font-size: 0.85rem; margin: 4px 0;">${b}</p>`).join('')}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 12px;">
+            <a href="https://tesla-landing-self.vercel.app" target="_blank" style="text-decoration: none; display: flex;">
+                <button class="option-button" style="width:100%; font-size: 0.9rem; background: #374151; border-color: #4B5563; display: flex; align-items: center; justify-content: center;">
+                    ­ƒîÉ Web
+                </button>
+            </a>
+             <button class="option-button" id="btn-whatsapp-card" style="width:100%; font-size: 0.9rem; background: #25D366; border: none; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 8px; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 1.2rem;">­ƒÆ¼</span>
+                    <span style="font-weight: 800; text-transform: uppercase;">WhatsApp</span>
+                </div>
+                <span style="font-size: 1.1rem; font-weight: 900; margin-top: 2px;">906 315 961</span>
+            </button>
+        </div>
+        
+        <button class="option-button" id="btn-download-card" style="width:100%; font-size: 0.9rem; border: 1px solid #F59E0B; background: rgba(245, 158, 11, 0.1);">
+            ­ƒô© Guardar Ficha (Imagen)
+        </button>
+    `;
+
+    cardDiv.appendChild(body);
+
+    // -- EVENTS -- 
+
+    // Helper for capture (shared)
+    function captureDOMElement(element, button) {
+        if (typeof html2canvas === 'undefined') {
+            alert('Librer├¡a de imagen no cargada.'); return;
+        }
+
+        if (button) {
+            button.textContent = 'Generando...';
+            button.disabled = true;
+        }
+
+        // Hide overlay controls if zoom
+        const zoomIcon = element.querySelector('#btn-zoom-card');
+        if (zoomIcon) zoomIcon.style.display = 'none';
+
+        html2canvas(element, {
+            scale: 3,
+            backgroundColor: null,
+            useCORS: true,
+            logging: false,
+            allowTaint: true
+        }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `Ficha_Tesla_${info.title.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+
+            if (button) {
+                button.textContent = 'Ô£à Guardada';
+                button.disabled = false;
+                setTimeout(() => button.textContent = '­ƒô© Guardar Ficha (Imagen)', 2500);
+            }
+            if (zoomIcon) zoomIcon.style.display = 'block';
+
+        }).catch(err => {
+            console.error(err);
+            if (button) {
+                button.textContent = 'ÔØî Error';
+                button.disabled = false;
+            }
+            if (zoomIcon) zoomIcon.style.display = 'block';
+        });
+    }
+
+
+    // Zoom Logic (Lightbox Overlay)
+    const zoomBtn = header.querySelector('#btn-zoom-card');
+    zoomBtn.onclick = () => {
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100vh';
+        overlay.style.background = 'rgba(0,0,0,0.85)';
+        overlay.style.zIndex = '9999';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.padding = '20px';
+        overlay.style.backdropFilter = 'blur(5px)';
+
+        // Explicit Close Button
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = 'Ô£ò Cerrar';
+        closeBtn.className = 'option-button';
+        closeBtn.style.position = 'absolute';
+        closeBtn.style.top = '20px';
+        closeBtn.style.right = '20px';
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.1)';
+        closeBtn.style.maxWidth = '100px';
+        closeBtn.style.fontSize = '0.8rem';
+        closeBtn.onclick = () => overlay.remove();
+        overlay.appendChild(closeBtn);
+

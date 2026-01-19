@@ -1,6 +1,3 @@
-// PILI V4 - Serverless Function (Vercel)
-// Handles chat interactions with session management
-
 const STATES = {
     START: 'START',
     ASK_PROJECT_TYPE: 'ASK_PROJECT_TYPE',
@@ -10,33 +7,33 @@ const STATES = {
     ASK_PHONE: 'ASK_PHONE',
     ASK_LOCATION: 'ASK_LOCATION',
     ASK_APPOINTMENT: 'ASK_APPOINTMENT',
-    CONFIRM: 'CONFIRM',
     END: 'END'
 };
 
 const OPTIONS = {
     PROJECT_TYPE: [
         "🏗️ Obra en ejecución",
-        "🏢 Proyecto nuevo",
-        "🔧 Mantenimiento / Remodelación"
-    ],
-    STAGE: [
-        "Inicio / Planos",
-        "En ejecución / Casco",
-        "Etapa final / Cierre"
-    ],
-    NEED: [
-        "⚡ Electricidad",
-        "🚨 Sistemas contra incendios",
         "🤖 Automatización / Domótica",
-        "🔐 Seguridad electrónica",
+        "🚨 Sistemas contra incendios",
+        "🔧 Mantenimiento / Remodelación",
         "🏗️ Acabados técnicos",
         "🧩 Solución integral TESLA"
+    ],
+    STAGE: [
+        "💡 Idea / Perfil",
+        "🚧 En ejecución",
+        "🔧 Mantenimiento",
+        "✅ Etapa final / Cierre"
+    ],
+    NEED: [
+        "📋 Evaluar solución técnica",
+        "⚡ Ejecutar instalación",
+        "� Resolver fallas",
+        "🔑 Solución completa llave en mano"
     ]
 };
 
 function generateWhatsAppLink(session) {
-    // Direct emoji literals for WhatsApp compatibility
     const text = `🔔 *SOLICITUD PILi V4* 🔔
     
 👤 *Cliente:* ${session.nombre || '-'}
@@ -55,8 +52,8 @@ Link autogenerado por PILi Chat.`;
 }
 
 function isValidOption(input, options) {
-    if (!options || !Array.isArray(options)) return true;
-    const normalizedInput = input.trim().toLowerCase();
+    if (!input || !options) return false;
+    const normalizedInput = input.toString().toLowerCase().trim();
     return options.some(opt => opt.toLowerCase().includes(normalizedInput) || normalizedInput.includes(opt.toLowerCase()));
 }
 
@@ -67,7 +64,7 @@ function processMessage(session, message) {
     switch (state) {
         case STATES.START:
             return {
-                message: "Hola, soy PILI, asistente técnica de TESLA Electricidad y Automatización.\nTe ayudo a evaluar tu proyecto y orientarte con la mejor solución técnica, sin que tengas que coordinar múltiples proveedores.\n\nPara comenzar, dime en qué área necesitas apoyo:",
+                message: "Hola, soy PILI, asistente técnica de TESLA Electricidad y Automatización.\\nTe ayudo a evaluar tu proyecto y orientarte con la mejor solución técnica, sin que tengas que coordinar múltiples proveedores.\\n\\nPara comenzar, dime en qué área necesitas apoyo:",
                 nextState: STATES.ASK_PROJECT_TYPE,
                 options: OPTIONS.PROJECT_TYPE
             };
@@ -82,24 +79,24 @@ function processMessage(session, message) {
             }
             session.tipo_proyecto = msg;
 
-            // Mensaje de especialista según servicio
+            // Mensaje de especialista según servicio (DOCUMENTO FINAL)
             let specialistMessage = "";
             if (msg.includes("Obra en ejecución") || msg.includes("eléctrica")) {
-                specialistMessage = "Entendido. En proyectos eléctricos, los problemas suelen aparecer al final: protecciones mal calculadas, tableros sin criterio o instalaciones que no quedaron operativas.\n\n";
+                specialistMessage = "Perfecto. En TESLA abordamos la electricidad como un sistema completo, desde puesta a tierra y tableros hasta tomacorrientes, iluminación y certificación final.\\nNo instalamos por partes sueltas, integramos todo correctamente para evitar fallas futuras.\\n\\n";
             } else if (msg.includes("incendios")) {
-                specialistMessage = "Entendido. En sistemas contra incendios, el mayor riesgo es instalar sin criterio normativo y descubrir observaciones cuando la obra ya está avanzada.\n\n";
+                specialistMessage = "Perfecto. En TESLA gestionamos detección, alarma y cumplimiento normativo para proteger vidas y activos.\\nNo solo instalamos equipos, aseguramos que el sistema cumpla con todas las normativas vigentes.\\n\\n";
             } else if (msg.includes("Automatización") || msg.includes("Domótica")) {
-                specialistMessage = "Entendido. En automatización, muchas veces se instalan equipos que luego no se integran ni se aprovechan correctamente.\n\n";
+                specialistMessage = "Perfecto. En TESLA implementamos control inteligente de iluminación, accesos y energía para viviendas y edificios.\\nNo solo conectamos dispositivos, creamos sistemas que realmente funcionen de forma integrada.\\n\\n";
             } else if (msg.includes("Mantenimiento") || msg.includes("Remodelación")) {
-                specialistMessage = "Entendido. En mantenimiento técnico, el problema común es corregir síntomas sin resolver la causa real de la falla.\n\n";
+                specialistMessage = "Perfecto. En TESLA no solo corregimos fallas, identificamos la causa raíz y solucionamos el problema de forma definitiva.\\nEvitamos que los mismos problemas se repitan.\\n\\n";
             } else if (msg.includes("Acabados")) {
-                specialistMessage = "Entendido. En acabados, los mayores retrabajos ocurren cuando no se coordinan correctamente las instalaciones técnicas.\n\n";
+                specialistMessage = "Perfecto. En TESLA coordinamos amoblados y acabados técnicos alineados al diseño del proyecto.\\nIntegramos la parte técnica con la estética para un resultado profesional.\\n\\n";
             } else if (msg.includes("integral") || msg.includes("TESLA")) {
-                specialistMessage = "Entendido. Esta solución es ideal cuando no se quiere coordinar múltiples proveedores ni asumir riesgos técnicos.\n\n";
+                specialistMessage = "Perfecto. Con la solución integral TESLA obtienes un solo contrato, un solo responsable y todo resuelto.\\nNosotros coordinamos todo para que tú no tengas que hacerlo.\\n\\n";
             }
 
             return {
-                message: specialistMessage + "¿En qué etapa se encuentra actualmente?",
+                message: specialistMessage + "¿En qué etapa se encuentra tu proyecto?",
                 nextState: STATES.ASK_STAGE,
                 options: OPTIONS.STAGE
             };
@@ -118,17 +115,17 @@ function processMessage(session, message) {
             let technicalContext = "";
             const projectType = session.tipo_proyecto || "";
             if (projectType.includes("eléctrica") || projectType.includes("Obra")) {
-                technicalContext = "Perfecto. En estos casos revisamos carga, protecciones, puesta a tierra y el estado real de la instalación para evitar reprocesos.\n\n";
+                technicalContext = "Perfecto. En estos casos revisamos carga, protecciones, puesta a tierra y el estado real de la instalación para evitar reprocesos.\\n\\n";
             } else if (projectType.includes("incendios")) {
-                technicalContext = "Perfecto. En estos casos revisamos normativa INDECI, diseño de red y certificación para evitar observaciones.\n\n";
+                technicalContext = "Perfecto. En estos casos revisamos normativa INDECI, diseño de red y certificación para evitar observaciones.\\n\\n";
             } else if (projectType.includes("Automatización") || projectType.includes("Domótica")) {
-                technicalContext = "Perfecto. En estos casos revisamos integración de sistemas, protocolos y configuración para garantizar aprovechamiento completo.\n\n";
+                technicalContext = "Perfecto. En estos casos revisamos integración de sistemas, protocolos y configuración para garantizar aprovechamiento completo.\\n\\n";
             } else if (projectType.includes("Mantenimiento") || projectType.includes("Remodelación")) {
-                technicalContext = "Perfecto. En estos casos realizamos diagnóstico de causa raíz y plan preventivo para soluciones duraderas.\n\n";
+                technicalContext = "Perfecto. En estos casos realizamos diagnóstico de causa raíz y plan preventivo para soluciones duraderas.\\n\\n";
             } else if (projectType.includes("Acabados")) {
-                technicalContext = "Perfecto. En estos casos coordinamos instalaciones técnicas y acabado final para evitar retrabajos.\n\n";
+                technicalContext = "Perfecto. En estos casos coordinamos instalaciones técnicas y acabado final para evitar retrabajos.\\n\\n";
             } else if (projectType.includes("integral") || projectType.includes("TESLA")) {
-                technicalContext = "Perfecto. En estos casos gestionamos el proyecto completo con un solo responsable técnico.\n\n";
+                technicalContext = "Perfecto. En estos casos gestionamos el proyecto completo con un solo responsable técnico.\\n\\n";
             }
 
             return {
@@ -147,7 +144,7 @@ function processMessage(session, message) {
             }
             session.necesidad = msg;
             return {
-                message: "Con esta información podemos orientarte correctamente y evitar reprocesos o sobrecostos.\nPara continuar, necesito registrar tus datos y que un especialista continúe el proceso.\n\n¿Cuál es tu nombre completo?",
+                message: "Con esta información podemos orientarte correctamente y evitar reprocesos o sobrecostos.\\nPara continuar, necesito registrar tus datos y que un especialista continúe el proceso.\\n\\n¿Cuál es tu nombre completo?",
                 nextState: STATES.ASK_NAME
             };
 
@@ -160,7 +157,7 @@ function processMessage(session, message) {
             }
             session.nombre = msg;
             return {
-                message: `Gracias ${msg}.\n\n¿Cuál es tu número de *WhatsApp*? (para confirmación de evaluación técnica)`,
+                message: `Gracias ${msg}.\\n\\n¿Cuál es tu número de *WhatsApp*? (para confirmación de evaluación técnica)`,
                 nextState: STATES.ASK_PHONE
             };
 
@@ -173,7 +170,7 @@ function processMessage(session, message) {
             }
             session.telefono = msg;
             return {
-                message: "Perfecto.\n\n¿En qué *ciudad o región* se ubica el proyecto? (ejemplo: Huancayo, Lima, Junín)",
+                message: "Perfecto.\\n\\n¿En qué *ciudad o región* se ubica el proyecto? (ejemplo: Huancayo, Lima, Junín)",
                 nextState: STATES.ASK_LOCATION
             };
 
@@ -195,7 +192,7 @@ function processMessage(session, message) {
             session.cita = msg;
             const whatsappLink = generateWhatsAppLink(session);
             return {
-                message: `Gracias. Un especialista de TESLA continuará contigo para definir la mejor solución.\n\n*Resumen de tu solicitud:*\n• Proyecto: ${session.tipo_proyecto}\n• Etapa: ${session.etapa}\n• Necesidad: ${session.necesidad}\n• Ubicación: ${session.ubicacion}\n• Contacto: ${session.telefono}\n• Cita preferida: ${session.cita}\n\nEstás en buenas manos.`,
+                message: `Gracias. Un especialista de TESLA continuará contigo para definir la mejor solución.\\n\\n*Resumen de tu solicitud:*\\n• Proyecto: ${session.tipo_proyecto}\\n• Etapa: ${session.etapa}\\n• Necesidad: ${session.necesidad}\\n• Ubicación: ${session.ubicacion}\\n• Contacto: ${session.telefono}\\n• Cita preferida: ${session.cita}\\n\\nEstás en buenas manos.`,
                 nextState: STATES.END,
                 whatsappLink: whatsappLink,
                 cardData: {
@@ -213,24 +210,4 @@ function processMessage(session, message) {
     }
 }
 
-const sessions = new Map();
-
-export default async function handler(req, res) {
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
-
-    const { message, sessionId } = req.body;
-
-    if (!sessionId) {
-        return res.status(400).json({ error: 'Session ID required' });
-    }
-
-    let session = sessions.get(sessionId) || { estado: STATES.START };
-    const response = processMessage(session, message);
-
-    session.estado = response.nextState;
-    sessions.set(sessionId, session);
-
-    return res.status(200).json(response);
-}
+module.exports = { processMessage, STATES, OPTIONS };
