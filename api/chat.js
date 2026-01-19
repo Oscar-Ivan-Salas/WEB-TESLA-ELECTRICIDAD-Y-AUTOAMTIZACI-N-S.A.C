@@ -149,12 +149,39 @@ function processMessage(session, message) {
             };
 
         case STATES.ASK_NAME:
+            // Validación de nombre
             if (!msg || msg.length < 3) {
                 return {
                     message: "Por favor, ingresa tu nombre completo.",
                     nextState: STATES.ASK_NAME
                 };
             }
+
+            // Detectar si es solo números
+            if (/^\d+$/.test(msg)) {
+                return {
+                    message: "Por favor, ingresa tu nombre completo (no solo números).",
+                    nextState: STATES.ASK_NAME
+                };
+            }
+
+            // Detectar si tiene al menos 2 palabras (nombre y apellido)
+            const palabras = msg.trim().split(/\s+/);
+            if (palabras.length < 2) {
+                return {
+                    message: "Por favor, ingresa tu nombre completo (nombre y apellido).",
+                    nextState: STATES.ASK_NAME
+                };
+            }
+
+            // Detectar caracteres inválidos o gibberish
+            if (!/^[a-záéíóúñA-ZÁÉÍÓÚÑ\s]+$/.test(msg)) {
+                return {
+                    message: "Por favor, ingresa un nombre válido (solo letras).",
+                    nextState: STATES.ASK_NAME
+                };
+            }
+
             session.nombre = msg;
             return {
                 message: `Gracias ${msg}.\\n\\n¿Cuál es tu número de *WhatsApp*? (para confirmación de evaluación técnica)`,
