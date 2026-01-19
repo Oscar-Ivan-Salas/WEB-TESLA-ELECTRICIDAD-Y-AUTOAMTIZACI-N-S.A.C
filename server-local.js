@@ -205,13 +205,46 @@ function processMessage(session, message) {
             };
 
         case STATES.ASK_PHONE:
+            // Validación de teléfono peruano
             if (!msg || msg.length < 9) {
                 return {
                     message: "Por favor, ingresa un número de WhatsApp válido.",
                     nextState: STATES.ASK_PHONE
                 };
             }
-            session.telefono = msg;
+
+            // Limpiar el número (quitar espacios, guiones, paréntesis)
+            let cleanPhone = msg.replace(/[\s\-\(\)]/g, '');
+
+            // Quitar prefijo +51 o 51 si lo ingresó
+            cleanPhone = cleanPhone.replace(/^\+?51/, '');
+
+            // Validar que sea solo números
+            if (!/^\d+$/.test(cleanPhone)) {
+                return {
+                    message: "Por favor, ingresa solo números (ejemplo: 987654321).",
+                    nextState: STATES.ASK_PHONE
+                };
+            }
+
+            // Validar longitud (9 dígitos para celular peruano)
+            if (cleanPhone.length !== 9) {
+                return {
+                    message: "Por favor, ingresa un número válido de 9 dígitos (ejemplo: 987654321).",
+                    nextState: STATES.ASK_PHONE
+                };
+            }
+
+            // Validar que empiece con 9 (celulares en Perú)
+            if (!cleanPhone.startsWith('9')) {
+                return {
+                    message: "Por favor, ingresa un número de celular válido (debe empezar con 9).",
+                    nextState: STATES.ASK_PHONE
+                };
+            }
+
+            // Guardar con prefijo +51
+            session.telefono = `+51${cleanPhone}`;
             return {
                 message: "Perfecto.\\n\\n¿En qué *ciudad o región* se ubica el proyecto? (ejemplo: Huancayo, Lima, Junín)",
                 nextState: STATES.ASK_LOCATION
