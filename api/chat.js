@@ -251,6 +251,40 @@ function processMessage(session, message) {
         case STATES.ASK_APPOINTMENT:
             session.cita = msg;
             const whatsappLink = generateWhatsAppLink(session);
+
+            // SAVE LEAD TO SUPABASE (Background)
+            // No await to avoid blocking response
+            // We use standard fetch if available, or construct a request if internal
+            // In Vercel serverless we can just fire and forget, but to be safe we use a try-catch block wrapping a fetch
+            // But since we are inside the same API structure, we can call the handler? 
+            // Better to keep it decoupled via HTTP or direct save if we imported the client.
+            // Let's use direct import of save logic to keep it simple and robust, OR use fetch.
+            // Given Vercel restrictions on self-calling URLs during execution sometimes, 
+            // and that we are already in node, let's keep it simple: 
+            // We'll add a helper function `saveLeadInBackground` at the top or bottom of this file that imports the save logic or client.
+            // Actually, we can just fetch the localhost URL if dev or relative URL.
+            // BUT simpler: let's just create a small async function here to save.
+
+            (async () => {
+                try {
+                    const saveLead = require('./save-lead');
+                    // Mock request/response objects for the internal handler
+                    const req = {
+                        method: 'POST',
+                        body: { session }
+                    };
+                    const res = {
+                        setHeader: () => { },
+                        status: (code) => ({ json: (data) => { } }),
+                        json: (data) => { }
+                    };
+                    await saveLead(req, res);
+                    console.log('Lead saved successfully via internal call');
+                } catch (e) {
+                    console.error('Error saving lead background:', e);
+                }
+            })();
+
             return {
                 message: `Gracias. Un especialista de TESLA continuará contigo para definir la mejor solución.\\n\\n*Resumen de tu solicitud:*\\n• Proyecto: ${session.tipo_proyecto}\\n• Etapa: ${session.etapa}\\n• Necesidad: ${session.necesidad}\\n• Ubicación: ${session.ubicacion}\\n• Contacto: ${session.telefono}\\n• Cita preferida: ${session.cita}\\n\\nEstás en buenas manos.`,
                 nextState: STATES.END,
