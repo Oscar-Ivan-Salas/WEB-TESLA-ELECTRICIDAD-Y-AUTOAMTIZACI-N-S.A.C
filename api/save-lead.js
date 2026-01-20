@@ -21,7 +21,17 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { session } = req.body;
+        let body = req.body;
+        // Ensure body is an object (Vercel sometimes passes string if content-type is missing)
+        if (typeof body === 'string') {
+            try {
+                body = JSON.parse(body);
+            } catch (e) {
+                console.error('Error parsing body:', e);
+            }
+        }
+
+        const session = body?.session;
 
         if (!session || !session.telefono) {
             return res.status(400).json({ error: 'Datos incompletos. Se requiere al menos teléfono.' });

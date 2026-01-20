@@ -265,25 +265,7 @@ function processMessage(session, message) {
             // Actually, we can just fetch the localhost URL if dev or relative URL.
             // BUT simpler: let's just create a small async function here to save.
 
-            (async () => {
-                try {
-                    const saveLead = require('./save-lead');
-                    // Mock request/response objects for the internal handler
-                    const req = {
-                        method: 'POST',
-                        body: { session }
-                    };
-                    const res = {
-                        setHeader: () => { },
-                        status: (code) => ({ json: (data) => { } }),
-                        json: (data) => { }
-                    };
-                    await saveLead(req, res);
-                    console.log('Lead saved successfully via internal call');
-                } catch (e) {
-                    console.error('Error saving lead background:', e);
-                }
-            })();
+            // (Background save removed - moved to sync handler below)
 
             return {
                 message: `Gracias. Un especialista de TESLA continuará contigo para definir la mejor solución.\\n\\n*Resumen de tu solicitud:*\\n• Proyecto: ${session.tipo_proyecto}\\n• Etapa: ${session.etapa}\\n• Necesidad: ${session.necesidad}\\n• Ubicación: ${session.ubicacion}\\n• Contacto: ${session.telefono}\\n• Cita preferida: ${session.cita}\\n\\nEstás en buenas manos.`,
@@ -334,6 +316,24 @@ module.exports = async (req, res) => {
 
         session.estado = response.nextState;
         sessions.set(sessionId, session);
+
+        // SYNC SAVE: If conversation ended, save to Supabase before returning response
+        if (response.nextState === STATES.END) {
+            console.log('>>> [PILI] Conversation ended. Saving lead synchronously...');
+            try {
+                const saveLead = require('./save-lead');
+                const reqSave = { body: { session }, method: 'POST' };
+                const resSave = {
+                    setHeader: () => { },
+                    status: (code) => ({ json: (data) => console.log(`[PILI] Save result: ${code}`, data) }),
+                    json: (data) => console.log(`[PILI] Save data:`, data)
+                };
+                await saveLead(reqSave, resSave);
+                console.log('>>> [PILI] Lead saved.');
+            } catch (err) {
+                console.error('>>> [PILI] Error saving lead:', err);
+            }
+        }
 
         return res.status(200).json(response);
     } catch (error) {
