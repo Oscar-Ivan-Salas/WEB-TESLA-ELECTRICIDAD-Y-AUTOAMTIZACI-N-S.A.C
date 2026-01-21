@@ -1,6 +1,6 @@
 {
     "name": "tesla-landing",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "TESLA Landing Page with PILI Chatbot",
     "scripts": {
         "build:css": "tailwindcss -i ./input.css -o ./styles-tailwind.css --minify",
@@ -9,6 +9,7 @@
         "start": "node server-local.js"
     },
     "dependencies": {
+        "@supabase/supabase-js": "^2.90.1",
         "@vercel/kv": "^3.0.0",
         "cors": "^2.8.5",
         "express": "^4.18.2"
