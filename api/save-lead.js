@@ -65,6 +65,7 @@ module.exports = async (req, res) => {
 
     } catch (err) {
         console.error('Error interno saving lead:', err);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        // RETURNING 200 TO SEE THE ERROR IN STRESS TEST RESPONSE
+        return res.status(200).json({ error: 'Internal Server Error (Debug)', details: err.message, stack: err.stack });
     }
 };
