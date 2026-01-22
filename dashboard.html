@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Profesional - TESLA</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --tesla-red: #DC2626;
+            --tesla-gold: #FFB800;
+            --tesla-dark: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+        }
+
+        .stat-card-red {
+            background: linear-gradient(135deg, var(--tesla-red) 0%, #b91c1c 100%);
+        }
+
+        .stat-card-gold {
+            background: linear-gradient(135deg, var(--tesla-gold) 0%, #f59e0b 100%);
+        }
+
+        .stat-card-dark {
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        }
+
+        .stat-card-green {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .stat-card-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        table.dataTable {
+            background: rgba(26, 26, 26, 0.8);
+            color: white;
+        }
+
+        table.dataTable thead th {
+            background: linear-gradient(135deg, var(--tesla-red) 0%, #b91c1c 100%);
+            color: var(--tesla-gold);
+            font-weight: 700;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: rgba(220, 38, 38, 0.1);
+        }
+
+        .status-select,
+        .chart-selector,
+        .date-filter {
+            background: #1a1a1a;
+            color: var(--tesla-gold);
+            border: 2px solid var(--tesla-gold);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .alert-box {
+            background: rgba(220, 38, 38, 0.1);
+            border-left: 4px solid var(--tesla-red);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+        }
+
+        .activity-item {
+            background: rgba(255, 184, 0, 0.05);
+            border-left: 3px solid var(--tesla-gold);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.375rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            margin: 10% auto;
+            padding: 2rem;
+            border: 2px solid var(--tesla-gold);
+            border-radius: 1rem;
+            width: 80%;
+            max-width: 500px;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b-4 border-red-600 shadow-2xl">
+        <div class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="assets/logo.png" alt="TESLA Logo" class="h-16 w-16">
+                    <div>
+                        <h1 class="text-3xl font-bold text-white">TESLA <span class="text-yellow-500">Dashboard
+                                Pro</span></h1>
+                        <p class="text-yellow-500 text-sm font-semibold">Sistema Avanzado de Gestión de Leads</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select id="dateFilter" class="date-filter" onchange="applyDateFilter()">
+                        <option value="today">Hoy</option>
+                        <option value="week" selected>Esta Semana</option>
+                        <option value="month">Este Mes</option>
+                        <option value="quarter">Últimos 3 Meses</option>
+                        <option value="all">Todo el Tiempo</option>
+                    </select>
+                    <button onclick="refreshData()"
+                        class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
+                        🔄 Actualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="container mx-auto px-6 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-6 gap-6 mb-8">
+            <div class="stat-card-red text-white rounded-xl p-6 shadow-2xl border-2 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-300 text-sm font-bold">Total Leads</p>
+                        <p class="text-5xl font-bold mt-2" id="totalLeads">0</p>
+                    </div>
+                    <div class="text-6xl opacity-75">📊</div>
+                </div>
+            </div>
+
+            <div class="stat-card-gold text-gray-900 rounded-xl p-6 shadow-2xl border-2 border-red-600">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-red-700 text-sm font-bold">Nuevos</p>
+                        <p class="text-5xl font-bold mt-2" id="todayLeads">0</p>
+                    </div>
+                    <div class="text-6xl opacity-75">🆕</div>
+                </div>
+            </div>
+
+            <div class="stat-card-green text-white rounded-xl p-6 shadow-2xl border-2 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-100 text-sm font-bold">Tasa Conversión</p>
+                        <p class="text-5xl font-bold mt-2" id="conversionRate">0%</p>
+                    </div>
+                    <div class="text-6xl opacity-75">💰</div>
+                </div>
+            </div>
+
+            <div class="stat-card-purple text-white rounded-xl p-6 shadow-2xl border-2 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-100 text-sm font-bold">Velocidad</p>
+                        <p class="text-4xl font-bold mt-2" id="pipelineVelocity">0d</p>
+                    </div>
+                    <div class="text-6xl opacity-75">⏱️</div>
+                </div>
+            </div>
+
+            <div class="stat-card-dark text-white rounded-xl p-6 shadow-2xl border-2 border-yellow-500">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-yellow-400 text-sm font-bold">En Proceso</p>
+                        <p class="text-5xl font-bold mt-2" id="activeLeads">0</p>
+                    </div>
+                    <div class="text-6xl opacity-75">🔄</div>
+                </div>
+            </div>
+
+            <div
+                class="bg-gradient-to-br from-yellow-500 to-yellow-600 text-gray-900 rounded-xl p-6 shadow-2xl border-2 border-red-600">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-red-700 text-sm font-bold">Servicio Top</p>
+                        <p class="text-lg font-bold mt-2" id="topService">-</p>
+                    </div>
+                    <div class="text-6xl opacity-75">🏆</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alerts Section -->
+        <div id="alertsSection" class="mb-8"></div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Sales Funnel -->
+            <div class="lg:col-span-2 bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+                <h3 class="text-2xl font-bold text-yellow-500 mb-4">🎯 Embudo de Ventas</h3>
+                <canvas id="funnelChart"></canvas>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+                <h3 class="text-xl font-bold text-yellow-500 mb-4">📋 Actividad Reciente</h3>
+                <div id="activityFeed" class="max-h-96 overflow-y-auto"></div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-yellow-500">📊 Distribución</h3>
+                    <select id="chart1Selector" class="chart-selector" onchange="updateChart1()">
+                        <option value="servicios">Por Servicio</option>
+                        <option value="ubicaciones">Por Ubicación</option>
+                        <option value="etapas">Por Etapa</option>
+                        <option value="estados">Por Estado</option>
+                    </select>
+                </div>
+                <canvas id="chart1"></canvas>
+            </div>
+
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-yellow-500">📊 Top 5</h3>
+                    <select id="chart2Selector" class="chart-selector" onchange="updateChart2()">
+                        <option value="servicios">Servicios</option>
+                        <option value="ubicaciones">Ubicaciones</option>
+                        <option value="etapas">Etapas</option>
+                    </select>
+                </div>
+                <canvas id="chart2"></canvas>
+            </div>
+
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+                <h3 class="text-xl font-bold text-yellow-500 mb-4">📈 Tendencia</h3>
+                <canvas id="trendChart"></canvas>
+            </div>
+        </div>
+
+        <!-- More Charts Row -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-yellow-500">🎯 Comparación</h3>
+                    <select id="chart3Selector" class="chart-selector" onchange="updateChart3()">
+                        <option value="etapas">Por Etapa</option>
+                        <option value="servicios">Por Servicio</option>
+                        <option value="estados">Por Estado</option>
+                    </select>
+                </div>
+                <canvas id="chart3"></canvas>
+            </div>
+
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+                <h3 class="text-xl font-bold text-yellow-500 mb-4">📊 Volumen Acumulado</h3>
+                <canvas id="volumeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-yellow-500">📋 Lista de Leads</h2>
+                <button onclick="exportToCSV()"
+                    class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
+                    📥 Exportar CSV
+                </button>
+            </div>
+
+            <table id="leadsTable" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Servicio</th>
+                        <th>Etapa</th>
+                        <th>Ubicación</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="leadsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para Notas -->
+    <div id="notesModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold text-yellow-500 mb-4">📝 Agregar Nota</h2>
+            <textarea id="noteText" class="w-full p-3 bg-gray-800 text-white border-2 border-yellow-500 rounded-lg"
+                rows="4" placeholder="Escribe tu nota aquí..."></textarea>
+            <div class="flex justify-end space-x-4 mt-4">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-700 text-white rounded-lg">Cancelar</button>
+                <button onclick="saveNote()"
+                    class="px-4 py-2 bg-red-600 text-yellow-400 font-bold rounded-lg border-2 border-yellow-500">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://bgwovsuyjajxrmkvcggn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_K-BlssTGWsG5uzY9bAnwfg_M7Zwheap';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let allLeadsData = [];
+        let filteredLeadsData = [];
+        let dataTable;
+        let currentLeadId = null;
+        let charts = {};
+
+        async function loadLeads() {
+            console.log('🔄 Cargando leads...');
+            try {
+                const { data, error } = await supabaseClient
+                    .from('leads')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                console.log(`✅ ${data.length} leads cargados`);
+                allLeadsData = data;
+                applyDateFilter();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al cargar datos: ' + error.message);
+            }
+        }
+
+        function applyDateFilter() {
+            const filter = document.getElementById('dateFilter').value;
+            const now = new Date();
+            let startDate;
+
+            switch (filter) {
+                case 'today':
+                    startDate = new Date(now.setHours(0, 0, 0, 0));
+                    break;
+                case 'week':
+                    startDate = new Date(now.setDate(now.getDate() - 7));
+                    break;
+                case 'month':
+                    startDate = new Date(now.setMonth(now.getMonth() - 1));
+                    break;
+                case 'quarter':
+                    startDate = new Date(now.setMonth(now.getMonth() - 3));
+                    break;
+                default:
+                    startDate = new Date(0);
+            }
+
+            filteredLeadsData = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+            updateDashboard();
+        }
+
+        function updateDashboard() {
+            updateStats(filteredLeadsData);
+            updateAlerts(filteredLeadsData);
+            updateActivityFeed(filteredLeadsData);
+            initializeCharts();
+            updateTable(filteredLeadsData);
+        }
+
+        function updateStats(data) {
+            const total = data.length;
+            const newLeads = data.filter(l => !l.estado || l.estado === 'Nuevo').length;
+            const active = data.filter(l => l.estado === 'Contactado' || l.estado === 'Calificado').length;
+            const closed = data.filter(l => l.estado === 'Cerrado').length;
+            const conversionRate = total > 0 ? ((closed / total) * 100).toFixed(1) : 0;
+
+            // Pipeline Velocity
+            const closedLeads = data.filter(l => l.estado === 'Cerrado');
+            let avgDays = 0;
+            if (closedLeads.length > 0) {
+                const totalDays = closedLeads.reduce((sum, l) => {
+                    const created = new Date(l.created_at);
+                    const now = new Date();
+                    return sum + Math.floor((now - created) / (1000 * 60 * 60 * 24));
+                }, 0);
+                avgDays = Math.floor(totalDays / closedLeads.length);
+            }
+
+            const serviceCounts = {};
+            data.forEach(l => {
+                serviceCounts[l.servicio_interes] = (serviceCounts[l.servicio_interes] || 0) + 1;
+            });
+            const topService = Object.entries(serviceCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '-';
+
+            document.getElementById('totalLeads').textContent = total;
+            document.getElementById('todayLeads').textContent = newLeads;
+            document.getElementById('activeLeads').textContent = active;
+            document.getElementById('conversionRate').textContent = conversionRate + '%';
+            document.getElementById('pipelineVelocity').textContent = avgDays + 'd';
+            document.getElementById('topService').textContent = topService.substring(0, 25);
+        }
+
+        function updateAlerts(data) {
+            const alerts = [];
+            const now = new Date();
+
+            // Leads sin contactar hace más de 48h
+            const uncontacted = data.filter(l => {
+                if (l.estado !== 'Nuevo') return false;
+                const created = new Date(l.created_at);
+                const hoursDiff = (now - created) / (1000 * 60 * 60);
+                return hoursDiff > 48;
+            });
+
+            if (uncontacted.length > 0) {
+                alerts.push(`🔴 <strong>${uncontacted.length} leads</strong> sin contactar hace más de 48 horas`);
+            }
+
+            // Leads en proceso
+            const inProcess = data.filter(l => l.estado === 'Contactado' || l.estado === 'Calificado');
+            if (inProcess.length > 5) {
+                alerts.push(`🟡 <strong>${inProcess.length} leads</strong> en proceso - Revisar prioridades`);
+            }
+
+            // Leads listos para cerrar
+            const qualified = data.filter(l => l.estado === 'Calificado');
+            if (qualified.length > 0) {
+                alerts.push(`🟢 <strong>${qualified.length} leads calificados</strong> listos para cerrar`);
+            }
+
+            const alertsHTML = alerts.length > 0
+                ? alerts.map(a => `<div class="alert-box text-white">${a}</div>`).join('')
+                : '<div class="text-center text-gray-400 py-4">✅ No hay alertas pendientes</div>';
+
+            document.getElementById('alertsSection').innerHTML = `
+                <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+                    <h3 class="text-xl font-bold text-yellow-500 mb-4">🔔 Alertas Inteligentes</h3>
+                    ${alertsHTML}
+                </div>
+            `;
+        }
+
+        function updateActivityFeed(data) {
+            const activities = data.slice(0, 10).map(l => {
+                const date = new Date(l.created_at);
+                const timeAgo = getTimeAgo(date);
+                const estado = l.estado || 'Nuevo';
+                return `
+                    <div class="activity-item text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="font-semibold text-yellow-400">${l.nombre}</p>
+                                <p class="text-sm text-gray-300">Estado: ${estado} • ${l.servicio_interes}</p>
+                            </div>
+                            <span class="text-xs text-gray-400">${timeAgo}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('activityFeed').innerHTML = activities || '<p class="text-gray-400 text-center">No hay actividad reciente</p>';
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diff = now - date;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 60) return `Hace ${minutes} min`;
+            if (hours < 24) return `Hace ${hours}h`;
+            return `Hace ${days}d`;
+        }
+
+        function getCounts(field) {
+            const counts = {};
+            filteredLeadsData.forEach(l => {
+                const value = l[field] || 'Sin especificar';
+                counts[value] = (counts[value] || 0) + 1;
+            });
+            return counts;
+        }
+
+        function initializeCharts() {
+            updateFunnelChart();
+            updateChart1();
+            updateChart2();
+            updateChart3();
+            updateTrendChart();
+            updateVolumeChart();
+        }
+
+        function updateFunnelChart() {
+            const stages = {
+                'Nuevo': filteredLeadsData.filter(l => !l.estado || l.estado === 'Nuevo').length,
+                'Contactado': filteredLeadsData.filter(l => l.estado === 'Contactado').length,
+                'Calificado': filteredLeadsData.filter(l => l.estado === 'Calificado').length,
+                'Cerrado': filteredLeadsData.filter(l => l.estado === 'Cerrado').length
+            };
+
+            if (charts.funnelChart) charts.funnelChart.destroy();
+
+            charts.funnelChart = new Chart(document.getElementById('funnelChart'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(stages),
+                    datasets: [{
+                        label: 'Leads',
+                        data: Object.values(stages),
+                        backgroundColor: ['#FFB800', '#F59E0B', '#DC2626', '#10B981'],
+                        borderColor: '#FFB800',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: { display: false }
+                    },
+                    scales: {
+                        x: { beginAtZero: true, ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.1)' } },
+                        y: { ticks: { color: '#FFB800', font: { size: 14, weight: 'bold' } }, grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function updateChart1() {
+            const selector = document.getElementById('chart1Selector').value;
+            const fieldMap = {
+                'servicios': 'servicio_interes',
+                'ubicaciones': 'ubicacion',
+                'etapas': 'etapa',
+                'estados': 'estado'
+            };
+
+            const counts = getCounts(fieldMap[selector]);
+
+            if (charts.chart1) charts.chart1.destroy();
+
+            charts.chart1 = new Chart(document.getElementById('chart1'), {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        data: Object.values(counts),
+                        backgroundColor: ['#DC2626', '#FFB800', '#F59E0B', '#EF4444', '#FCD34D', '#B91C1C', '#7C2D12']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { position: 'bottom', labels: { color: '#FFB800', font: { weight: 'bold', size: 10 } } } }
+                }
+            });
+        }
+
+        function updateChart2() {
+            const selector = document.getElementById('chart2Selector').value;
+            const fieldMap = {
+                'servicios': 'servicio_interes',
+                'ubicaciones': 'ubicacion',
+                'etapas': 'etapa'
+            };
+
+            const counts = getCounts(fieldMap[selector]);
+            const topItems = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+            if (charts.chart2) charts.chart2.destroy();
+
+            charts.chart2 = new Chart(document.getElementById('chart2'), {
+                type: 'bar',
+                data: {
+                    labels: topItems.map(l => l[0]),
+                    datasets: [{
+                        label: 'Leads',
+                        data: topItems.map(l => l[1]),
+                        backgroundColor: '#DC2626',
+                        borderColor: '#FFB800',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.1)' } },
+                        x: { ticks: { color: '#FFB800', font: { size: 10 } }, grid: { color: 'rgba(255, 184, 0, 0.1)' } }
+                    }
+                }
+            });
+        }
+
+        function updateTrendChart() {
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                last7Days.push(date.toISOString().split('T')[0]);
+            }
+
+            const trendData = last7Days.map(date => filteredLeadsData.filter(l => l.created_at.startsWith(date)).length);
+
+            if (charts.trendChart) charts.trendChart.destroy();
+
+            charts.trendChart = new Chart(document.getElementById('trendChart'), {
+                type: 'line',
+                data: {
+                    labels: last7Days.map(d => new Date(d).toLocaleDateString('es-PE', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'Leads por día',
+                        data: trendData,
+                        borderColor: '#FFB800',
+                        backgroundColor: 'rgba(255, 184, 0, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#FFB800' } } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.1)' } },
+                        x: { ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.1)' } }
+                    }
+                }
+            });
+        }
+
+        function updateChart3() {
+            const selector = document.getElementById('chart3Selector').value;
+            const fieldMap = {
+                'etapas': 'etapa',
+                'servicios': 'servicio_interes',
+                'estados': 'estado'
+            };
+
+            const counts = getCounts(fieldMap[selector]);
+
+            if (charts.chart3) charts.chart3.destroy();
+
+            charts.chart3 = new Chart(document.getElementById('chart3'), {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(counts),
+                    datasets: [{
+                        label: 'Leads',
+                        data: Object.values(counts),
+                        backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                        borderColor: '#FFB800',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { display: false } },
+                    scales: { r: { ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.2)' } } }
+                }
+            });
+        }
+
+        function updateVolumeChart() {
+            const last7Days = [];
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date();
+                date.setDate(date.getDate() - i);
+                last7Days.push(date.toISOString().split('T')[0]);
+            }
+
+            const trendData = last7Days.map(date => filteredLeadsData.filter(l => l.created_at.startsWith(date)).length);
+            let cumulative = 0;
+            const volumeData = trendData.map(count => cumulative += count);
+
+            if (charts.volumeChart) charts.volumeChart.destroy();
+
+            charts.volumeChart = new Chart(document.getElementById('volumeChart'), {
+                type: 'line',
+                data: {
+                    labels: last7Days.map(d => new Date(d).toLocaleDateString('es-PE', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'Acumulado',
+                        data: volumeData,
+                        borderColor: '#DC2626',
+                        backgroundColor: 'rgba(220, 38, 38, 0.3)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: { legend: { labels: { color: '#FFB800' } } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.1)' } },
+                        x: { ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.1)' } }
+                    }
+                }
+            });
+        }
+
+        function updateTable(data) {
+            if (dataTable) dataTable.destroy();
+
+            const tbody = document.getElementById('leadsTableBody');
+            tbody.innerHTML = data.map(lead => `
+                <tr>
+                    <td class="font-semibold text-yellow-400">${lead.nombre || '-'}</td>
+                    <td class="text-gray-300">${lead.telefono || '-'}</td>
+                    <td class="text-gray-300">${lead.servicio_interes || '-'}</td>
+                    <td class="text-gray-300">${lead.etapa || '-'}</td>
+                    <td class="text-gray-300">${lead.ubicacion || '-'}</td>
+                    <td class="text-gray-300">${new Date(lead.created_at).toLocaleDateString('es-PE')}</td>
+                    <td>
+                        <select class="status-select" onchange="updateStatus('${lead.id}', this.value)">
+                            <option ${!lead.estado || lead.estado === 'Nuevo' ? 'selected' : ''}>Nuevo</option>
+                            <option ${lead.estado === 'Contactado' ? 'selected' : ''}>Contactado</option>
+                            <option ${lead.estado === 'Calificado' ? 'selected' : ''}>Calificado</option>
+                            <option ${lead.estado === 'Cerrado' ? 'selected' : ''}>Cerrado</option>
+                        </select>
+                    </td>
+                    <td>
+                        <a href="https://wa.me/${lead.telefono?.replace(/\+/g, '')}" target="_blank" class="text-green-400 hover:text-green-300 mr-2" title="WhatsApp">📱</a>
+                        <button onclick="openNotesModal('${lead.id}')" class="text-yellow-400 hover:text-yellow-300" title="Agregar nota">📝</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            dataTable = $('#leadsTable').DataTable({
+                language: { url: 'https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json' },
+                pageLength: 25,
+                order: [[5, 'desc']]
+            });
+        }
+
+        async function updateStatus(leadId, newStatus) {
+            try {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .update({ estado: newStatus })
+                    .eq('id', leadId);
+
+                if (error) throw error;
+                console.log('✅ Estado actualizado');
+                loadLeads();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al actualizar estado');
+            }
+        }
+
+        function openNotesModal(leadId) {
+            currentLeadId = leadId;
+            document.getElementById('notesModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('notesModal').style.display = 'none';
+            document.getElementById('noteText').value = '';
+        }
+
+        async function saveNote() {
+            const note = document.getElementById('noteText').value;
+            if (!note) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .update({ resumen_chat: note })
+                    .eq('id', currentLeadId);
+
+                if (error) throw error;
+                console.log('✅ Nota guardada');
+                closeModal();
+                loadLeads();
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al guardar nota');
+            }
+        }
+
+        function exportToCSV() {
+            const csv = [
+                ['Nombre', 'Teléfono', 'Servicio', 'Etapa', 'Ubicación', 'Fecha', 'Estado'],
+                ...filteredLeadsData.map(l => [
+                    l.nombre, l.telefono, l.servicio_interes, l.etapa, l.ubicacion,
+                    new Date(l.created_at).toLocaleDateString('es-PE'), l.estado || 'Nuevo'
+                ])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `leads_tesla_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function refreshData() {
+            location.reload();
+        }
+
+        console.log('🚀 Iniciando Dashboard TESLA Pro...');
+        loadLeads();
+    </script>
+</body>
+
+</html>
