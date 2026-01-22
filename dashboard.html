@@ -137,6 +137,10 @@
                         class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
                         🔄 Actualizar
                     </button>
+                    <button onclick="logout()"
+                        class="bg-gradient-to-r from-gray-700 to-gray-800 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-gray-800 hover:to-gray-900 transition shadow-lg border-2 border-yellow-500">
+                        🚪 Cerrar Sesión
+                    </button>
                 </div>
             </div>
         </div>
@@ -330,6 +334,39 @@
         let dataTable;
         let currentLeadId = null;
         let charts = {};
+
+        // ========== AUTENTICACIÓN ==========
+
+        // Verificar autenticación al cargar la página
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                // No está autenticado, redirigir al login
+                console.log('❌ No autenticado, redirigiendo a login...');
+                window.location.href = '/login.html';
+                return false;
+            }
+
+            console.log('✅ Usuario autenticado:', session.user.email);
+            return true;
+        }
+
+        // Función de logout
+        async function logout() {
+            try {
+                const { error } = await supabaseClient.auth.signOut();
+                if (error) throw error;
+
+                console.log('✅ Sesión cerrada');
+                window.location.href = '/login.html';
+            } catch (error) {
+                console.error('❌ Error al cerrar sesión:', error);
+                alert('Error al cerrar sesión: ' + error.message);
+            }
+        }
+
+        // ========== FIN AUTENTICACIÓN ==========
 
         async function loadLeads() {
             console.log('🔄 Cargando leads...');
@@ -818,7 +855,13 @@
         }
 
         console.log('🚀 Iniciando Dashboard TESLA Pro...');
-        loadLeads();
+
+        // Verificar autenticación y luego cargar datos
+        checkAuth().then(isAuthenticated => {
+            if (isAuthenticated) {
+                loadLeads();
+            }
+        });
     </script>
 </body>
 

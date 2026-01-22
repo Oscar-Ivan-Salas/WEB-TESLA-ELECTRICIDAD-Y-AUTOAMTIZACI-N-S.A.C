@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Dashboard TESLA</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --tesla-red: #DC2626;
+            --tesla-gold: #FFB800;
+            --tesla-dark: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+        }
+
+        .login-card {
+            background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(15, 15, 15, 0.95) 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .input-field {
+            background: rgba(26, 26, 26, 0.8);
+            border: 2px solid var(--tesla-gold);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--tesla-red);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--tesla-red) 0%, #b91c1c 100%);
+            color: var(--tesla-gold);
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(220, 38, 38, 0.3);
+        }
+
+        .error-message {
+            background: rgba(220, 38, 38, 0.1);
+            border-left: 4px solid var(--tesla-red);
+            color: var(--tesla-gold);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="login-card rounded-2xl shadow-2xl p-8 w-full max-w-md border-2 border-yellow-500">
+        <!-- Logo y Título -->
+        <div class="text-center mb-8">
+            <img src="assets/logo.png" alt="TESLA Logo" class="h-20 w-20 mx-auto mb-4">
+            <h1 class="text-3xl font-bold text-white mb-2">
+                TESLA <span class="text-yellow-500">Dashboard</span>
+            </h1>
+            <p class="text-yellow-500 text-sm font-semibold">Acceso Administrativo</p>
+        </div>
+
+        <!-- Mensaje de Error -->
+        <div id="errorMessage" class="error-message rounded-lg p-4 mb-6 hidden">
+            <p class="text-sm font-semibold" id="errorText"></p>
+        </div>
+
+        <!-- Formulario de Login -->
+        <form id="loginForm" class="space-y-6">
+            <div>
+                <label for="email" class="block text-yellow-500 text-sm font-bold mb-2">
+                    📧 Correo Electrónico
+                </label>
+                <input type="email" id="email" class="input-field w-full px-4 py-3 rounded-lg"
+                    placeholder="admin@tesla-electricidad.com" required autocomplete="email">
+            </div>
+
+            <div>
+                <label for="password" class="block text-yellow-500 text-sm font-bold mb-2">
+                    🔒 Contraseña
+                </label>
+                <input type="password" id="password" class="input-field w-full px-4 py-3 rounded-lg"
+                    placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" id="loginButton"
+                class="btn-login w-full py-3 rounded-lg font-bold text-lg border-2 border-yellow-500 shadow-lg">
+                🚀 Iniciar Sesión
+            </button>
+        </form>
+
+        <!-- Link de Recuperación -->
+        <div class="mt-6 text-center">
+            <a href="#" onclick="showRecovery()" class="text-yellow-500 text-sm hover:text-yellow-400 transition">
+                ¿Olvidaste tu contraseña?
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-8 text-center">
+            <p class="text-gray-500 text-xs">
+                © 2024 TESLA Electricidad y Automatización S.A.C.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Configuración Supabase
+        const SUPABASE_URL = 'https://bgwovsuyjajxrmkvcggn.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_K-BlssTGWsG5uzY9bAnwfg_M7Zwheap';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Verificar si ya está autenticado
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+                // Ya está autenticado, redirigir al dashboard
+                window.location.href = '/dashboard.html';
+            }
+        }
+
+        // Mostrar error
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorDiv.classList.remove('hidden');
+
+            // Ocultar después de 5 segundos
+            setTimeout(() => {
+                errorDiv.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Manejar login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const button = document.getElementById('loginButton');
+
+            // Deshabilitar botón
+            button.disabled = true;
+            button.textContent = '⏳ Iniciando sesión...';
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) {
+                    throw error;
+                }
+
+                // Login exitoso
+                console.log('✅ Login exitoso');
+                window.location.href = '/dashboard.html';
+
+            } catch (error) {
+                console.error('❌ Error de login:', error);
+
+                // Mensajes de error personalizados
+                let errorMessage = 'Error al iniciar sesión';
+
+                if (error.message.includes('Invalid login credentials')) {
+                    errorMessage = '❌ Correo o contraseña incorrectos';
+                } else if (error.message.includes('Email not confirmed')) {
+                    errorMessage = '📧 Por favor confirma tu correo electrónico';
+                } else if (error.message.includes('network')) {
+                    errorMessage = '🌐 Error de conexión. Verifica tu internet';
+                } else {
+                    errorMessage = `❌ ${error.message}`;
+                }
+
+                showError(errorMessage);
+
+                // Rehabilitar botón
+                button.disabled = false;
+                button.textContent = '🚀 Iniciar Sesión';
+            }
+        });
+
+        // Recuperación de contraseña
+        async function showRecovery() {
+            const email = prompt('Ingresa tu correo electrónico para recuperar tu contraseña:');
+
+            if (email) {
+                try {
+                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                        redirectTo: window.location.origin + '/reset-password.html'
+                    });
+
+                    if (error) throw error;
+
+                    alert('✅ Se ha enviado un correo de recuperación. Revisa tu bandeja de entrada.');
+                } catch (error) {
+                    alert('❌ Error: ' + error.message);
+                }
+            }
+        }
+
+        // Verificar autenticación al cargar
+        checkAuth();
+    </script>
+</body>
+
+</html>
