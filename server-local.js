@@ -287,7 +287,7 @@ function processMessage(session, message) {
 }
 
 // Endpoint principal del chat
-app.post('/api/chat', (req, res) => {
+app.post('/api/chat', async (req, res) => {
     try {
         const { sessionId, message } = req.body;
 
@@ -300,6 +300,24 @@ app.post('/api/chat', (req, res) => {
 
         session.estado = response.nextState;
         sessions.set(sessionId, session);
+
+        // SAVE TO SUPABASE when conversation ends (same as production)
+        if (response.nextState === 'END') {
+            console.log('>>> [LOCAL] Guardando lead en Supabase...');
+            try {
+                const saveLead = require('./api/save-lead');
+                const reqSave = { body: { session }, method: 'POST' };
+                const resSave = {
+                    setHeader: () => { },
+                    status: (code) => ({ json: (data) => console.log(`[LOCAL] Save: ${code}`, data) }),
+                    json: (data) => console.log(`[LOCAL] Saved:`, data)
+                };
+                await saveLead(reqSave, resSave);
+                console.log('>>> [LOCAL] Lead guardado en Supabase.');
+            } catch (err) {
+                console.error('>>> [LOCAL] Error guardando:', err.message);
+            }
+        }
 
         res.json(response);
     } catch (error) {

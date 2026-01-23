@@ -220,3 +220,174 @@ Se ejecuta tal cual.
 
 **TESLA = solución integral + responsabilidad única.**
 
+# TESLA ELECTRICIDAD Y AUTOMATIZACIÓN
+
+## DOCUMENTO ÚNICO, FINAL Y EJECUTABLE
+
+**Autor:** Dirección Senior de Marketing
+**Estado:** DEFINITIVO – NO INTERPRETAR, SOLO EJECUTAR
+
+---
+
+## 1. OBJETIVO DEL DOCUMENTO
+
+Este documento define **exactamente** qué debe decir la web de TESLA, **qué se muestra en PC**, **qué se muestra en móvil**, y **cómo debe sentirse el usuario**.
+El programador **NO decide**, **NO adapta**, **NO opina**.
+Solo copia, pega y ejecuta.
+
+TESLA se presenta como:
+
+> **Empresa integradora de soluciones técnicas**, responsable de todo el frente técnico de una obra.
+
+---
+
+## 2. MENSAJE CENTRAL (OBLIGATORIO EN TODA LA WEB)
+
+> *Un solo responsable técnico para que el cliente no coordine proveedores ni asuma riesgos.*
+
+Este mensaje debe estar visible en los **primeros 5 segundos**.
+
+---
+
+## 3. HERO PRINCIPAL
+
+### 3.1 VERSIÓN PC
+
+**TÍTULO (H1):**
+Integrador estratégico de soluciones técnicas para tu proyecto
+
+**SUBTÍTULO:**
+Asumimos la ingeniería, ejecución y responsabilidad técnica en un solo equipo.
+
+**TEXTO DE APOYO:**
+Electricidad, automatización, sistemas contra incendios y acabados técnicos sin coordinar múltiples proveedores.
+
+**BOTÓN PRINCIPAL:**
+Solicitar evaluación técnica
+
+---
+
+### 3.2 VERSIÓN MÓVIL (OBLIGATORIO, TEXTO DIFERENTE)
+
+**TÍTULO (H1):**
+Te quitamos el problema técnico de tu obra
+
+**SUBTÍTULO:**
+Un solo responsable. Sin coordinar proveedores.
+
+**MICROCOPY:**
+Evaluación técnica rápida y especializada.
+
+**BOTÓN PRINCIPAL:**
+Hablar con PILI ahora
+
+---
+
+## 4. BLOQUE DE PROBLEMA (CONEXIÓN EMOCIONAL)
+
+**PC:**
+La etapa final de una obra suele ser la más compleja: cotizaciones múltiples, técnicos independientes, reprocesos y retrasos. TESLA asume toda la solución técnica para que el cliente solo supervise resultados.
+
+**MÓVIL (MOSTRAR EN FRASES CORTAS):**
+Menos coordinación.
+Menos estrés.
+Un solo responsable técnico.
+
+---
+
+## 5. BLOQUE: NUESTRA SOLUCIÓN
+
+**TEXTO ÚNICO:**
+No ofrecemos servicios aislados. Entregamos soluciones técnicas integrales con responsabilidad clara y resultados operables.
+
+**BULLETS (OBLIGATORIOS):**
+• Un solo responsable técnico
+• Coordinación total de sistemas
+• Ejecución con criterio de ingeniería
+• Respuesta rápida y trazable
+
+---
+
+## 6. SERVICIOS (BASE DE TARJETAS)
+
+### ⚡ Infraestructura Eléctrica
+
+Diseño, suministro e instalación de sistemas eléctricos seguros, normados y listos para operar.
+
+### 🔥 Sistemas Contra Incendios
+
+Implementación de detección y protección contra incendios conforme normativa vigente, con pruebas funcionales.
+
+### 🤖 Automatización & BMS
+
+Control inteligente de iluminación, energía y sistemas críticos para eficiencia y seguridad.
+
+### 🧰 Mantenimiento Técnico Especializado
+
+Corrección y mejora de sistemas existentes sin afectar la continuidad del proyecto.
+
+### 🏗️ Acabados Técnicos Integrados
+
+Coordinación de instalaciones técnicas con acabados para evitar reprocesos.
+
+### 🔑 Solución Llave en Mano
+
+TESLA asume todo el frente técnico. El cliente no coordina proveedores.
+
+---
+
+## 7. DIFERENCIAL COMPETITIVO
+
+Nuestros clientes nos eligen porque no quieren coordinar especialistas por separado ni asumir riesgos técnicos. Prefieren una empresa que responda por el conjunto.
+
+---
+
+## 8. CTA FINAL
+
+**PC:**
+Solicitar evaluación técnica
+
+**MÓVIL:**
+Hablar con PILI ahora
+
+---
+
+## 9. PILI (CONGELADA – NO MODIFICAR)
+
+PILI permanece tal como está implementada. Este documento no autoriza cambios en PILI.
+
+---
+
+## 10. 20 PROMPTS O INSTRUCCIONES PARA EL PROGRAMADOR
+
+1. Implementar textos EXACTOS de este documento.
+2. Crear versión PC y móvil con copy diferente.
+3. Priorizar mensaje central en primer pantallazo.
+4. En móvil, mostrar solo títulos + bullets.
+5. No mostrar párrafos largos en móvil.
+6. CTA móvil visible antes del scroll.
+7. No agregar textos adicionales.
+8. No reinterpretar copy.
+9. No cambiar palabras.
+10. Mantener tono corporativo y profesional.
+11. Respetar jerarquía visual definida.
+12. No duplicar textos PC en móvil.
+13. Usar microcopy EXACTO indicado.
+14. Mantener CTA textual sin variantes.
+15. No añadir slogans nuevos.
+16. No eliminar secciones definidas.
+17. Mantener orden exacto de bloques.
+18. No modificar estructura sin autorización.
+19. Priorizar legibilidad móvil.
+20. El resultado final debe reflejar exactamente este documento.
+
+---
+
+## 11. RESPONSABILIDAD FINAL
+
+Si el resultado no refleja este documento al 100%, el error es de ejecución, no de estrategia.
+
+TESLA debe percibirse como:
+**Empresa integradora, responsable, técnica y confiable.**
+
+FIN DEL DOCUMENTO.
