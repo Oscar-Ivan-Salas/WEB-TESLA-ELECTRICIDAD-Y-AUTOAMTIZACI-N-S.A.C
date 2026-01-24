@@ -128,10 +128,10 @@
                 <div class="flex items-center space-x-4">
                     <select id="dateFilter" class="date-filter" onchange="applyDateFilter()">
                         <option value="today">Hoy</option>
-                        <option value="week" selected>Esta Semana</option>
+                        <option value="week">Esta Semana</option>
                         <option value="month">Este Mes</option>
                         <option value="quarter">Últimos 3 Meses</option>
-                        <option value="all">Todo el Tiempo</option>
+                        <option value="all" selected>Todo el Tiempo</option>
                     </select>
                     <button onclick="refreshData()"
                         class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
@@ -215,103 +215,220 @@
             </div>
         </div>
 
-        <!-- Alerts Section -->
-        <div id="alertsSection" class="mb-8"></div>
+        <!-- NUEVAS MÉTRICAS: Analytics y WhatsApp -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+
+            <!-- Card: Embudo de Conversión -->
+            <div class="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 border-2 border-yellow-500 shadow-2xl">
+                <h3 class="text-2xl font-bold text-yellow-500 mb-6 flex items-center">
+                    <span class="text-3xl mr-3">📊</span>
+                    Embudo de Conversión
+                </h3>
+
+                <div class="space-y-4">
+                    <!-- Visitantes -->
+                    <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-blue-500">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">👥 Visitantes Únicos</span>
+                            <span class="text-2xl font-bold text-blue-400" id="metricsVisitors">-</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-gray-500 text-sm">
+                        ↓ <span id="chatOpenRate">-</span>%
+                    </div>
+
+                    <!-- Chat Abierto -->
+                    <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-purple-500">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">💬 Abrieron Chat</span>
+                            <span class="text-2xl font-bold text-purple-400" id="metricsChatOpened">-</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-gray-500 text-sm">
+                        ↓ <span id="chatCompletionRate">-</span>%
+                    </div>
+
+                    <!-- Completaron Datos -->
+                    <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-green-500">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-300">✅ Completaron Datos</span>
+                            <span class="text-2xl font-bold text-green-400" id="metricsChatCompleted">-</span>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-gray-500 text-sm">
+                        Tasa de Conversión: <span class="text-yellow-500 font-bold"
+                            id="conversionRateAnalytics">-</span>%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card: Seguimiento WhatsApp -->
+            <div class="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 border-2 border-green-500 shadow-2xl">
+                <h3 class="text-2xl font-bold text-green-500 mb-6 flex items-center">
+                    <span class="text-3xl mr-3">📱</span>
+                    Seguimiento WhatsApp
+                </h3>
+
+                <div class="space-y-4">
+                    <!-- Contactados -->
+                    <div class="bg-gray-800/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300">📞 Contactados</span>
+                            <span class="text-xl font-bold text-yellow-400">
+                                <span id="whatsappContactados">-</span>/<span id="totalLeadsMetric">-</span>
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div id="progressContactados" class="bg-yellow-500 h-2 rounded-full transition-all"
+                                style="width: 0%"></div>
+                        </div>
+                        <div class="text-right text-sm text-gray-400 mt-1">
+                            <span id="pctContactados">0</span>%
+                        </div>
+                    </div>
+
+                    <!-- Respondieron -->
+                    <div class="bg-gray-800/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300">✅ Respondieron</span>
+                            <span class="text-xl font-bold text-blue-400">
+                                <span id="whatsappRespondieron">-</span>/<span id="whatsappContactadosBase">-</span>
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div id="progressRespondieron" class="bg-blue-500 h-2 rounded-full transition-all"
+                                style="width: 0%"></div>
+                        </div>
+                        <div class="text-right text-sm text-gray-400 mt-1">
+                            <span id="pctRespondieron">0</span>%
+                        </div>
+                    </div>
+
+                    <!-- Citas Agendadas -->
+                    <div class="bg-gray-800/50 rounded-lg p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-gray-300">📅 Citas Agendadas</span>
+                            <span class="text-xl font-bold text-green-400">
+                                <span id="whatsappCitas">-</span>/<span id="whatsappRespondieronBase">-</span>
+                            </span>
+                        </div>
+                        <div class="w-full bg-gray-700 rounded-full h-2">
+                            <div id="progressCitas" class="bg-green-500 h-2 rounded-full transition-all"
+                                style="width: 0%"></div>
+                        </div>
+                        <div class="text-right text-sm text-gray-400 mt-1">
+                            <span id="pctCitas">0</span>%
+                        </div>
+                    </div>
+
+                    <!-- Convertidos -->
+                    <div class="bg-gray-800/50 rounded-lg p-4 border-2 border-yellow-500">
+                        <div class="flex justify-between items-center">
+                            <span class="text-yellow-500 font-bold">🎯 Convertidos</span>
+                            <span class="text-2xl font-bold text-yellow-400" id="whatsappConvertidos">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
         <!-- Main Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <!-- Sales Funnel -->
-            <div class="lg:col-span-2 bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <h3 class="text-2xl font-bold text-yellow-500 mb-4">🎯 Embudo de Ventas</h3>
-                <canvas id="funnelChart"></canvas>
-            </div>
-
-            <!-- Activity Feed -->
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
-                <h3 class="text-xl font-bold text-yellow-500 mb-4">📋 Actividad Reciente</h3>
-                <div id="activityFeed" class="max-h-96 overflow-y-auto"></div>
-            </div>
+            <h3 class="text-2xl font-bold text-yellow-500 mb-4">🎯 Embudo de Ventas</h3>
+            <canvas id="funnelChart"></canvas>
         </div>
 
-        <!-- Charts Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-yellow-500">📊 Distribución</h3>
-                    <select id="chart1Selector" class="chart-selector" onchange="updateChart1()">
-                        <option value="servicios">Por Servicio</option>
-                        <option value="ubicaciones">Por Ubicación</option>
-                        <option value="etapas">Por Etapa</option>
-                        <option value="estados">Por Estado</option>
-                    </select>
-                </div>
-                <canvas id="chart1"></canvas>
-            </div>
-
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-yellow-500">📊 Top 5</h3>
-                    <select id="chart2Selector" class="chart-selector" onchange="updateChart2()">
-                        <option value="servicios">Servicios</option>
-                        <option value="ubicaciones">Ubicaciones</option>
-                        <option value="etapas">Etapas</option>
-                    </select>
-                </div>
-                <canvas id="chart2"></canvas>
-            </div>
-
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <h3 class="text-xl font-bold text-yellow-500 mb-4">📈 Tendencia</h3>
-                <canvas id="trendChart"></canvas>
-            </div>
+        <!-- Activity Feed -->
+        <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+            <h3 class="text-xl font-bold text-yellow-500 mb-4">📋 Actividad Reciente</h3>
+            <div id="activityFeed" class="max-h-96 overflow-y-auto"></div>
         </div>
+    </div>
 
-        <!-- More Charts Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-yellow-500">🎯 Comparación</h3>
-                    <select id="chart3Selector" class="chart-selector" onchange="updateChart3()">
-                        <option value="etapas">Por Etapa</option>
-                        <option value="servicios">Por Servicio</option>
-                        <option value="estados">Por Estado</option>
-                    </select>
-                </div>
-                <canvas id="chart3"></canvas>
-            </div>
-
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <h3 class="text-xl font-bold text-yellow-500 mb-4">📊 Volumen Acumulado</h3>
-                <canvas id="volumeChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Table -->
+    <!-- Charts Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-yellow-500">📋 Lista de Leads</h2>
-                <button onclick="exportToCSV()"
-                    class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
-                    📥 Exportar CSV
-                </button>
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-yellow-500">📊 Distribución</h3>
+                <select id="chart1Selector" class="chart-selector" onchange="updateChart1()">
+                    <option value="servicios">Por Servicio</option>
+                    <option value="ubicaciones">Por Ubicación</option>
+                    <option value="etapas">Por Etapa</option>
+                    <option value="estados">Por Estado</option>
+                </select>
             </div>
-
-            <table id="leadsTable" class="display" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Teléfono</th>
-                        <th>Servicio</th>
-                        <th>Etapa</th>
-                        <th>Ubicación</th>
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="leadsTableBody"></tbody>
-            </table>
+            <canvas id="chart1"></canvas>
         </div>
+
+        <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-yellow-500">📊 Top 5</h3>
+                <select id="chart2Selector" class="chart-selector" onchange="updateChart2()">
+                    <option value="servicios">Servicios</option>
+                    <option value="ubicaciones">Ubicaciones</option>
+                    <option value="etapas">Etapas</option>
+                </select>
+            </div>
+            <canvas id="chart2"></canvas>
+        </div>
+
+        <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+            <h3 class="text-xl font-bold text-yellow-500 mb-4">📈 Tendencia</h3>
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <!-- More Charts Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-yellow-500">🎯 Comparación</h3>
+                <select id="chart3Selector" class="chart-selector" onchange="updateChart3()">
+                    <option value="etapas">Por Etapa</option>
+                    <option value="servicios">Por Servicio</option>
+                    <option value="estados">Por Estado</option>
+                </select>
+            </div>
+            <canvas id="chart3"></canvas>
+        </div>
+
+        <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+            <h3 class="text-xl font-bold text-yellow-500 mb-4">📊 Volumen Acumulado</h3>
+            <canvas id="volumeChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-yellow-500">📋 Lista de Leads</h2>
+            <button onclick="exportToCSV()"
+                class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
+                📥 Exportar CSV
+            </button>
+        </div>
+
+        <table id="leadsTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Teléfono</th>
+                    <th>Servicio</th>
+                    <th>Etapa</th>
+                    <th>Ubicación</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="leadsTableBody"></tbody>
+        </table>
+    </div>
     </div>
 
     <!-- Modal para Notas -->
@@ -1095,10 +1212,154 @@
 
         console.log('🚀 Iniciando Dashboard TESLA Pro...');
 
+        // ========== FUNCIONES DE ANALYTICS Y WHATSAPP ==========
+
+        // Función para cargar métricas de analytics
+        function loadAnalyticsMetrics() {
+            // Obtener métricas de localStorage (TeslaAnalytics)
+            if (typeof TeslaAnalytics !== 'undefined') {
+                const metrics = TeslaAnalytics.getMetrics();
+
+                document.getElementById('metricsVisitors').textContent = metrics.uniqueVisitors || 0;
+                document.getElementById('metricsChatOpened').textContent = metrics.chatOpened || 0;
+                document.getElementById('metricsChatCompleted').textContent = metrics.chatCompleted || 0;
+                document.getElementById('chatOpenRate').textContent = metrics.chatOpenRate || 0;
+                document.getElementById('chatCompletionRate').textContent = metrics.chatCompletionRate || 0;
+                document.getElementById('conversionRateAnalytics').textContent = metrics.conversionRate || 0;
+            } else {
+                // Si no hay analytics, mostrar mensaje
+                document.getElementById('metricsVisitors').textContent = 'N/A';
+                document.getElementById('metricsChatOpened').textContent = 'N/A';
+                document.getElementById('metricsChatCompleted').textContent = allLeadsData ? allLeadsData.length : 0;
+                document.getElementById('chatOpenRate').textContent = '0';
+                document.getElementById('chatCompletionRate').textContent = '0';
+                document.getElementById('conversionRateAnalytics').textContent = '0';
+            }
+        }
+
+        // Función para cargar métricas de WhatsApp desde Supabase
+        async function loadWhatsAppMetrics() {
+            try {
+                const { data: leads, error } = await supabaseClient
+                    .from('leads')
+                    .select('*');
+
+                if (error) throw error;
+
+                const total = leads.length;
+                const contactados = leads.filter(l => l.contactado_whatsapp).length;
+                const respondieron = leads.filter(l => l.respondio_whatsapp).length;
+                const citas = leads.filter(l => l.cita_agendada).length;
+                const convertidos = leads.filter(l => l.estado === 'convertido').length;
+
+                // Actualizar números
+                document.getElementById('totalLeadsMetric').textContent = total;
+                document.getElementById('whatsappContactados').textContent = contactados;
+                document.getElementById('whatsappContactadosBase').textContent = contactados;
+                document.getElementById('whatsappRespondieron').textContent = respondieron;
+                document.getElementById('whatsappRespondieronBase').textContent = respondieron;
+                document.getElementById('whatsappCitas').textContent = citas;
+                document.getElementById('whatsappConvertidos').textContent = convertidos;
+
+                // Calcular porcentajes
+                const pctContactados = total > 0 ? ((contactados / total) * 100).toFixed(1) : 0;
+                const pctRespondieron = contactados > 0 ? ((respondieron / contactados) * 100).toFixed(1) : 0;
+                const pctCitas = respondieron > 0 ? ((citas / respondieron) * 100).toFixed(1) : 0;
+
+                // Actualizar porcentajes
+                document.getElementById('pctContactados').textContent = pctContactados;
+                document.getElementById('pctRespondieron').textContent = pctRespondieron;
+                document.getElementById('pctCitas').textContent = pctCitas;
+
+                // Actualizar barras de progreso
+                document.getElementById('progressContactados').style.width = pctContactados + '%';
+                document.getElementById('progressRespondieron').style.width = pctRespondieron + '%';
+                document.getElementById('progressCitas').style.width = pctCitas + '%';
+
+                console.log('📊 Métricas WhatsApp cargadas:', { total, contactados, respondieron, citas, convertidos });
+
+            } catch (error) {
+                console.error('❌ Error al cargar métricas WhatsApp:', error);
+            }
+        }
+
+        // Marcar lead como contactado por WhatsApp
+        async function markContactedWhatsApp(leadId) {
+            try {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .update({
+                        contactado_whatsapp: true,
+                        fecha_contacto: new Date().toISOString()
+                    })
+                    .eq('id', leadId);
+
+                if (error) throw error;
+
+                console.log('✅ Lead marcado como contactado');
+                loadLeads(); // Recargar tabla
+                loadWhatsAppMetrics(); // Actualizar métricas
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('Error al actualizar lead');
+            }
+        }
+
+        // Marcar lead como que respondió
+        async function markRespondedWhatsApp(leadId) {
+            try {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .update({
+                        respondio_whatsapp: true,
+                        fecha_respuesta: new Date().toISOString()
+                    })
+                    .eq('id', leadId);
+
+                if (error) throw error;
+
+                console.log('✅ Lead marcado como respondió');
+                loadLeads();
+                loadWhatsAppMetrics();
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('Error al actualizar lead');
+            }
+        }
+
+        // Agendar cita
+        async function scheduleAppointment(leadId) {
+            const fechaCita = prompt('Ingresa la fecha de la cita (YYYY-MM-DD):');
+            if (!fechaCita) return;
+
+            try {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .update({
+                        cita_agendada: true,
+                        fecha_cita: new Date(fechaCita).toISOString()
+                    })
+                    .eq('id', leadId);
+
+                if (error) throw error;
+
+                console.log('✅ Cita agendada');
+                loadLeads();
+                loadWhatsAppMetrics();
+            } catch (error) {
+                console.error('❌ Error:', error);
+                alert('Error al agendar cita');
+            }
+        }
+
+        // ========== FIN FUNCIONES DE ANALYTICS Y WHATSAPP ==========
+
         // Verificar autenticación y luego cargar datos
         checkAuth().then(isAuthenticated => {
             if (isAuthenticated) {
                 loadLeads();
+                loadAnalyticsMetrics();
+                loadWhatsAppMetrics();
             }
         });
     </script>
