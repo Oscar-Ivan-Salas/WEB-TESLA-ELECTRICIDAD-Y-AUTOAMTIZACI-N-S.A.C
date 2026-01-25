@@ -843,172 +843,174 @@
                             </select>
                         </div>
                     </div>
-                </div>
-                <canvas id="chart3"></canvas>
 
-                <!-- Leyenda Explicativa -->
-                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
-                    <p class="font-semibold text-red-500 mb-2 text-sm flex items-center">
-                        <span class="mr-2">ℹ️</span> Leyenda:
-                    </p>
-                    <p class="text-xs text-gray-400">
-                        <span class="text-white font-medium">Comparación:</span> Permite comparar diferentes
-                        aspectos de
-                        tus leads (etapas, servicios, estados). Usa el selector para cambiar la vista y analizar
-                        diferentes perspectivas.
-                    </p>
-                </div>
-            </div>
+                    <div class="relative h-64 md:h-80 w-full my-4">
+                        <canvas id="chart3"></canvas>
+                    </div>
 
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
-                    <h3 class="text-xl font-bold text-yellow-500">📊 Volumen Acumulado</h3>
-                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
-                        <select id="volumeDateFilter" onchange="applyVolumeDateFilter()"
-                            class="bg-gray-800 text-white px-3 py-1.5 rounded border border-orange-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
-                            <option value="today">Hoy</option>
-                            <option value="week">Esta Semana</option>
-                            <option value="month">Este Mes</option>
-                            <option value="quarter">Últimos 3 Meses</option>
-                            <option value="all" selected>Todo el Tiempo</option>
-                        </select>
-                        <button onclick="downloadChart('volumeChart', 'volumen-acumulado')"
-                            class="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded transition">
-                            📥 Descargar
-                        </button>
+                    <!-- Leyenda Explicativa -->
+                    <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                        <p class="font-semibold text-red-500 mb-2 text-sm flex items-center">
+                            <span class="mr-2">ℹ️</span> Leyenda:
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            <span class="text-white font-medium">Comparación:</span> Permite comparar diferentes
+                            aspectos de
+                            tus leads (etapas, servicios, estados). Usa el selector para cambiar la vista y analizar
+                            diferentes perspectivas.
+                        </p>
                     </div>
                 </div>
-                <canvas id="volumeChart"></canvas>
 
-                <!-- Leyenda Explicativa -->
-                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
-                    <p class="font-semibold text-yellow-500 mb-2 text-sm flex items-center">
-                        <span class="mr-2">ℹ️</span> Leyenda:
-                    </p>
-                    <p class="text-xs text-gray-400">
-                        <span class="text-white font-medium">Volumen Acumulado:</span> Muestra el total
-                        acumulado de
-                        leads a lo largo del tiempo. Te ayuda a visualizar el crecimiento total de tu base
-                        de datos
-                        de
-                        clientes potenciales.
-                    </p>
+                <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                        <h3 class="text-xl font-bold text-yellow-500">📊 Volumen Acumulado</h3>
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                            <select id="volumeDateFilter" onchange="applyVolumeDateFilter()"
+                                class="bg-gray-800 text-white px-3 py-1.5 rounded border border-orange-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                                <option value="today">Hoy</option>
+                                <option value="week">Esta Semana</option>
+                                <option value="month">Este Mes</option>
+                                <option value="quarter">Últimos 3 Meses</option>
+                                <option value="all" selected>Todo el Tiempo</option>
+                            </select>
+                            <button onclick="downloadChart('volumeChart', 'volumen-acumulado')"
+                                class="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded transition">
+                                📥 Descargar
+                            </button>
+                        </div>
+                    </div>
+                    <canvas id="volumeChart"></canvas>
+
+                    <!-- Leyenda Explicativa -->
+                    <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                        <p class="font-semibold text-yellow-500 mb-2 text-sm flex items-center">
+                            <span class="mr-2">ℹ️</span> Leyenda:
+                        </p>
+                        <p class="text-xs text-gray-400">
+                            <span class="text-white font-medium">Volumen Acumulado:</span> Muestra el total
+                            acumulado de
+                            leads a lo largo del tiempo. Te ayuda a visualizar el crecimiento total de tu base
+                            de datos
+                            de
+                            clientes potenciales.
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Leads Table -->
-        <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-yellow-500">📋 Gestión de Leads</h3>
+            <!-- Leads Table -->
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-yellow-500">📋 Gestión de Leads</h3>
+                    <button onclick="exportToCSV()"
+                        class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition shadow-lg border-2 border-yellow-500">
+                        📥 Exportar CSV
+                    </button>
+                </div>
+
+                <!-- BUSCADOR TIPO EXCEL -->
+                <div class="mb-6 space-y-4">
+                    <!-- Búsqueda Global -->
+                    <div class="flex items-center gap-4">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <input type="text" id="globalSearch" placeholder="🔍 Buscar en todas las columnas..."
+                                    class="w-full px-4 py-3 bg-gray-800 border-2 border-yellow-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400 transition"
+                                    oninput="applyFilters()">
+                                <span class="absolute right-3 top-3 text-gray-400 text-sm" id="searchCount">0
+                                    resultados</span>
+                            </div>
+                        </div>
+                        <button onclick="clearAllFilters()"
+                            class="px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition border-2 border-red-400">
+                            🗑️ Limpiar Filtros
+                        </button>
+                    </div>
+
+                    <!-- Filtros por Columna -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                        <!-- Filtro: Nombre/Apellido -->
+                        <input type="text" id="filterNombre" placeholder="Nombre/Apellido"
+                            class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-yellow-400"
+                            oninput="applyFilters()">
+
+                        <!-- Filtro: Teléfono -->
+                        <input type="text" id="filterTelefono" placeholder="Teléfono"
+                            class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-yellow-400"
+                            oninput="applyFilters()">
+
+                        <!-- Filtro: Servicio -->
+                        <select id="filterServicio"
+                            class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
+                            onchange="applyFilters()">
+                            <option value="">Todos los Servicios</option>
+                            <option value="⚡ Instalación eléctrica nueva">⚡ Instalación eléctrica</option>
+                            <option value="🤖 Automatización / Domótica">🤖 Automatización</option>
+                            <option value="🔧 Mantenimiento / Remodelación">🔧 Mantenimiento</option>
+                            <option value="🏗️ Obra en ejecución">🏗️ Obra en ejecución</option>
+                            <option value="🧩 Solución integral TESLA">🧩 Solución integral</option>
+                        </select>
+
+                        <!-- Filtro: Etapa -->
+                        <select id="filterEtapa"
+                            class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
+                            onchange="applyFilters()">
+                            <option value="">Todas las Etapas</option>
+                            <option value="Contacto inicial">Contacto inicial</option>
+                            <option value="Propuesta enviada">Propuesta enviada</option>
+                            <option value="Negociación">Negociación</option>
+                            <option value="Ganado">Ganado</option>
+                        </select>
+
+                        <!-- Filtro: Estado WhatsApp -->
+                        <select id="filterWhatsApp"
+                            class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
+                            onchange="applyFilters()">
+                            <option value="">Estado WhatsApp</option>
+                            <option value="contactado">✅ Contactado</option>
+                            <option value="respondio">💬 Respondió</option>
+                            <option value="cita">📅 Cita Agendada</option>
+                            <option value="pendiente">⏳ Pendiente</option>
+                        </select>
+                    </div>
+
+                    <!-- Rango de Fechas -->
+                    <div class="flex items-center gap-3">
+                        <span class="text-gray-400 text-sm font-semibold">📅 Rango de Fechas:</span>
+                        <input type="date" id="filterFechaDesde"
+                            class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
+                            onchange="applyFilters()">
+                        <span class="text-gray-400">→</span>
+                        <input type="date" id="filterFechaHasta"
+                            class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
+                            onchange="applyFilters()">
+                    </div>
+                </div>
+
+                <h2 class="text-2xl font-bold text-yellow-500">📋 Lista de Leads</h2>
                 <button onclick="exportToCSV()"
-                    class="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition shadow-lg border-2 border-yellow-500">
+                    class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
                     📥 Exportar CSV
                 </button>
             </div>
 
-            <!-- BUSCADOR TIPO EXCEL -->
-            <div class="mb-6 space-y-4">
-                <!-- Búsqueda Global -->
-                <div class="flex items-center gap-4">
-                    <div class="flex-1">
-                        <div class="relative">
-                            <input type="text" id="globalSearch" placeholder="🔍 Buscar en todas las columnas..."
-                                class="w-full px-4 py-3 bg-gray-800 border-2 border-yellow-500 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-yellow-400 transition"
-                                oninput="applyFilters()">
-                            <span class="absolute right-3 top-3 text-gray-400 text-sm" id="searchCount">0
-                                resultados</span>
-                        </div>
-                    </div>
-                    <button onclick="clearAllFilters()"
-                        class="px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-bold transition border-2 border-red-400">
-                        🗑️ Limpiar Filtros
-                    </button>
-                </div>
-
-                <!-- Filtros por Columna -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
-                    <!-- Filtro: Nombre/Apellido -->
-                    <input type="text" id="filterNombre" placeholder="Nombre/Apellido"
-                        class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-yellow-400"
-                        oninput="applyFilters()">
-
-                    <!-- Filtro: Teléfono -->
-                    <input type="text" id="filterTelefono" placeholder="Teléfono"
-                        class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-yellow-400"
-                        oninput="applyFilters()">
-
-                    <!-- Filtro: Servicio -->
-                    <select id="filterServicio"
-                        class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
-                        onchange="applyFilters()">
-                        <option value="">Todos los Servicios</option>
-                        <option value="⚡ Instalación eléctrica nueva">⚡ Instalación eléctrica</option>
-                        <option value="🤖 Automatización / Domótica">🤖 Automatización</option>
-                        <option value="🔧 Mantenimiento / Remodelación">🔧 Mantenimiento</option>
-                        <option value="🏗️ Obra en ejecución">🏗️ Obra en ejecución</option>
-                        <option value="🧩 Solución integral TESLA">🧩 Solución integral</option>
-                    </select>
-
-                    <!-- Filtro: Etapa -->
-                    <select id="filterEtapa"
-                        class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
-                        onchange="applyFilters()">
-                        <option value="">Todas las Etapas</option>
-                        <option value="Contacto inicial">Contacto inicial</option>
-                        <option value="Propuesta enviada">Propuesta enviada</option>
-                        <option value="Negociación">Negociación</option>
-                        <option value="Ganado">Ganado</option>
-                    </select>
-
-                    <!-- Filtro: Estado WhatsApp -->
-                    <select id="filterWhatsApp"
-                        class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
-                        onchange="applyFilters()">
-                        <option value="">Estado WhatsApp</option>
-                        <option value="contactado">✅ Contactado</option>
-                        <option value="respondio">💬 Respondió</option>
-                        <option value="cita">📅 Cita Agendada</option>
-                        <option value="pendiente">⏳ Pendiente</option>
-                    </select>
-                </div>
-
-                <!-- Rango de Fechas -->
-                <div class="flex items-center gap-3">
-                    <span class="text-gray-400 text-sm font-semibold">📅 Rango de Fechas:</span>
-                    <input type="date" id="filterFechaDesde"
-                        class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
-                        onchange="applyFilters()">
-                    <span class="text-gray-400">→</span>
-                    <input type="date" id="filterFechaHasta"
-                        class="px-3 py-2 bg-gray-800 border border-yellow-500/50 rounded-lg text-white text-sm focus:outline-none focus:border-yellow-400"
-                        onchange="applyFilters()">
-                </div>
-            </div>
-
-            <h2 class="text-2xl font-bold text-yellow-500">📋 Lista de Leads</h2>
-            <button onclick="exportToCSV()"
-                class="bg-gradient-to-r from-red-600 to-red-700 text-yellow-400 px-6 py-3 rounded-lg font-bold hover:from-red-700 hover:to-red-800 transition shadow-lg border-2 border-yellow-500">
-                📥 Exportar CSV
-            </button>
+            <table id="leadsTable" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Teléfono</th>
+                        <th>Servicio</th>
+                        <th>Etapa</th>
+                        <th>Ubicación</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="leadsTableBody"></tbody>
+            </table>
         </div>
-
-        <table id="leadsTable" class="display" style="width:100%">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Teléfono</th>
-                    <th>Servicio</th>
-                    <th>Etapa</th>
-                    <th>Ubicación</th>
-                    <th>Fecha</th>
-                    <th>Estado</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody id="leadsTableBody"></tbody>
-        </table>
-    </div>
     </div>
 
     <!-- Modal para Notas -->
