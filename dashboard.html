@@ -426,10 +426,18 @@
                 <div class="space-y-4">
                     <!-- Visitantes -->
                     <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-blue-500">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center mb-2">
                             <span class="text-gray-300">👥 Visitantes Únicos</span>
                             <span class="text-2xl font-bold text-blue-400" id="metricsVisitors">-</span>
                         </div>
+                        <!-- Barra de Progreso -->
+                        <div class="w-full bg-black/40 rounded-full h-3 overflow-hidden shadow-inner">
+                            <div id="progressVisitors"
+                                class="h-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-full transition-all duration-1000 ease-out shadow-lg"
+                                style="width: 0%; box-shadow: 0 0 12px rgba(59, 130, 246, 0.8)">
+                            </div>
+                        </div>
+                        <p class="text-blue-300 text-xs mt-1 text-right font-medium" id="percentVisitors">0%</p>
                     </div>
 
                     <div class="text-center text-gray-500 text-sm">
@@ -438,10 +446,18 @@
 
                     <!-- Chat Abierto -->
                     <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-purple-500">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center mb-2">
                             <span class="text-gray-300">💬 Abrieron Chat</span>
                             <span class="text-2xl font-bold text-purple-400" id="metricsChatOpened">-</span>
                         </div>
+                        <!-- Barra de Progreso -->
+                        <div class="w-full bg-black/40 rounded-full h-3 overflow-hidden shadow-inner">
+                            <div id="progressChatOpened"
+                                class="h-full bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 rounded-full transition-all duration-1000 ease-out shadow-lg"
+                                style="width: 0%; box-shadow: 0 0 12px rgba(168, 85, 247, 0.8)">
+                            </div>
+                        </div>
+                        <p class="text-purple-300 text-xs mt-1 text-right font-medium" id="percentChatOpened">0%</p>
                     </div>
 
                     <div class="text-center text-gray-500 text-sm">
@@ -450,10 +466,18 @@
 
                     <!-- Completaron Datos -->
                     <div class="bg-gray-800/50 rounded-lg p-4 border-l-4 border-green-500">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center mb-2">
                             <span class="text-gray-300">✅ Completaron Datos</span>
                             <span class="text-2xl font-bold text-green-400" id="metricsChatCompleted">-</span>
                         </div>
+                        <!-- Barra de Progreso -->
+                        <div class="w-full bg-black/40 rounded-full h-3 overflow-hidden shadow-inner">
+                            <div id="progressChatCompleted"
+                                class="h-full bg-gradient-to-r from-green-400 via-green-500 to-green-600 rounded-full transition-all duration-1000 ease-out shadow-lg"
+                                style="width: 0%; box-shadow: 0 0 12px rgba(34, 197, 94, 0.8)">
+                            </div>
+                        </div>
+                        <p class="text-green-300 text-xs mt-1 text-right font-medium" id="percentChatCompleted">0%</p>
                     </div>
 
                     <div class="text-center text-gray-500 text-sm">
@@ -1971,6 +1995,33 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 document.getElementById('chatOpenRate').textContent = chatOpenRate;
                 document.getElementById('chatCompletionRate').textContent = chatCompletionRate;
                 document.getElementById('conversionRateAnalytics').textContent = conversionRate;
+
+                // ANIMAR BARRAS DE PROGRESO DEL EMBUDO
+                setTimeout(() => {
+                    // Calcular porcentajes para las barras (basado en el máximo como 100%)
+                    const maxValue = Math.max(uniqueVisitors, chatOpened, totalLeads);
+
+                    // Visitantes Únicos
+                    if (document.getElementById('progressVisitors')) {
+                        const pctVisitors = maxValue > 0 ? (uniqueVisitors / maxValue) * 100 : 0;
+                        document.getElementById('progressVisitors').style.width = `${pctVisitors}%`;
+                        document.getElementById('percentVisitors').textContent = `${pctVisitors.toFixed(1)}%`;
+                    }
+
+                    // Abrieron Chat
+                    if (document.getElementById('progressChatOpened')) {
+                        const pctChat = maxValue > 0 ? (chatOpened / maxValue) * 100 : 0;
+                        document.getElementById('progressChatOpened').style.width = `${pctChat}%`;
+                        document.getElementById('percentChatOpened').textContent = `${pctChat.toFixed(1)}%`;
+                    }
+
+                    // Completaron Datos
+                    if (document.getElementById('progressChatCompleted')) {
+                        const pctCompleted = maxValue > 0 ? (totalLeads / maxValue) * 100 : 0;
+                        document.getElementById('progressChatCompleted').style.width = `${pctCompleted}%`;
+                        document.getElementById('percentChatCompleted').textContent = `${pctCompleted.toFixed(1)}%`;
+                    }
+                }, 100);
 
                 console.log('📊 Analytics estimados:', { uniqueVisitors, chatOpened, totalLeads });
             }
