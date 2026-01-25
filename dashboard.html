@@ -643,9 +643,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <!-- Sales Funnel -->
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
                     <h3 class="text-xl font-bold text-yellow-500">🎯 Embudo de Ventas</h3>
-                    <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
                         <select id="funnelDateFilter" onchange="applyFunnelDateFilter()"
                             class="bg-gray-800 text-white px-3 py-1.5 rounded border border-yellow-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
                             <option value="today">Hoy</option>
@@ -702,9 +702,17 @@
         <!-- Charts Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
                     <h3 class="text-xl font-bold text-yellow-500">📊 Distribución</h3>
-                    <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <select id="serviceDistDateFilter" onchange="applyServiceDistDateFilter()"
+                            class="bg-gray-800 text-white px-3 py-1.5 rounded border border-yellow-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta Semana</option>
+                            <option value="month">Este Mes</option>
+                            <option value="quarter">Últimos 3 Meses</option>
+                            <option value="all" selected>Todo</option>
+                        </select>
                         <select id="chart1Selector" class="chart-selector" onchange="updateChart1()">
                             <option value="servicios">Por Servicio</option>
                             <option value="ubicaciones">Por Ubicación</option>
@@ -737,10 +745,19 @@
                 </div>
             </div>
 
+            <!-- Top 5 -->
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
-                <div class="flex items-center justify-between mb-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
                     <h3 class="text-xl font-bold text-yellow-500">📊 Top 5</h3>
-                    <div class="flex gap-2">
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <select id="sourceDistDateFilter" onchange="applySourceDistDateFilter()"
+                            class="bg-gray-800 text-white px-3 py-1.5 rounded border border-red-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta Semana</option>
+                            <option value="month">Este Mes</option>
+                            <option value="quarter">Últimos 3 Meses</option>
+                            <option value="all" selected>Todo</option>
+                        </select>
                         <select id="chart2Selector" class="chart-selector" onchange="updateChart2()">
                             <option value="servicios">Servicios</option>
                             <option value="ubicaciones">Ubicaciones</option>
@@ -771,8 +788,25 @@
                 </div>
             </div>
 
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <h3 class="text-xl font-bold text-yellow-500 mb-4">📈 Tendencia</h3>
+            <!-- Lead Trend -->
+            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-green-500">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                    <h3 class="text-xl font-bold text-green-500">📈 Tendencia de Leads</h3>
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <select id="trendDateFilter" onchange="applyTrendDateFilter()"
+                            class="bg-gray-800 text-white px-3 py-1.5 rounded border border-green-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta Semana</option>
+                            <option value="month">Este Mes</option>
+                            <option value="quarter">Últimos 3 Meses</option>
+                            <option value="all" selected>Todo el Tiempo</option>
+                        </select>
+                        <button onclick="downloadChart('trendChart', 'tendencia-leads')"
+                            class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white font-bold text-xs rounded transition">
+                            📥 Descargar
+                        </button>
+                    </div>
+                </div>
                 <canvas id="trendChart"></canvas>
 
                 <!-- Leyenda Explicativa -->
@@ -787,24 +821,63 @@
                     </p>
                 </div>
             </div>
-        </div>
 
-        <!-- More Charts Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-yellow-500">🎯 Comparación</h3>
-                    <select id="chart3Selector" class="chart-selector" onchange="updateChart3()">
-                        <option value="etapas">Por Etapa</option>
-                        <option value="servicios">Por Servicio</option>
-                        <option value="estados">Por Estado</option>
-                    </select>
+            <!-- More Charts Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                        <h3 class="text-xl font-bold text-yellow-500">🎯 Comparación</h3>
+                        <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                            <select id="comparisonDateFilter" onchange="applyComparisonDateFilter()"
+                                class="bg-gray-800 text-white px-3 py-1.5 rounded border border-yellow-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                                <option value="today">Hoy</option>
+                                <option value="week">Esta Semana</option>
+                                <option value="month">Este Mes</option>
+                                <option value="quarter">Últimos 3 Meses</option>
+                                <option value="all" selected>Todo</option>
+                            </select>
+                            <select id="chart3Selector" class="chart-selector" onchange="updateChart3()">
+                                <option value="etapas">Por Etapa</option>
+                                <option value="servicios">Por Servicio</option>
+                                <option value="estados">Por Estado</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <canvas id="chart3"></canvas>
+
+                <!-- Leyenda Explicativa -->
+                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                    <p class="font-semibold text-red-500 mb-2 text-sm flex items-center">
+                        <span class="mr-2">ℹ️</span> Leyenda:
+                    </p>
+                    <p class="text-xs text-gray-400">
+                        <span class="text-white font-medium">Comparación:</span> Permite comparar diferentes
+                        aspectos de
+                        tus leads (etapas, servicios, estados). Usa el selector para cambiar la vista y analizar
+                        diferentes perspectivas.
+                    </p>
+                </div>
             </div>
 
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
-                <h3 class="text-xl font-bold text-yellow-500 mb-4">📊 Volumen Acumulado</h3>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-3">
+                    <h3 class="text-xl font-bold text-yellow-500">📊 Volumen Acumulado</h3>
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
+                        <select id="volumeDateFilter" onchange="applyVolumeDateFilter()"
+                            class="bg-gray-800 text-white px-3 py-1.5 rounded border border-orange-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta Semana</option>
+                            <option value="month">Este Mes</option>
+                            <option value="quarter">Últimos 3 Meses</option>
+                            <option value="all" selected>Todo el Tiempo</option>
+                        </select>
+                        <button onclick="downloadChart('volumeChart', 'volumen-acumulado')"
+                            class="px-3 py-1 bg-orange-600 hover:bg-orange-700 text-white font-bold text-xs rounded transition">
+                            📥 Descargar
+                        </button>
+                    </div>
+                </div>
                 <canvas id="volumeChart"></canvas>
 
                 <!-- Leyenda Explicativa -->
@@ -813,8 +886,11 @@
                         <span class="mr-2">ℹ️</span> Leyenda:
                     </p>
                     <p class="text-xs text-gray-400">
-                        <span class="text-white font-medium">Volumen Acumulado:</span> Muestra el total acumulado de
-                        leads a lo largo del tiempo. Te ayuda a visualizar el crecimiento total de tu base de datos de
+                        <span class="text-white font-medium">Volumen Acumulado:</span> Muestra el total
+                        acumulado de
+                        leads a lo largo del tiempo. Te ayuda a visualizar el crecimiento total de tu base
+                        de datos
+                        de
                         clientes potenciales.
                     </p>
                 </div>
@@ -1045,7 +1121,8 @@
             <!-- Nota Informativa -->
             <div class="mt-6 bg-blue-900/20 border-l-4 border-blue-500 rounded-lg p-4">
                 <p class="text-xs text-gray-300">
-                    <strong class="text-blue-400">ℹ️ Importante:</strong> Si cambias tu email, recibirás un correo de
+                    <strong class="text-blue-400">ℹ️ Importante:</strong> Si cambias tu email, recibirás un
+                    correo de
                     confirmación en la nueva dirección. Deberás confirmar el cambio desde ese email.
                 </p>
             </div>
@@ -1718,9 +1795,9 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
             return `Hace ${days}d`;
         }
 
-        function getCounts(field) {
+        function getCounts(field, data = filteredLeadsData) {
             const counts = {};
-            filteredLeadsData.forEach(l => {
+            data.forEach(l => {
                 const value = l[field] || 'Sin especificar';
                 counts[value] = (counts[value] || 0) + 1;
             });
@@ -1794,7 +1871,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 console.error('❌ Error en updateFunnelChart:', error);
             }
         }
-        function updateChart1() {
+        function updateChart1(data = filteredLeadsData) {
             const selector = document.getElementById('chart1Selector').value;
             const chartType = document.getElementById('chart1TypeSelector')?.value || 'doughnut';
             const fieldMap = {
@@ -1804,7 +1881,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 'estados': 'estado'
             };
 
-            const counts = getCounts(fieldMap[selector]);
+            const counts = getCounts(fieldMap[selector], data);
 
             if (charts.chart1) charts.chart1.destroy();
 
@@ -1834,7 +1911,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
             });
         }
 
-        function updateChart2() {
+        function updateChart2(data = filteredLeadsData) {
             const selector = document.getElementById('chart2Selector').value;
             const chartType = document.getElementById('chart2TypeSelector')?.value || 'bar';
             const fieldMap = {
@@ -1843,7 +1920,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 'etapas': 'etapa'
             };
 
-            const counts = getCounts(fieldMap[selector]);
+            const counts = getCounts(fieldMap[selector], data);
             const topItems = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
             if (charts.chart2) charts.chart2.destroy();
@@ -1872,7 +1949,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
             });
         }
 
-        function updateTrendChart() {
+        function updateTrendChart(data = filteredLeadsData) {
             const last7Days = [];
             for (let i = 6; i >= 0; i--) {
                 const date = new Date();
@@ -1880,7 +1957,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 last7Days.push(date.toISOString().split('T')[0]);
             }
 
-            const trendData = last7Days.map(date => filteredLeadsData.filter(l => l.created_at.startsWith(date)).length);
+            const trendData = last7Days.map(date => data.filter(l => l.created_at.startsWith(date)).length);
 
             if (charts.trendChart) charts.trendChart.destroy();
 
@@ -1908,7 +1985,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
             });
         }
 
-        function updateChart3() {
+        function updateChart3(data = filteredLeadsData) {
             const selector = document.getElementById('chart3Selector').value;
             const fieldMap = {
                 'etapas': 'etapa',
@@ -1916,7 +1993,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 'estados': 'estado'
             };
 
-            const counts = getCounts(fieldMap[selector]);
+            const counts = getCounts(fieldMap[selector], data);
 
             if (charts.chart3) charts.chart3.destroy();
 
@@ -1940,7 +2017,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
             });
         }
 
-        function updateVolumeChart() {
+        function updateVolumeChart(data = filteredLeadsData) {
             const last7Days = [];
             for (let i = 6; i >= 0; i--) {
                 const date = new Date();
@@ -1948,7 +2025,7 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 last7Days.push(date.toISOString().split('T')[0]);
             }
 
-            const trendData = last7Days.map(date => filteredLeadsData.filter(l => l.created_at.startsWith(date)).length);
+            const trendData = last7Days.map(date => data.filter(l => l.created_at.startsWith(date)).length);
             let cumulative = 0;
             const volumeData = trendData.map(count => cumulative += count);
 
@@ -2129,6 +2206,168 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
 
             updateDashboard();
             console.log('📅 Filtro de fecha limpiado');
+        }
+
+        // ========== FUNCIONES DE FILTRADO POR FECHA INDIVIDUAL ==========
+
+        function getStartDateFromFilter(filter) {
+            const now = new Date();
+            let startDate;
+            switch (filter) {
+                case 'today': startDate = new Date(now.setHours(0, 0, 0, 0)); break;
+                case 'week': startDate = new Date(now.setDate(now.getDate() - 7)); break;
+                case 'month': startDate = new Date(now.setMonth(now.getMonth() - 1)); break;
+                case 'quarter': startDate = new Date(now.setMonth(now.getMonth() - 3)); break;
+                default: startDate = new Date(0);
+            }
+            return startDate;
+        }
+
+        function applyAnalyticsDateFilter() {
+            const filter = document.getElementById('analyticsDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+
+            const totalLeads = filteredLeads.length;
+            const uniqueVisitors = Math.round(totalLeads * 3.5);
+            const chatOpened = Math.round(totalLeads * 1.8);
+
+            document.getElementById('metricsVisitors').textContent = uniqueVisitors;
+            document.getElementById('metricsChatOpened').textContent = chatOpened;
+            document.getElementById('metricsChatCompleted').textContent = totalLeads;
+
+            const chatOpenRate = uniqueVisitors > 0 ? ((chatOpened / uniqueVisitors) * 100).toFixed(1) + '%' : '0%';
+            const chatCompletionRate = chatOpened > 0 ? ((totalLeads / chatOpened) * 100).toFixed(1) + '%' : '0%';
+            const conversionRate = uniqueVisitors > 0 ? ((totalLeads / uniqueVisitors) * 100).toFixed(1) + '%' : '0%';
+
+            document.getElementById('chatOpenRate').textContent = chatOpenRate;
+            document.getElementById('chatCompletionRate').textContent = chatCompletionRate;
+            document.getElementById('conversionRateAnalytics').textContent = conversionRate;
+
+            setTimeout(() => {
+                const maxValue = Math.max(uniqueVisitors, chatOpened, totalLeads);
+                if (document.getElementById('progressVisitors')) {
+                    const pct = maxValue > 0 ? (uniqueVisitors / maxValue) * 100 : 0;
+                    document.getElementById('progressVisitors').style.width = `${pct}%`;
+                    document.getElementById('percentVisitors').textContent = `${pct.toFixed(1)}%`;
+                }
+                if (document.getElementById('progressChatOpened')) {
+                    const pct = maxValue > 0 ? (chatOpened / maxValue) * 100 : 0;
+                    document.getElementById('progressChatOpened').style.width = `${pct}%`;
+                    document.getElementById('percentChatOpened').textContent = `${pct.toFixed(1)}%`;
+                }
+                if (document.getElementById('progressChatCompleted')) {
+                    const pct = maxValue > 0 ? (totalLeads / maxValue) * 100 : 0;
+                    document.getElementById('progressChatCompleted').style.width = `${pct}%`;
+                    document.getElementById('percentChatCompleted').textContent = `${pct.toFixed(1)}%`;
+                }
+            }, 100);
+        }
+
+        function applyWhatsAppDateFilter() {
+            const filter = document.getElementById('whatsappDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+
+            const total = filteredLeads.length;
+            const contactados = filteredLeads.filter(l => l.contactado_whatsapp).length;
+            const respondieron = filteredLeads.filter(l => l.respondio_whatsapp).length;
+            const citas = filteredLeads.filter(l => l.cita_agendada).length;
+            const convertidos = filteredLeads.filter(l => l.estado === 'convertido').length;
+
+            document.getElementById('totalLeadsMetric').textContent = total;
+            document.getElementById('whatsappContactados').textContent = contactados;
+            document.getElementById('whatsappContactadosBase').textContent = contactados;
+            document.getElementById('whatsappRespondieron').textContent = respondieron;
+            document.getElementById('whatsappRespondieronBase').textContent = respondieron;
+            document.getElementById('whatsappCitas').textContent = citas;
+            document.getElementById('whatsappConvertidos').textContent = convertidos;
+
+            const pctContactados = total > 0 ? ((contactados / total) * 100).toFixed(1) : 0;
+            const pctRespondieron = contactados > 0 ? ((respondieron / contactados) * 100).toFixed(1) : 0;
+            const pctCitas = respondieron > 0 ? ((citas / respondieron) * 100).toFixed(1) : 0;
+
+            document.getElementById('pctContactados').textContent = pctContactados;
+            document.getElementById('pctRespondieron').textContent = pctRespondieron;
+            document.getElementById('pctCitas').textContent = pctCitas;
+
+            document.getElementById('progressContactados').style.width = pctContactados + '%';
+            document.getElementById('progressRespondieron').style.width = pctRespondieron + '%';
+            document.getElementById('progressCitas').style.width = pctCitas + '%';
+        }
+
+        function applyFunnelDateFilter() {
+            const filter = document.getElementById('funnelDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+
+            // Reusar lógica de updateFunnelChart pero con datos filtrados locales
+            const stages = {
+                'Contacto inicial': filteredLeads.filter(l => l.etapa === 'Contacto inicial').length,
+                'Propuesta enviada': filteredLeads.filter(l => l.etapa === 'Propuesta enviada').length,
+                'Negociación': filteredLeads.filter(l => l.etapa === 'Negociación').length,
+                'Ganado': filteredLeads.filter(l => l.etapa === 'Ganado').length
+            };
+
+            if (charts.funnelChart) charts.funnelChart.destroy();
+            const canvas = document.getElementById('funnelChart');
+            if (canvas) {
+                charts.funnelChart = new Chart(canvas, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(stages),
+                        datasets: [{
+                            label: 'Leads',
+                            data: Object.values(stages),
+                            backgroundColor: ['#FFB800', '#F59E0B', '#DC2626', '#10B981'],
+                            borderColor: '#FFB800', borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { beginAtZero: true, ticks: { color: '#FFB800' }, grid: { color: 'rgba(255, 184, 0, 0.1)' } },
+                            y: { ticks: { color: '#FFB800', font: { size: 14, weight: 'bold' } }, grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function applyServiceDistDateFilter() {
+            const filter = document.getElementById('serviceDistDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+            updateChart1(filteredLeads);
+        }
+
+        function applySourceDistDateFilter() {
+            const filter = document.getElementById('sourceDistDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+            updateChart2(filteredLeads);
+        }
+
+        function applyTrendDateFilter() {
+            const filter = document.getElementById('trendDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+            updateTrendChart(filteredLeads);
+        }
+
+        function applyVolumeDateFilter() {
+            const filter = document.getElementById('volumeDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+            updateVolumeChart(filteredLeads);
+        }
+
+        function applyComparisonDateFilter() {
+            const filter = document.getElementById('comparisonDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+            updateChart3(filteredLeads);
         }
 
         // ========== FUNCIONES DE ANALYTICS Y WHATSAPP ==========
