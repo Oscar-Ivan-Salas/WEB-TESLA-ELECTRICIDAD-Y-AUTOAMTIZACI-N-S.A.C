@@ -694,7 +694,17 @@
 
             <!-- Activity Feed -->
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
-                <h3 class="text-xl font-bold text-yellow-500 mb-4">📋 Actividad Reciente</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-yellow-500">📋 Actividad Reciente</h3>
+                    <select id="activityDateFilter" onchange="applyActivityDateFilter()"
+                        class="bg-gray-800 text-white px-3 py-1.5 rounded border border-red-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                        <option value="today">Hoy</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month">Este Mes</option>
+                        <option value="quarter">Últimos 3 Meses</option>
+                        <option value="all" selected>Todo el Tiempo</option>
+                    </select>
+                </div>
                 <div id="activityFeed" class="max-h-96 overflow-y-auto"></div>
             </div>
         </div>
@@ -2376,6 +2386,13 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
             const startDate = getStartDateFromFilter(filter);
             const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
             updateChart3(filteredLeads);
+        }
+
+        function applyActivityDateFilter() {
+            const filter = document.getElementById('activityDateFilter').value;
+            const startDate = getStartDateFromFilter(filter);
+            const filteredLeads = allLeadsData.filter(l => new Date(l.created_at) >= startDate);
+            updateActivityFeed(filteredLeads);
         }
 
         // ========== FUNCIONES DE ANALYTICS Y WHATSAPP ==========
