@@ -418,10 +418,21 @@
 
             <!-- Card: Embudo de Conversión -->
             <div class="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 border-2 border-yellow-500 shadow-2xl">
-                <h3 class="text-2xl font-bold text-yellow-500 mb-6 flex items-center">
-                    <span class="text-3xl mr-3">📊</span>
-                    Embudo de Conversión
-                </h3>
+                <!-- Título + Selector de Fechas -->
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-yellow-500 flex items-center">
+                        <span class="text-2xl mr-2">📊</span>
+                        Embudo de Conversión
+                    </h3>
+                    <select id="analyticsDateFilter" onchange="applyAnalyticsDateFilter()"
+                        class="bg-gray-800 text-white px-3 py-1.5 rounded border border-yellow-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                        <option value="today">Hoy</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month">Este Mes</option>
+                        <option value="quarter">Últimos 3 Meses</option>
+                        <option value="all" selected>Todo el Tiempo</option>
+                    </select>
+                </div>
 
                 <div class="space-y-4">
                     <!-- Visitantes -->
@@ -484,15 +495,55 @@
                         Tasa de Conversión: <span class="text-yellow-500 font-bold"
                             id="conversionRateAnalytics">-</span>%
                     </div>
+
+                    <!-- Leyenda Explicativa -->
+                    <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                        <p class="font-semibold text-yellow-500 mb-2 text-sm flex items-center">
+                            <span class="mr-2">ℹ️</span> Leyenda:
+                        </p>
+                        <ul class="space-y-1.5 text-xs text-gray-400">
+                            <li class="flex items-start">
+                                <span class="text-blue-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Visitantes Únicos:</span> Personas que
+                                    visitaron tu sitio web</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-purple-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Abrieron Chat:</span> Visitantes que
+                                    iniciaron una conversación</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Completaron Datos:</span> Visitantes que se
+                                    convirtieron en leads (clientes potenciales)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-yellow-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Tasa de Conversión:</span> Porcentaje de
+                                    visitantes que se convirtieron en leads</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             <!-- Card: Seguimiento WhatsApp -->
             <div class="bg-gradient-to-br from-gray-900 to-black rounded-2xl p-6 border-2 border-green-500 shadow-2xl">
-                <h3 class="text-2xl font-bold text-green-500 mb-6 flex items-center">
-                    <span class="text-3xl mr-3">📱</span>
-                    Seguimiento WhatsApp
-                </h3>
+                <!-- Título + Selector de Fechas -->
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-green-500 flex items-center">
+                        <span class="text-2xl mr-2">📱</span>
+                        Seguimiento WhatsApp
+                    </h3>
+                    <select id="whatsappDateFilter" onchange="applyWhatsAppDateFilter()"
+                        class="bg-gray-800 text-white px-3 py-1.5 rounded border border-green-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                        <option value="today">Hoy</option>
+                        <option value="week">Esta Semana</option>
+                        <option value="month">Este Mes</option>
+                        <option value="quarter">Últimos 3 Meses</option>
+                        <option value="all" selected>Todo el Tiempo</option>
+                    </select>
+                </div>
 
                 <div class="space-y-4">
                     <!-- Contactados -->
@@ -552,6 +603,35 @@
                             <span class="text-yellow-500 font-bold">🎯 Convertidos</span>
                             <span class="text-2xl font-bold text-yellow-400" id="whatsappConvertidos">-</span>
                         </div>
+                    </div>
+
+                    <!-- Leyenda Explicativa -->
+                    <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                        <p class="font-semibold text-green-500 mb-2 text-sm flex items-center">
+                            <span class="mr-2">ℹ️</span> Leyenda:
+                        </p>
+                        <ul class="space-y-1.5 text-xs text-gray-400">
+                            <li class="flex items-start">
+                                <span class="text-yellow-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Contactados:</span> Leads a los que se envió
+                                    mensaje por WhatsApp</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Respondieron:</span> Leads que respondieron
+                                    el mensaje de WhatsApp</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Citas Agendadas:</span> Leads que agendaron
+                                    una reunión o visita</span>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-yellow-400 mr-2">•</span>
+                                <span><span class="text-white font-medium">Convertidos:</span> Leads que se convirtieron
+                                    en clientes (compraron)</span>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
