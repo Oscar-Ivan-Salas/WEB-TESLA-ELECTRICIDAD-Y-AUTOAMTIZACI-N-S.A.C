@@ -645,12 +645,51 @@
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold text-yellow-500">🎯 Embudo de Ventas</h3>
-                    <button onclick="downloadChart('funnelChart', 'embudo-ventas')"
-                        class="px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-black font-bold text-xs rounded transition">
-                        📥 Descargar
-                    </button>
+                    <div class="flex gap-2">
+                        <select id="funnelDateFilter" onchange="applyFunnelDateFilter()"
+                            class="bg-gray-800 text-white px-3 py-1.5 rounded border border-yellow-500 text-sm font-medium hover:bg-gray-700 transition cursor-pointer">
+                            <option value="today">Hoy</option>
+                            <option value="week">Esta Semana</option>
+                            <option value="month">Este Mes</option>
+                            <option value="quarter">Últimos 3 Meses</option>
+                            <option value="all" selected>Todo el Tiempo</option>
+                        </select>
+                        <button onclick="downloadChart('funnelChart', 'embudo-ventas')"
+                            class="px-3 py-1 bg-yellow-600 hover:bg-yellow-700 text-black font-bold text-xs rounded transition">
+                            📥 Descargar
+                        </button>
+                    </div>
                 </div>
                 <canvas id="funnelChart"></canvas>
+
+                <!-- Leyenda Explicativa -->
+                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                    <p class="font-semibold text-yellow-500 mb-2 text-sm flex items-center">
+                        <span class="mr-2">ℹ️</span> Leyenda:
+                    </p>
+                    <ul class="space-y-1.5 text-xs text-gray-400">
+                        <li class="flex items-start">
+                            <span class="text-yellow-400 mr-2">•</span>
+                            <span><span class="text-white font-medium">Contacto Inicial:</span> Leads en la primera
+                                etapa del proceso de venta</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-orange-400 mr-2">•</span>
+                            <span><span class="text-white font-medium">Propuesta Enviada:</span> Leads a los que se
+                                envió una cotización o propuesta</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-red-400 mr-2">•</span>
+                            <span><span class="text-white font-medium">Negociación:</span> Leads en proceso de
+                                negociación de precios y condiciones</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-400 mr-2">•</span>
+                            <span><span class="text-white font-medium">Ganado:</span> Leads que se convirtieron en
+                                clientes (cerraron la venta)</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
 
             <!-- Activity Feed -->
@@ -684,6 +723,18 @@
                     </div>
                 </div>
                 <canvas id="chart1"></canvas>
+
+                <!-- Leyenda Explicativa -->
+                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                    <p class="font-semibold text-yellow-500 mb-2 text-sm flex items-center">
+                        <span class="mr-2">ℹ️</span> Leyenda:
+                    </p>
+                    <p class="text-xs text-gray-400">
+                        <span class="text-white font-medium">Distribución:</span> Muestra cómo se distribuyen tus leads
+                        según diferentes criterios (servicios, ubicaciones, etapas, estados). Cambia el selector arriba
+                        para ver diferentes perspectivas de tus datos.
+                    </p>
+                </div>
             </div>
 
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-red-600">
@@ -706,11 +757,35 @@
                     </div>
                 </div>
                 <canvas id="chart2"></canvas>
+
+                <!-- Leyenda Explicativa -->
+                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                    <p class="font-semibold text-red-500 mb-2 text-sm flex items-center">
+                        <span class="mr-2">ℹ️</span> Leyenda:
+                    </p>
+                    <p class="text-xs text-gray-400">
+                        <span class="text-white font-medium">Top 5:</span> Muestra los 5 elementos más importantes según
+                        el criterio seleccionado (servicios más solicitados, ubicaciones con más leads, etapas con más
+                        volumen). Te ayuda a identificar dónde enfocar tus esfuerzos.
+                    </p>
+                </div>
             </div>
 
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
                 <h3 class="text-xl font-bold text-yellow-500 mb-4">📈 Tendencia</h3>
                 <canvas id="trendChart"></canvas>
+
+                <!-- Leyenda Explicativa -->
+                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                    <p class="font-semibold text-yellow-500 mb-2 text-sm flex items-center">
+                        <span class="mr-2">ℹ️</span> Leyenda:
+                    </p>
+                    <p class="text-xs text-gray-400">
+                        <span class="text-white font-medium">Tendencia de Leads:</span> Muestra la evolución del número
+                        de leads a lo largo del tiempo. Te permite identificar patrones estacionales, picos de demanda y
+                        tendencias de crecimiento o decrecimiento.
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -731,6 +806,18 @@
             <div class="bg-gray-900 bg-opacity-90 rounded-xl shadow-2xl p-6 border-2 border-yellow-500">
                 <h3 class="text-xl font-bold text-yellow-500 mb-4">📊 Volumen Acumulado</h3>
                 <canvas id="volumeChart"></canvas>
+
+                <!-- Leyenda Explicativa -->
+                <div class="bg-gray-800/30 rounded-lg p-4 mt-4 border border-gray-700">
+                    <p class="font-semibold text-yellow-500 mb-2 text-sm flex items-center">
+                        <span class="mr-2">ℹ️</span> Leyenda:
+                    </p>
+                    <p class="text-xs text-gray-400">
+                        <span class="text-white font-medium">Volumen Acumulado:</span> Muestra el total acumulado de
+                        leads a lo largo del tiempo. Te ayuda a visualizar el crecimiento total de tu base de datos de
+                        clientes potenciales.
+                    </p>
+                </div>
             </div>
         </div>
 
