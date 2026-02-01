@@ -976,6 +976,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     <!-- Proyecto 1: Minera Chinalco -->
+                    <!-- Proyecto 1: Minera Chinalco (OCULTO TEMPORALMENTE A PEDIDO DEL USUARIO) -->
+                    <!--
                     <div
                         class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
                         <div onclick="toggleAccordion('accordion-proyecto1')"
@@ -991,7 +993,6 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Contenido expandible -->
                         <div id="accordion-proyecto1" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
                             <p class="text-gray-300 mb-4">
                                 Automatización e instrumentación en planta de cobalto. Instalación de sistemas de
@@ -1003,6 +1004,46 @@
                                     <li>• Sistemas de medición y control de procesos</li>
                                     <li>• Pruebas de motores eléctricos y bombas</li>
                                     <li>• Instrumentación industrial especializada</li>
+                                </ul>
+                            </div>
+                            <button onclick="openChat()"
+                                class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-sm font-bold hover:scale-105 transition-all">
+                                Solicitar Evaluación
+                            </button>
+                        </div>
+                    </div>
+                    -->
+
+                    <!-- Proyecto 1: Complejos Inmobiliarios (NUEVO) -->
+                    <div
+                        class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-proyecto-inmo')"
+                            class="group relative h-72 cursor-pointer">
+                            <img src="assets/service_finishes.png" alt="Complejos Inmobiliarios"
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-2">Complejos Inmobiliarios</h3>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">
+                                        Click para ver más <i class="fas fa-chevron-down"></i>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Contenido expandible -->
+                        <div id="accordion-proyecto-inmo"
+                            class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4">
+                                Gestión integral de instalaciones eléctricas y automatización para desarrollos
+                                inmobiliarios
+                                de gran escala. Garantizamos eficiencia energética y confort desde el diseño.
+                            </p>
+                            <div class="bg-gray-900/50 p-4 rounded-lg border border-tesla-gold/20 mb-4">
+                                <h4 class="text-tesla-gold font-bold mb-2 text-sm">✓ Alcance</h4>
+                                <ul class="text-gray-300 space-y-1 text-sm">
+                                    <li>• Redes eléctricas de baja y media tensión</li>
+                                    <li>• Automatización de áreas comunes</li>
+                                    <li>• Sistemas de seguridad electrónica integrada</li>
                                 </ul>
                             </div>
                             <button onclick="openChat()"
