@@ -8,6 +8,8 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
@@ -23,7 +25,6 @@
 
         .login-card {
             background: rgba(15, 15, 15, 0.98);
-            /* backdrop-filter eliminado para estabilidad móvil */
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
             z-index: 10;
@@ -80,6 +81,12 @@
             <p class="text-sm font-semibold" id="errorText"></p>
         </div>
 
+        <!-- Mensaje de Éxito -->
+        <div id="successMessage"
+            class="hidden bg-green-900/30 border-l-4 border-green-500 text-green-400 p-4 mb-6 rounded-lg">
+            <p class="text-sm font-semibold" id="successText"></p>
+        </div>
+
         <!-- Formulario de Login -->
         <form id="loginForm" class="space-y-6">
             <div>
@@ -90,12 +97,20 @@
                     placeholder="admin@tesla-electricidad.com" required autocomplete="email">
             </div>
 
-            <div>
+            <div class="relative">
                 <label for="password" class="block text-yellow-500 text-sm font-bold mb-2">
                     🔒 Contraseña
                 </label>
-                <input type="password" id="password" class="input-field w-full px-4 py-3 rounded-lg"
-                    placeholder="••••••••" required autocomplete="current-password">
+                <div class="relative">
+                    <input type="password" id="password" class="input-field w-full px-4 py-3 rounded-lg pr-12"
+                        placeholder="••••••••" required autocomplete="current-password">
+
+                    <!-- Botón Ojo -->
+                    <button type="button" id="togglePassword"
+                        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-yellow-500 focus:outline-none p-2">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" id="loginButton"
@@ -106,9 +121,10 @@
 
         <!-- Link de Recuperación -->
         <div class="mt-6 text-center">
-            <a href="#" onclick="showRecovery()" class="text-yellow-500 text-sm hover:text-yellow-400 transition">
+            <button onclick="showRecovery()"
+                class="text-yellow-500 text-sm hover:text-yellow-400 transition bg-transparent border-none underline cursor-pointer">
                 ¿Olvidaste tu contraseña?
-            </a>
+            </button>
         </div>
 
         <!-- Footer -->
@@ -125,6 +141,20 @@
         const SUPABASE_KEY = 'sb_publishable_K-BlssTGWsG5uzY9bAnwfg_M7Zwheap';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // Toggle Password Visibility
+        const togglePasswordBtn = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        togglePasswordBtn.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Cambiar ícono
+            const icon = togglePasswordBtn.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+
         // Verificar si ya está autenticado
         async function checkAuth() {
             const { data: { session } } = await supabase.auth.getSession();
@@ -140,8 +170,8 @@
             const errorText = document.getElementById('errorText');
             errorText.textContent = message;
             errorDiv.classList.remove('hidden');
+            document.getElementById('successMessage').classList.add('hidden');
 
-            // Ocultar después de 5 segundos
             setTimeout(() => {
                 errorDiv.classList.add('hidden');
             }, 5000);
@@ -154,10 +184,11 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const button = document.getElementById('loginButton');
+            const originalText = button.innerHTML;
 
             // Deshabilitar botón
             button.disabled = true;
-            button.textContent = '⏳ Iniciando sesión...';
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
 
             try {
                 const { data, error } = await supabase.auth.signInWithPassword({
@@ -165,18 +196,18 @@
                     password: password
                 });
 
-                if (error) {
-                    throw error;
-                }
+                if (error) throw error;
 
                 // Login exitoso
                 console.log('✅ Login exitoso');
+                // button.innerHTML = '<i class="fas fa-check"></i> ¡Bienvenido!'; 
+                // No mostrar mensaje en botón, redireccionar directo
+
                 window.location.href = '/dashboard.html';
 
             } catch (error) {
                 console.error('❌ Error de login:', error);
 
-                // Mensajes de error personalizados
                 let errorMessage = 'Error al iniciar sesión';
 
                 if (error.message.includes('Invalid login credentials')) {
@@ -193,26 +224,48 @@
 
                 // Rehabilitar botón
                 button.disabled = false;
-                button.textContent = '🚀 Iniciar Sesión';
+                button.innerHTML = originalText;
             }
         });
 
-        // Recuperación de contraseña
+        // Recuperación de contraseña (Mejorada)
         async function showRecovery() {
-            const email = prompt('Ingresa tu correo electrónico para recuperar tu contraseña:');
+            const emailInput = document.getElementById('email');
+            const email = emailInput.value;
 
-            if (email) {
-                try {
-                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                        redirectTo: window.location.origin + '/reset-password.html'
-                    });
+            if (!email) {
+                showError('⚠️ Por favor ingresa tu correo electrónico en el campo de arriba primero.');
+                emailInput.focus();
+                emailInput.classList.add('border-red-500');
+                setTimeout(() => emailInput.classList.remove('border-red-500'), 2000);
+                return;
+            }
 
-                    if (error) throw error;
+            const button = document.querySelector('button[onclick="showRecovery()"]');
 
-                    alert('✅ Se ha enviado un correo de recuperación. Revisa tu bandeja de entrada.');
-                } catch (error) {
-                    alert('❌ Error: ' + error.message);
-                }
+            if (!confirm(`¿Enviar enlace de recuperación a ${email}?`)) return;
+
+            const originalText = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Enviando...';
+
+            try {
+                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + '/reset-password.html'
+                });
+
+                if (error) throw error;
+
+                const successDiv = document.getElementById('successMessage');
+                document.getElementById('successText').textContent = `✅ Enlace enviado a ${email}. Revisa tu bandeja de entrada.`;
+                successDiv.classList.remove('hidden');
+                document.getElementById('errorMessage').classList.add('hidden');
+
+            } catch (error) {
+                showError('❌ Error: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.textContent = originalText;
             }
         }
 
