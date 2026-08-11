@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -8,6 +8,13 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        if (typeof window.supabase === 'undefined') {
+            var _sbFallback = document.createElement('script');
+            _sbFallback.src = 'https://unpkg.com/@supabase/supabase-js@2';
+            document.head.appendChild(_sbFallback);
+        }
+    </script>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -94,7 +101,7 @@
                     📧 Correo Electrónico
                 </label>
                 <input type="email" id="email" class="input-field w-full px-4 py-3 rounded-lg"
-                    placeholder="admin@tesla-electricidad.com" required autocomplete="email">
+                    placeholder="oyp.solucionesdeingenieria@gmail.com" required autocomplete="email">
             </div>
 
             <div class="relative">
@@ -136,28 +143,59 @@
     </div>
 
     <script>
-        // Configuración Supabase
-        const SUPABASE_URL = 'https://bgwovsuyjajxrmkvcggn.supabase.co';
-        const SUPABASE_KEY = 'sb_publishable_K-BlssTGWsG5uzY9bAnwfg_M7Zwheap';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Configuración Supabase (Proyecto TESLA Activo)
+        const SUPABASE_URL = 'https://fckbbohlxfqoyiomyxqm.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_lbRx3jVpe9P7gzl3B5gFEg_5GbQXXF0';
 
-        // Toggle Password Visibility
-        const togglePasswordBtn = document.getElementById('togglePassword');
+        // ========== MEMORIA DE CORREO (auto-guardado) ==========
+        const EMAIL_MEMORY_KEY = 'tesla_admin_email';
+        const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('togglePassword');
 
-        togglePasswordBtn.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
+        function rememberEmail() {
+            const value = emailInput.value.trim();
+            if (value) localStorage.setItem(EMAIL_MEMORY_KEY, value);
+        }
 
-            // Cambiar ícono
+        // Restaurar correo guardado la próxima vez
+        const savedEmail = localStorage.getItem(EMAIL_MEMORY_KEY);
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+            passwordInput.focus();
+        }
+
+        // Auto-guardar mientras se escribe el correo
+        emailInput.addEventListener('change', rememberEmail);
+        emailInput.addEventListener('blur', rememberEmail);
+
+        // ========== VISOR DE CONTRASEÑA (ojo) ==========
+        // Se configura antes que Supabase para que SIEMPRE funcione
+        function togglePasswordVisibility() {
+            const show = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', show ? 'text' : 'password');
             const icon = togglePasswordBtn.querySelector('i');
-            icon.classList.toggle('fa-eye');
-            icon.classList.toggle('fa-eye-slash');
-        });
+            if (icon) {
+                icon.classList.toggle('fa-eye', !show);
+                icon.classList.toggle('fa-eye-slash', show);
+            }
+            togglePasswordBtn.setAttribute('aria-label', show ? 'Ocultar contraseña' : 'Mostrar contraseña');
+            passwordInput.focus();
+        }
+        togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
+
+        // ========== CONEXIÓN SUPABASE (no rompe el resto si falla) ==========
+        let supabaseClient = null;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (err) {
+            console.error('❌ No se pudo cargar Supabase:', err);
+        }
 
         // Verificar si ya está autenticado
         async function checkAuth() {
-            const { data: { session } } = await supabase.auth.getSession();
+            if (!supabaseClient) return;
+            const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 // Ya está autenticado, redirigir al dashboard
                 window.location.href = '/dashboard.html';
@@ -190,8 +228,15 @@
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
 
+            if (!supabaseClient) {
+                showError('❌ Supabase no cargó. Recarga la página o revisa tu conexión.');
+                button.disabled = false;
+                button.innerHTML = originalText;
+                return;
+            }
+
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
@@ -199,6 +244,7 @@
                 if (error) throw error;
 
                 // Login exitoso
+                rememberEmail();
                 console.log('✅ Login exitoso');
                 // button.innerHTML = '<i class="fas fa-check"></i> ¡Bienvenido!'; 
                 // No mostrar mensaje en botón, redireccionar directo
@@ -249,8 +295,15 @@
             button.disabled = true;
             button.textContent = 'Enviando...';
 
+            if (!supabaseClient) {
+                showError('❌ Supabase no cargó. Recarga la página.');
+                button.disabled = false;
+                button.textContent = originalText;
+                return;
+            }
+
             try {
-                const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
                     redirectTo: window.location.origin + '/reset-password.html'
                 });
 

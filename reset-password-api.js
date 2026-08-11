@@ -2,7 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 const readline = require('readline');
 
 // Configuración básica
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://bgwovsuyjajxrmkvcggn.supabase.co';
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://fckbbohlxfqoyiomyxqm.supabase.co';
 
 console.log('🔐 Script de Reseteo de Contraseña Admin - TESLA Dashboard');
 console.log('---------------------------------------------------------');

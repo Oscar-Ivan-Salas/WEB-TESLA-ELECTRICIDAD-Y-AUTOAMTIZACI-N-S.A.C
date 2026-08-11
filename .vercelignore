@@ -1,0 +1,15 @@
+node_modules
+.vercel
+.vscode
+docker
+.git
+.env.local
+*.log
+Backup_main.js
+card_code.txt
+changes_diff.txt
+temp_old_*.js
+temp_old_*.html
+old_index_utf8.html
+seed_*.js
+supabase-setup.sql
