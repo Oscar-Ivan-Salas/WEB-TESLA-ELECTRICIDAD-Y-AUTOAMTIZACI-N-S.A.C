@@ -1452,20 +1452,38 @@
         // ========== FIN GESTIÓN DE PERFIL ==========
 
         async function loadLeads() {
-            console.log('🔄 Cargando leads...');
+            console.log('🔄 Cargando todos los leads (con paginación)...');
             try {
-                const { data, error } = await supabaseClient
-                    .from('leads')
-                    .select('*')
-                    .order('created_at', { ascending: false });
+                let allLeads = [];
+                let from = 0;
+                const step = 1000;
+                let hasMore = true;
 
-                if (error) throw error;
+                while (hasMore) {
+                    const { data, error } = await supabaseClient
+                        .from('leads')
+                        .select('*')
+                        .order('created_at', { ascending: false })
+                        .range(from, from + step - 1);
 
-                console.log(`✅ ${data.length} leads cargados`);
-                allLeadsData = data;
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        allLeads = allLeads.concat(data);
+                        from += step;
+                        if (data.length < step) {
+                            hasMore = false;
+                        }
+                    } else {
+                        hasMore = false;
+                    }
+                }
+
+                console.log(`✅ ${allLeads.length} leads cargados en total`);
+                allLeadsData = allLeads;
                 applyDateFilter();
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error al cargar leads:', error);
                 alert('Error al cargar datos: ' + error.message);
             }
         }
