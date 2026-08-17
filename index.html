@@ -353,6 +353,10 @@
 
 <body class="text-white dark">
 
+    <!-- Capas de Fondo Interactivo (React Bits: Splash Cursor + Waves) -->
+    <div id="splash-cursor" class="fixed inset-0 pointer-events-none z-0 opacity-80"></div>
+    <div id="waves-bg" class="fixed inset-0 pointer-events-none z-0"></div>
+
     <!-- Header -->
     <header class="fixed top-0 left-0 right-0 bg-gray-900/95 backdrop-blur-md z-50 border-b border-tesla-red/20">
         <div class="container mx-auto px-4 py-4">
@@ -2026,6 +2030,46 @@
 
     <!-- TESLA Analytics - Lightweight Tracker -->
     <script src="tesla-analytics.js"></script>
+
+    <!-- Cursor de fluido WebGL (React Bits: SplashCursor) -->
+    <script src="splash-cursor.js"></script>
+
+    <!-- Fondo animado Waves (React Bits) -->
+    <script src="waves.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.initSplashCursor) {
+                window.initSplashCursor(document.getElementById('splash-cursor'), {
+                    DENSITY_DISSIPATION: 5,
+                    VELOCITY_DISSIPATION: 2,
+                    PRESSURE: 0.1,
+                    CURL: 3,
+                    SPLAT_RADIUS: 0.16,
+                    SPLAT_FORCE: 4500,
+                    COLOR_UPDATE_SPEED: 10,
+                    SHADING: true,
+                    RAINBOW_MODE: false,
+                    COLORS: ['#FFB800', '#DC2626'],
+                    COLOR_INTENSITY: 0.15
+                });
+            }
+            if (window.initWaves) {
+                window.initWaves(document.getElementById('waves-bg'), {
+                    lineColor: 'rgba(255, 184, 0, 0.10)',
+                    backgroundColor: 'transparent',
+                    waveSpeedX: 0.0125,
+                    waveSpeedY: 0.005,
+                    waveAmpX: 40,
+                    waveAmpY: 22,
+                    xGap: 22,
+                    yGap: 54,
+                    friction: 0.925,
+                    tension: 0.005,
+                    maxCursorMove: 140
+                });
+            }
+        });
+    </script>
 </body>
 
 </html>
