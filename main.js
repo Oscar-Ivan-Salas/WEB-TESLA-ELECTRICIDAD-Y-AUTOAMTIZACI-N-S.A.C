@@ -106,6 +106,12 @@ function displaySolutionCard(data) {
 
     // Service Content Dictionary
     const SERVICE_DETAILS = {
+        "BIM": {
+            icon: "📐",
+            title: "MODELADO Y COORDINACIÓN BIM / MEP 3D",
+            desc: "Ingeniería 3D previa a la construcción. Detectamos choques e interferencias entre especialidades antes de ejecutar en obra.",
+            bullets: ["✔ Detección de Choques (Clash)", "✔ Cómputos Métricos Exactos", "✔ Cero Retrabajos en Campo"]
+        },
         "Electricidad": {
             icon: "⚡",
             title: "ELECTRICIDAD INDUSTRIAL Y COMERCIAL",

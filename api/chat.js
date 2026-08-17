@@ -12,6 +12,7 @@ const STATES = {
 
 const OPTIONS = {
     PROJECT_TYPE: [
+        "📐 Coordinación BIM / MEP 3D",
         "🏗️ Obra en ejecución",
         "🤖 Automatización / Domótica",
         "🚨 Sistemas contra incendios",
@@ -28,7 +29,7 @@ const OPTIONS = {
     NEED: [
         "📋 Evaluar solución técnica",
         "⚡ Ejecutar instalación",
-        "� Resolver fallas",
+        "🔧 Resolver fallas",
         "🔑 Solución completa llave en mano"
     ]
 };
@@ -81,7 +82,9 @@ function processMessage(session, message) {
 
             // Mensaje de especialista según servicio (DOCUMENTO FINAL)
             let specialistMessage = "";
-            if (msg.includes("Obra en ejecución") || msg.includes("eléctrica")) {
+            if (msg.includes("BIM") || msg.includes("MEP")) {
+                specialistMessage = "Excelente. En TESLA modelamos digitalmente en 3D (Navisworks / Revit) las instalaciones eléctricas, sanitarias y ductos antes de construir.\\nEliminamos al 100% las interferencias e imprevistos en campo, garantizando presupuestos exactos.\\n\\n";
+            } else if (msg.includes("Obra en ejecución") || msg.includes("eléctrica")) {
                 specialistMessage = "Perfecto. En TESLA abordamos la electricidad como un sistema completo, desde puesta a tierra y tableros hasta tomacorrientes, iluminación y certificación final.\\nNo instalamos por partes sueltas, integramos todo correctamente para evitar fallas futuras.\\n\\n";
             } else if (msg.includes("incendios")) {
                 specialistMessage = "Perfecto. En TESLA gestionamos detección, alarma y cumplimiento normativo para proteger vidas y activos.\\nNo solo instalamos equipos, aseguramos que el sistema cumpla con todas las normativas vigentes.\\n\\n";
