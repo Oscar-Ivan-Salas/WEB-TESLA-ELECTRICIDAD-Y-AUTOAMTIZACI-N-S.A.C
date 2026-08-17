@@ -1452,11 +1452,11 @@
         // ========== FIN GESTIÓN DE PERFIL ==========
 
         async function loadLeads() {
-            console.log('🔄 Cargando todos los leads (con paginación)...');
+            console.log('🔄 Cargando todos los leads (con paginación de 500 en 500)...');
             try {
                 let allLeads = [];
                 let from = 0;
-                const step = 1000;
+                const step = 500;
                 let hasMore = true;
 
                 while (hasMore) {
