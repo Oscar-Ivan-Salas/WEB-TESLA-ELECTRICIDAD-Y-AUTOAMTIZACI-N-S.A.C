@@ -12,13 +12,14 @@ const STATES = {
 
 const OPTIONS = {
     PROJECT_TYPE: [
+        "⚡ Infraestructura Eléctrica",
+        "🤖 Automatización y BMS",
+        "🚨 Sistemas Contra Incendios",
+        "🛡️ Vigilancia y Control 24/7",
+        "🏗️ Acabados Funcionales",
+        "📜 Inspección ITSE / INDECI",
         "📐 Coordinación BIM / MEP 3D",
-        "🏗️ Obra en ejecución",
-        "🤖 Automatización / Domótica",
-        "🚨 Sistemas contra incendios",
-        "🔧 Mantenimiento / Remodelación",
-        "🏗️ Acabados técnicos",
-        "🧩 Solución integral TESLA"
+        "🔑 Solución Llave en Mano TESLA"
     ],
     STAGE: [
         "💡 Idea / Perfil",
@@ -289,6 +290,68 @@ function processMessage(session, message) {
     }
 }
 
+const https = require('https');
+const { getAgentForMessage } = require('../lib/pili-multi-agent-rag');
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
+
+async function callGeminiAI(userPrompt, session) {
+    return new Promise((resolve) => {
+        const agent = getAgentForMessage(userPrompt, session ? session.agentId : null);
+        if (session) {
+            session.agentId = agent.id;
+            session.agentName = agent.name;
+        }
+
+        const payload = JSON.stringify({
+            contents: [
+                {
+                    role: "user",
+                    parts: [{ text: `${agent.systemPrompt}\n\nConsulta del cliente: "${userPrompt}"` }]
+                }
+            ],
+            generationConfig: {
+                maxOutputTokens: 250,
+                temperature: 0.7
+            }
+        });
+
+        const req = https.request(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Content-Length': Buffer.byteLength(payload)
+                },
+                timeout: 4000
+            },
+            (res) => {
+                let body = '';
+                res.on('data', chunk => body += chunk);
+                res.on('end', () => {
+                    try {
+                        const json = JSON.parse(body);
+                        if (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts[0]) {
+                            const text = json.candidates[0].content.parts[0].text.trim();
+                            resolve({ text, agent });
+                        } else {
+                            resolve(null);
+                        }
+                    } catch (e) {
+                        resolve(null);
+                    }
+                });
+            }
+        );
+
+        req.on('error', () => resolve(null));
+        req.on('timeout', () => { req.destroy(); resolve(null); });
+        req.write(payload);
+        req.end();
+    });
+}
+
 // Almacenamiento temporal de sesiones (en memoria)
 const sessions = new Map();
 
@@ -315,7 +378,46 @@ module.exports = async (req, res) => {
         }
 
         let session = sessions.get(sessionId) || { estado: STATES.START };
+        const msgStr = message ? message.toString().trim() : "";
+
+        // CAPA HÍBRIDA IA: Si el usuario escribe una pregunta abierta fuera de las opciones fijas
+        let isOptionClick = false;
+        let currentOptions = null;
+        if (session.estado === STATES.ASK_PROJECT_TYPE) currentOptions = OPTIONS.PROJECT_TYPE;
+        else if (session.estado === STATES.ASK_STAGE) currentOptions = OPTIONS.STAGE;
+        else if (session.estado === STATES.ASK_NEED) currentOptions = OPTIONS.NEED;
+        else if (session.estado === STATES.ASK_APPOINTMENT) currentOptions = ["🌅 Mañana", "🕐 Tarde", "📅 Fin de semana"];
+
+        if (currentOptions && isValidOption(msgStr, currentOptions)) {
+            isOptionClick = true;
+        }
+
+        // Si es pregunta abierta (más de 5 caracteres y no es clic en botón de lista previa ni estado de captura de datos como teléfono/nombre)
+        const isCapturingData = [STATES.ASK_NAME, STATES.ASK_PHONE, STATES.ASK_LOCATION].includes(session.estado);
+        if (!isOptionClick && !isCapturingData && msgStr.length > 4 && msgStr.toLowerCase() !== 'hola') {
+            console.log(`>>> [PILI IA] Invocando Gemini AI para consulta abierta: "${msgStr}"`);
+            const aiResult = await callGeminiAI(msgStr, session);
+            if (aiResult && aiResult.text) {
+                console.log(`>>> [PILI IA] Respuesta de ${aiResult.agent.name} obtenida con éxito.`);
+                return res.status(200).json({
+                    message: aiResult.text,
+                    agentName: aiResult.agent.name,
+                    agentBadge: aiResult.agent.badge,
+                    nextState: session.estado,
+                    options: currentOptions || OPTIONS.PROJECT_TYPE,
+                    whatsappLink: generateWhatsAppLink(session)
+                });
+            }
+        }
+
+        // Si no aplica IA o falla, procesar por autómata determinístico
+        const agent = getAgentForMessage(msgStr, session.agentId);
+        session.agentId = agent.id;
+        session.agentName = agent.name;
+
         const response = processMessage(session, message);
+        response.agentName = agent.name;
+        response.agentBadge = agent.badge;
 
         session.estado = response.nextState;
         sessions.set(sessionId, session);

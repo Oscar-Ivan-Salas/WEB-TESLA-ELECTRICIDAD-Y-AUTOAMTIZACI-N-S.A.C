@@ -323,6 +323,14 @@
                         <option value="all" selected>Todo el Tiempo</option>
                     </select>
 
+                    <!-- Botón Catálogo (Acceso Único Limpio) -->
+                    <button onclick="openVisualCatalogModal()"
+                        class="magnetic bg-yellow-500 hover:bg-yellow-400 text-black px-3.5 py-2 rounded-lg font-bold transition text-sm flex items-center gap-1.5 border border-yellow-400 shadow-md"
+                        title="Abrir Catálogo Visual de la Web">
+                        <i class="fas fa-images"></i>
+                        <span>Catálogo</span>
+                    </button>
+
                     <!-- Botón Actualizar -->
                     <button onclick="refreshData()"
                         class="magnetic bg-red-600 hover:bg-red-700 text-yellow-400 px-4 py-2 rounded-lg font-medium transition border border-yellow-500 text-sm flex items-center gap-2"
@@ -353,6 +361,14 @@
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
+
+                    <!-- Botón Simulador Responsivo (Privado Administrador) -->
+                    <button onclick="openResponsiveSimulator()"
+                        class="magnetic bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition border border-blue-400 text-sm flex items-center gap-2 shadow-lg"
+                        title="Simulador Multi-Dispositivo (PC, Laptop, Tablet, Celular)">
+                        <i class="fas fa-mobile-alt text-yellow-400"></i>
+                        <span class="hidden md:inline font-bold">Simulador Vista Previa</span>
+                    </button>
 
                     <!-- Botón Mi Perfil -->
                     <button onclick="openProfileSettings()"
@@ -719,6 +735,349 @@
                 </div>
             </div>
 
+        </div>
+
+        <!-- MODAL DE PANTALLA COMPLETA: Gestor Visual & Galería de Fotos (Ventana Dedicada Limpia) -->
+        <div id="modal-visual-catalog" class="fixed inset-0 bg-black/95 backdrop-blur-2xl z-50 hidden flex flex-col p-4 md:p-8 overflow-hidden">
+            <!-- Modal Header -->
+            <div class="flex flex-wrap justify-between items-center pb-4 mb-4 border-b border-yellow-500/40 gap-4">
+                <div class="flex items-center gap-4">
+                    <!-- Botón Destacado de Regreso -->
+                    <button onclick="closeVisualCatalogModal()" class="px-4 py-2.5 bg-yellow-500 hover:bg-yellow-400 text-black font-extrabold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+                        <i class="fas fa-arrow-left"></i> <span>← Volver al Dashboard</span>
+                    </button>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-bold text-yellow-400 flex items-center gap-2">
+                            <span>🖼️</span> Estudio de Catálogo Visual & Galería Web
+                        </h2>
+                        <p class="text-xs text-gray-400">Administra todas las fotografías de Servicios y Proyectos en una ventana limpia e independiente.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="TeslaCatalog.resetToFactory(); renderVisualCatalogModal(); alert('✅ Fotos restauradas a valores predeterminados de fábrica.');" class="px-3 py-2 bg-gray-800 text-xs text-gray-300 hover:text-white border border-gray-600 rounded-lg transition flex items-center gap-1">
+                        <span>🔄</span> Restaurar Fábrica
+                    </button>
+                    <button onclick="closeVisualCatalogModal()" class="w-10 h-10 bg-red-600/30 hover:bg-red-600 text-white rounded-full font-bold text-xl flex items-center justify-center transition border border-red-500/50" title="Cerrar Ventana">
+                        &times;
+                    </button>
+                </div>
+            </div>
+
+            <!-- GATO MEDIDOR / WIDGET DE MÉTRICAS DE DISEÑO Y MEDIOS (SELLO GATOMICHUY ESPECTACULAR) -->
+            <div class="bg-gray-900/90 border border-yellow-500/50 rounded-2xl p-4 mb-5 grid grid-cols-2 md:grid-cols-5 gap-3 items-center text-center shadow-2xl">
+                <!-- Sello Oficial GatoMichuy (Gato en Laptop con Gafas) -->
+                <div class="col-span-2 md:col-span-1 bg-black/60 p-2 rounded-xl border border-cyan-500/40 flex items-center justify-center gap-3">
+                    <img src="assets/gatomichuy-logo.svg" alt="GatoMichuy Logo" class="w-12 h-12 drop-shadow-[0_0_12px_rgba(0,242,254,0.8)]">
+                    <div class="text-left">
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Sello de Marca</p>
+                        <p class="text-xs font-black text-cyan-400 drop-shadow-[0_0_8px_rgba(0,242,254,0.6)]">GatoMichuy 🐈💻</p>
+                    </div>
+                </div>
+
+                <div class="bg-black/50 p-2.5 rounded-xl border border-gray-800">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">🐱 Medidor de Diseño</p>
+                    <p class="text-xs font-extrabold text-yellow-400 flex items-center justify-center gap-1 mt-0.5">
+                        <span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-pulse"></span> Activo & Calibrado
+                    </p>
+                </div>
+                <div class="bg-black/50 p-2.5 rounded-xl border border-gray-800">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">📐 Encuadre Rectangular</p>
+                    <p class="text-xs font-extrabold text-white mt-0.5">16:9 Aspect Ratio (Cero Deformación)</p>
+                </div>
+                <div class="bg-black/50 p-2.5 rounded-xl border border-gray-800">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">💾 Almacenamiento & Sync</p>
+                    <p class="text-xs font-extrabold text-green-400 mt-0.5">Sincronización En Vivo</p>
+                </div>
+                <div class="bg-black/50 p-2.5 rounded-xl border border-gray-800">
+                    <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">📊 Total Elementos Medios</p>
+                    <p class="text-xs font-extrabold text-yellow-400 mt-0.5"><span id="metric_total_media">20</span> Fotos Gestionadas</p>
+                </div>
+            </div>
+
+            <!-- Filter Tabs & Actions Bar -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+                <div class="flex gap-2">
+                    <button id="modal_tab_projects" onclick="switchModalCatalogTab('projects')" class="px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl shadow-md transition">
+                        🏗️ Proyectos Realizados (<span id="count_projects">0</span>)
+                    </button>
+                    <button id="modal_tab_services" onclick="switchModalCatalogTab('services')" class="px-4 py-2 bg-gray-800 text-yellow-400 border border-yellow-500/40 font-bold text-xs rounded-xl hover:bg-gray-700 transition">
+                        ⚡ 8 Servicios Técnicos
+                    </button>
+                </div>
+                <button onclick="openAddProjectModal()" class="px-4 py-2 bg-gradient-to-r from-yellow-500 to-amber-600 text-black font-extrabold text-xs rounded-xl shadow-lg hover:scale-105 transition">
+                    ➕ Añadir Proyecto al Catálogo (#<span id="next_proj_num">13</span>)
+                </button>
+            </div>
+
+            <!-- Modal Grid Container (Scrollable) -->
+            <div class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+                <div id="modal_catalog_grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
+                    <!-- Dinámico via catalog-manager.js -->
+                </div>
+
+                <!-- Footer Branded Corporativo en Modal -->
+                <footer class="mt-8 pt-6 border-t border-gray-800/80 text-center text-xs space-y-2 text-gray-400">
+                    <p class="text-sm font-bold text-white tracking-wide">Integradores estratégicos de sistemas técnicos</p>
+                    <p class="text-xs text-gray-400">
+                        Urb. Los Jardines de San Carlos - Calle Los Narcisos MZ H Lote 04<br>
+                        Huancayo – Junín – Perú
+                    </p>
+                    <p class="flex items-center justify-center gap-2 text-sm font-bold text-green-400 my-1">
+                        <i class="fab fa-whatsapp text-base"></i> <span>906 315 961</span>
+                    </p>
+                    <p class="text-[11px] text-gray-500">© 2026 TESLA Electricidad y Automatización S.A.C. Todos los derechos reservados.</p>
+                    <div class="flex items-center justify-center gap-3 pt-2">
+                        <span class="text-xs text-gray-400 font-semibold">Dpto. de Diseño:</span>
+                        <div class="flex items-center gap-2 bg-black/60 px-3 py-1.5 rounded-full border border-cyan-500/50 shadow-[0_0_15px_rgba(0,242,254,0.3)]">
+                            <img src="assets/gatomichuy-logo.svg" alt="GatoMichuy Logo" class="w-6 h-6 drop-shadow-[0_0_8px_rgba(0,242,254,0.8)]">
+                            <span class="font-extrabold text-cyan-400 tracking-wide text-xs drop-shadow-[0_0_10px_rgba(0,242,254,0.7)]">GatoMichuy</span>
+                            <span class="text-[10px] text-pink-500 font-bold">💻</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <!-- MODAL SECUNDARIO: Agregar Nuevo Proyecto -->
+        <div id="modal-add-project" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-gray-900 border-2 border-yellow-500/60 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-gray-800">
+                    <h3 class="text-lg font-bold text-yellow-400 flex items-center gap-2">
+                        <span>➕</span> Agregar Nuevo Proyecto al Catálogo
+                    </h3>
+                    <button onclick="closeAddProjectModal()" class="text-gray-400 hover:text-white font-bold text-xl">&times;</button>
+                </div>
+                <form id="form-add-project" onsubmit="handleSaveNewProject(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">Título del Proyecto</label>
+                        <input type="text" id="new_proj_title" required placeholder="Ej: Planta Solar & Subestación Industrial" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm text-white focus:border-yellow-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">Etiqueta / Servicio</label>
+                        <input type="text" id="new_proj_badge" required placeholder="Ej: ⚡ Media Tensión & BMS" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm text-white focus:border-yellow-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">Descripción Técnica</label>
+                        <textarea id="new_proj_desc" rows="3" required placeholder="Alcance técnico del proyecto real realizado..." class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm text-white focus:border-yellow-500 outline-none"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-300 mb-1">Seleccionar Foto Real (Rectangular 16:9)</label>
+                        <input type="file" id="new_proj_file" accept="image/*" required class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-yellow-500/20 file:text-yellow-400 hover:file:bg-yellow-500/30">
+                    </div>
+                    <div class="flex justify-end gap-3 pt-3 border-t border-gray-800">
+                        <button type="button" onclick="closeAddProjectModal()" class="px-4 py-2 bg-gray-800 text-gray-300 text-xs font-bold rounded-lg hover:bg-gray-700">Cancelar</button>
+                        <button type="submit" class="px-5 py-2 bg-yellow-500 text-black text-xs font-extrabold rounded-lg hover:bg-yellow-400 shadow-lg">Guardar Proyecto</button>
+                    </div>
+                </form>
+
+                <!-- Footer Branded Corporativo en Modal Nuevo Proyecto -->
+                <footer class="mt-6 pt-4 border-t border-gray-800 text-center text-xs space-y-1 text-gray-400">
+                    <p class="text-xs font-bold text-white">Integradores estratégicos de sistemas técnicos</p>
+                    <p class="text-[11px] text-gray-400">Urb. Los Jardines de San Carlos - Huancayo – Junín – Perú</p>
+                    <div class="flex items-center justify-center gap-2 pt-1.5">
+                        <span class="text-[11px] text-gray-400">Dpto. de Diseño:</span>
+                        <div class="flex items-center gap-1.5 bg-black/60 px-2.5 py-1 rounded-full border border-cyan-500/40">
+                            <img src="assets/gatomichuy-logo.svg" alt="GatoMichuy Logo" class="w-4 h-4">
+                            <span class="font-bold text-cyan-400 text-xs">GatoMichuy 🐈💻</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
+        <script src="assets/catalog-manager.js"></script>
+        <script>
+            let currentModalTab = 'projects';
+
+            function openVisualCatalogModal() {
+                document.getElementById('modal-visual-catalog').classList.remove('hidden');
+                renderVisualCatalogModal();
+            }
+
+            function closeVisualCatalogModal() {
+                document.getElementById('modal-visual-catalog').classList.add('hidden');
+            }
+
+            function openAddProjectModal() {
+                document.getElementById('modal-add-project').classList.remove('hidden');
+            }
+
+            function closeAddProjectModal() {
+                document.getElementById('modal-add-project').classList.add('hidden');
+            }
+
+            function switchModalCatalogTab(tab) {
+                currentModalTab = tab;
+                const btnProjects = document.getElementById('modal_tab_projects');
+                const btnServices = document.getElementById('modal_tab_services');
+
+                if (tab === 'projects') {
+                    btnProjects.className = "px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl shadow-md transition";
+                    btnServices.className = "px-4 py-2 bg-gray-800 text-yellow-400 border border-yellow-500/40 font-bold text-xs rounded-xl hover:bg-gray-700 transition";
+                } else {
+                    btnServices.className = "px-4 py-2 bg-yellow-500 text-black font-bold text-xs rounded-xl shadow-md transition";
+                    btnProjects.className = "px-4 py-2 bg-gray-800 text-yellow-400 border border-yellow-500/40 font-bold text-xs rounded-xl hover:bg-gray-700 transition";
+                }
+                renderVisualCatalogModal();
+            }
+
+            function renderVisualCatalogModal() {
+                if (!window.TeslaCatalog) return;
+                const catalog = TeslaCatalog.getCatalog();
+                const grid = document.getElementById('modal_catalog_grid');
+                
+                document.getElementById('count_projects').innerText = catalog.projects.length;
+                document.getElementById('next_proj_num').innerText = catalog.projects.length + 1;
+                const metricTotalEl = document.getElementById('metric_total_media');
+                if (metricTotalEl) {
+                    metricTotalEl.innerText = catalog.projects.length + catalog.services.length;
+                }
+
+                if (currentModalTab === 'projects') {
+                    grid.innerHTML = catalog.projects.map((p, idx) => `
+                        <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-yellow-500/60 transition shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="relative w-full aspect-video rounded-lg overflow-hidden mb-3 border border-gray-700 bg-black">
+                                    <img src="${p.image}" id="modal_img_${p.id}" alt="${p.title}" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 left-2 px-2 py-0.5 bg-black/70 text-yellow-400 rounded text-[10px] font-bold">#${idx + 1}</span>
+                                </div>
+                                <div class="space-y-2 mb-3">
+                                    <div>
+                                        <label class="text-[10px] text-gray-400 font-bold uppercase">Título Obra:</label>
+                                        <input type="text" id="edit_title_${p.id}" value="${p.title || ''}" class="w-full bg-black/60 border border-gray-700 rounded px-2 py-1 text-xs text-white focus:border-yellow-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] text-yellow-400 font-bold uppercase">Insignia / Rubro:</label>
+                                        <input type="text" id="edit_badge_${p.id}" value="${p.badge || ''}" class="w-full bg-black/60 border border-gray-700 rounded px-2 py-1 text-xs text-yellow-400 focus:border-yellow-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] text-gray-400 font-bold uppercase">Descripción Técnica:</label>
+                                        <textarea id="edit_desc_${p.id}" rows="2" class="w-full bg-black/60 border border-gray-700 rounded px-2 py-1 text-[11px] text-gray-300 focus:border-yellow-500 outline-none">${p.desc || ''}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2 pt-2 border-t border-gray-800">
+                                <button onclick="handleUpdateProjectText('${p.id}')" class="w-full py-1.5 px-3 bg-green-600/30 text-green-400 border border-green-500/50 rounded-lg text-xs text-center font-bold hover:bg-green-600/50 transition flex items-center justify-center gap-1.5">
+                                    <i class="fas fa-save"></i> Guardar Textos Editados
+                                </button>
+                                <label class="block w-full py-1.5 px-3 bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 rounded-lg text-xs text-center font-bold cursor-pointer hover:bg-yellow-500/30 transition">
+                                    <i class="fas fa-camera mr-1"></i> Cambiar Foto Real
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleModalImageUpload(event, '${p.id}', 'project')">
+                                </label>
+                                ${catalog.projects.length > 4 ? `
+                                    <button onclick="handleDeleteProject('${p.id}')" class="w-full py-1 text-[11px] text-red-400 hover:text-red-300 font-semibold transition">
+                                        🗑️ Eliminar de Catálogo
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `).join('');
+
+                    catalog.projects.forEach((p) => {
+                        window.TeslaCatalog.bakeTeslaLogoOnCanvas(p.image, function(bakedDataUrl) {
+                            const imgEl = document.getElementById('modal_img_' + p.id);
+                            if (imgEl && bakedDataUrl) {
+                                imgEl.src = bakedDataUrl;
+                            }
+                        });
+                    });
+                } else {
+                    grid.innerHTML = catalog.services.map((s, idx) => `
+                        <div class="bg-gray-900 border border-gray-800 rounded-xl p-4 hover:border-yellow-500/60 transition shadow-xl flex flex-col justify-between">
+                            <div>
+                                <div class="relative w-full aspect-video rounded-lg overflow-hidden mb-3 border border-gray-700 bg-black">
+                                    <img src="${s.image}" id="modal_img_${s.id}" alt="${s.title}" class="w-full h-full object-cover">
+                                    <span class="absolute top-2 left-2 px-2 py-0.5 bg-black/70 text-yellow-400 rounded text-[10px] font-bold">Servicio ${idx + 1}</span>
+                                </div>
+                                <h4 class="text-sm font-bold text-white mb-1 line-clamp-1">${s.title}</h4>
+                                <p class="text-xs text-gray-400 mb-3">${s.category}</p>
+                            </div>
+                            <div class="pt-2 border-t border-gray-800">
+                                <label class="block w-full py-1.5 px-3 bg-yellow-500/20 text-yellow-400 border border-yellow-500/40 rounded-lg text-xs text-center font-bold cursor-pointer hover:bg-yellow-500/30 transition">
+                                    <i class="fas fa-camera mr-1"></i> Cambiar Foto Real
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleModalImageUpload(event, '${s.id}', 'service')">
+                                </label>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    catalog.services.forEach((s) => {
+                        window.TeslaCatalog.bakeTeslaLogoOnCanvas(s.image, function(bakedDataUrl) {
+                            const imgEl = document.getElementById('modal_img_' + s.id);
+                            if (imgEl && bakedDataUrl) {
+                                imgEl.src = bakedDataUrl;
+                            }
+                        });
+                    });
+                }
+            }
+
+            function handleUpdateProjectText(id) {
+                const titleEl = document.getElementById('edit_title_' + id);
+                const badgeEl = document.getElementById('edit_badge_' + id);
+                const descEl = document.getElementById('edit_desc_' + id);
+
+                if (!titleEl || !descEl) return;
+                
+                TeslaCatalog.updateProject(id, {
+                    title: titleEl.value,
+                    badge: badgeEl ? badgeEl.value : '',
+                    desc: descEl.value
+                });
+
+                renderVisualCatalogModal();
+                alert('💾 Textos del proyecto actualizados correctamente.');
+            }
+
+            function handleModalImageUpload(event, id, type) {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    if (type === 'project') {
+                        TeslaCatalog.updateProject(id, { image: dataUrl });
+                    } else {
+                        TeslaCatalog.updateServiceImage(id, dataUrl);
+                    }
+                    renderVisualCatalogModal();
+                    alert('✅ Foto actualizada y sincronizada en tiempo real con la Landing Page.');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function handleSaveNewProject(e) {
+                e.preventDefault();
+                const title = document.getElementById('new_proj_title').value;
+                const badge = document.getElementById('new_proj_badge').value;
+                const desc = document.getElementById('new_proj_desc').value;
+                const fileInput = document.getElementById('new_proj_file');
+                const file = fileInput.files[0];
+
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const dataUrl = evt.target.result;
+                    TeslaCatalog.addProject({
+                        title: title,
+                        badge: badge,
+                        desc: desc,
+                        image: dataUrl
+                    });
+                    closeAddProjectModal();
+                    renderVisualCatalogModal();
+                    alert('🎉 ¡Nuevo Proyecto agregado al Catálogo con éxito! Ya se visualiza en tu Landing Page.');
+                };
+                reader.readAsDataURL(file);
+            }
+
+            function handleDeleteProject(id) {
+                if (confirm('¿Estás seguro de eliminar este proyecto del catálogo?')) {
+                    TeslaCatalog.deleteProject(id);
+                    renderVisualCatalogModal();
+                }
+            }
+        </script>
         </div>
 
 
@@ -2781,7 +3140,108 @@ ${lead.notas_seguimiento ? '\n📝 Notas: ' + lead.notas_seguimiento : ''}
                 });
             }
         });
+
+        // --- SIMULADOR MULTI-DISPOSITIVO PRIVADO PARA EL ADMINISTRADOR ---
+        function openResponsiveSimulator() {
+            const modal = document.getElementById('responsiveSimulatorModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setSimulatorDevice('mobile'); // Default: Celular
+            }
+        }
+
+        function closeResponsiveSimulator() {
+            const modal = document.getElementById('responsiveSimulatorModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function setSimulatorDevice(device) {
+            const iframe = document.getElementById('simulatorIframe');
+            const container = document.getElementById('simulatorFrameContainer');
+            const label = document.getElementById('simulatorDeviceLabel');
+            if (!iframe || !container) return;
+
+            const targetUrl = document.getElementById('simulatorPageSelect')?.value || 'index.html';
+
+            if (device === 'mobile') {
+                container.style.width = '375px';
+                container.style.height = '812px';
+                label.innerText = '📱 Móvil (iPhone / Android - 375x812 px)';
+            } else if (device === 'tablet') {
+                container.style.width = '768px';
+                container.style.height = '1024px';
+                label.innerText = '📱 Tablet (iPad - 768x1024 px)';
+            } else if (device === 'laptop') {
+                container.style.width = '1280px';
+                container.style.height = '800px';
+                label.innerText = '💻 Laptop (1280x800 px)';
+            } else if (device === 'desktop') {
+                container.style.width = '100%';
+                container.style.height = '900px';
+                label.innerText = '🖥️ PC Escritorio (1920x1080 Full Width)';
+            }
+
+            iframe.src = targetUrl;
+        }
+
+        function changeSimulatorPage() {
+            const currentDevice = document.getElementById('simulatorDeviceSelect')?.value || 'mobile';
+            setSimulatorDevice(currentDevice);
+        }
     </script>
+
+    <!-- MODAL PRIVADO DE VISTA PREVIA MULTI-DISPOSITIVO (ADMINISTRADOR) -->
+    <div id="responsiveSimulatorModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex-col items-center justify-start p-4 overflow-y-auto">
+        <!-- Barra de Control Superior -->
+        <div class="w-full max-w-7xl bg-gray-900 border-2 border-tesla-gold rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 mb-4 shadow-2xl">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-yellow-500/20 border border-yellow-400 flex items-center justify-center text-yellow-400 font-bold text-xl">
+                    📱
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">Simulador Multi-Dispositivo Privado</h3>
+                    <p id="simulatorDeviceLabel" class="text-xs text-yellow-400 font-medium">📱 Móvil (iPhone / Android - 375x812 px)</p>
+                </div>
+            </div>
+
+            <!-- Botones de Selección de Pantalla -->
+            <div class="flex flex-wrap items-center gap-2">
+                <select id="simulatorPageSelect" onchange="changeSimulatorPage()" class="bg-gray-800 text-white text-xs px-3 py-2 rounded-lg border border-yellow-500 font-medium focus:outline-none">
+                    <option value="index.html">🌐 Landing Page Oficial</option>
+                    <option value="index.html#projects">🖼️ Catálogo de Proyectos / Fotos</option>
+                    <option value="index.html?chat=open">🤖 Chat con PILi (RAG)</option>
+                    <option value="dashboard.html">📊 Dashboard Administrativo</option>
+                </select>
+
+                <button onclick="setSimulatorDevice('mobile')" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg border border-gray-700 text-xs font-bold flex items-center gap-1">
+                    📱 Celular
+                </button>
+                <button onclick="setSimulatorDevice('tablet')" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg border border-gray-700 text-xs font-bold flex items-center gap-1">
+                    📱 Tablet
+                </button>
+                <button onclick="setSimulatorDevice('laptop')" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg border border-gray-700 text-xs font-bold flex items-center gap-1">
+                    💻 Laptop
+                </button>
+                <button onclick="setSimulatorDevice('desktop')" class="px-3 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg border border-gray-700 text-xs font-bold flex items-center gap-1">
+                    🖥️ PC
+                </button>
+            </div>
+
+            <!-- Botón Cerrar -->
+            <button onclick="closeResponsiveSimulator()" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-xs transition flex items-center gap-1">
+                <i class="fas fa-times"></i> Cerrar
+            </button>
+        </div>
+
+        <!-- Contenedor del Marco del Dispositivo -->
+        <div id="simulatorFrameContainer" class="bg-gray-950 border-4 border-gray-800 rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 relative flex items-center justify-center">
+            <iframe id="simulatorIframe" src="index.html" class="w-full h-full border-0 bg-white"></iframe>
+        </div>
+    </div>
 </body>
 
 </html>

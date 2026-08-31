@@ -460,28 +460,36 @@
                 <p class="text-sm text-gray-400 mb-4 uppercase tracking-wider text-center">Selecciona tu necesidad:</p>
                 <div class="grid grid-cols-2 gap-3">
                     <button onclick="openChat()"
-                        class="px-4 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-sm font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all">
-                        🏗️ Infraestructura Eléctrica
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        ⚡ Eléctrica
                     </button>
                     <button onclick="openChat()"
-                        class="px-4 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-sm font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all">
-                        🤖 Automatización
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        🤖 Automatización BMS
                     </button>
                     <button onclick="openChat()"
-                        class="px-4 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-sm font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all">
-                        🚨 Sistemas Contra Incendios
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        🚨 Contra Incendios NFPA
                     </button>
                     <button onclick="openChat()"
-                        class="px-4 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-sm font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all">
-                        🔒 Seguridad
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        🛡️ Seguridad 24/7
                     </button>
                     <button onclick="openChat()"
-                        class="px-4 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-sm font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all">
-                        ⚡ Energía
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        🏗️ Acabados Técnicos
                     </button>
                     <button onclick="openChat()"
-                        class="px-4 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-sm font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all">
-                        🔧 Mantenimiento
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        📜 Certificado ITSE
+                    </button>
+                    <button onclick="openChat()"
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        📐 BIM / MEP 3D
+                    </button>
+                    <button onclick="openChat()"
+                        class="px-3 py-3 bg-gray-800/50 border border-tesla-gold/40 rounded-lg text-xs font-semibold hover:bg-tesla-gold/20 hover:border-tesla-gold transition-all text-left flex items-center gap-2">
+                        🔑 Llave en Mano
                     </button>
                 </div>
                 <p class="text-xs text-gray-500 mt-4 text-center">
@@ -1006,9 +1014,50 @@
                                     <li>• Integración directa con ejecución física en obra</li>
                                 </ul>
                             </div>
-                            <button onclick="window.open('https://wa.me/51906315961?text=Hola,%20quisiera%20cotizar%20el%20servicio%20de%20Coordinacion%20BIM%20MEP%203D', '_blank')"
+                            <button onclick="window.open('https://wa.me/51906315961?text=Estimados%20TESLA%20ELECTRICIDAD%20Y%20AUTOMATIZACI%C3%93N%20S.A.C.%0A%0ADeseo%20solicitar%20cotizaci%C3%B3n%20para%20el%20servicio%20de%20Coordinaci%C3%B3n%20BIM%20MEP%203D.%0A%0A%F0%9F%8C%90%20https%3A%2F%2Fweb-tesla-electricidad-y-autoamtiza-psi.vercel.app%2F', '_blank')"
                                 class="w-full px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-full text-sm font-bold hover:scale-105 transition-all shadow-md shadow-green-600/40 flex items-center justify-center gap-2">
                                 <i class="fab fa-whatsapp text-lg"></i> Cotizar Servicio BIM / MEP 3D
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Solución Llave en Mano TESLA -->
+                    <div
+                        class="rounded-xl overflow-hidden border border-tesla-gold/60 hover:border-tesla-gold transition-all duration-300 shadow-lg shadow-tesla-gold/10">
+                        <div onclick="toggleAccordion('accordion-llave-mano')"
+                            class="group relative h-80 md:h-96 cursor-pointer">
+                            <img src="assets/model_integration.png" alt="Solución Llave en Mano TESLA"
+                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent group-hover:from-black/90 transition-all">
+                                <div class="absolute bottom-0 left-0 right-0 p-6">
+                                    <div class="text-tesla-gold text-3xl mb-3 electric-icon">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <h3 class="text-xl font-bold mb-2 text-white">Solución Llave en Mano TESLA</h3>
+                                    <span class="inline-block px-3 py-1 bg-tesla-gold/20 border border-tesla-gold text-tesla-gold text-xs font-bold rounded-full mb-2">🔑 Servicio Integral 360°</span>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">
+                                        Click para ver más <i class="fas fa-chevron-down"></i>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Contenido expandible -->
+                        <div id="accordion-llave-mano" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4">
+                                Asumimos la responsabilidad técnica total de tu obra: diseño, suministro, instalación e integración de Eléctrica, Automatización, Incendios, Seguridad y Acabados bajo un solo contrato y un único punto de contacto.
+                            </p>
+                            <div class="bg-gray-900/50 p-4 rounded-lg border border-tesla-gold/20 mb-4">
+                                <h4 class="text-tesla-gold font-bold mb-2 text-sm">✓ Beneficios Clave</h4>
+                                <ul class="text-gray-300 space-y-1 text-sm">
+                                    <li>• Un solo contrato y responsable técnico para todo el proyecto</li>
+                                    <li>• Eliminación del 100% de la fricción entre contratistas</li>
+                                    <li>• Garantía integral de funcionamiento desde el primer día</li>
+                                </ul>
+                            </div>
+                            <button onclick="openChat()"
+                                class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-sm font-bold hover:scale-105 transition-all">
+                                Solicitar Evaluación Integral
                             </button>
                         </div>
                     </div>
@@ -1026,195 +1075,220 @@
                     </h2>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    <!-- Proyecto 1: Minera Chinalco -->
-                    <!-- Proyecto 1: Minera Chinalco (OCULTO TEMPORALMENTE A PEDIDO DEL USUARIO) -->
-                    <!--
-                    <div
-                        class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
-                        <div onclick="toggleAccordion('accordion-proyecto1')"
-                            class="group relative h-72 cursor-pointer">
-                            <img src="assets/project_industrial.png" alt="Minera Chinalco"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                <div id="projects-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                    <!-- Proyecto 1: Complejos Inmobiliarios -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p1')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_1.png" alt="Complejos Inmobiliarios" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                                 <div class="absolute bottom-0 left-0 right-0 p-4">
-                                    <h3 class="text-base font-bold mb-2">Minera Chinalco</h3>
-                                    <p class="text-gray-400 text-xs flex items-center gap-2">
-                                        Click para ver más <i class="fas fa-chevron-down"></i>
-                                    </p>
+                                    <h3 class="text-base font-bold mb-1 text-white">Complejos Inmobiliarios</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">⚡ Electrificación & BMS</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
                                 </div>
                             </div>
                         </div>
-                        <div id="accordion-proyecto1" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
-                            <p class="text-gray-300 mb-4">
-                                Automatización e instrumentación en planta de cobalto. Instalación de sistemas de
-                                medición en salida de pasta, pruebas de motores y bombas, calibración de equipos.
-                            </p>
-                            <div class="bg-gray-900/50 p-4 rounded-lg border border-tesla-gold/20 mb-4">
-                                <h4 class="text-tesla-gold font-bold mb-2 text-sm">✓ Alcance</h4>
-                                <ul class="text-gray-300 space-y-1 text-sm">
-                                    <li>• Sistemas de medición y control de procesos</li>
-                                    <li>• Pruebas de motores eléctricos y bombas</li>
-                                    <li>• Instrumentación industrial especializada</li>
-                                </ul>
-                            </div>
-                            <button onclick="openChat()"
-                                class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-sm font-bold hover:scale-105 transition-all">
-                                Solicitar Evaluación
-                            </button>
-                        </div>
-                    </div>
-                    -->
-
-                    <!-- Proyecto 1: Complejos Inmobiliarios (NUEVO) -->
-                    <div
-                        class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
-                        <div onclick="toggleAccordion('accordion-proyecto-inmo')"
-                            class="group relative h-72 cursor-pointer">
-                            <img src="assets/service_finishes.png" alt="Complejos Inmobiliarios"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
-                                <div class="absolute bottom-0 left-0 right-0 p-4">
-                                    <h3 class="text-base font-bold mb-2">Complejos Inmobiliarios</h3>
-                                    <p class="text-gray-400 text-xs flex items-center gap-2">
-                                        Click para ver más <i class="fas fa-chevron-down"></i>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Contenido expandible -->
-                        <div id="accordion-proyecto-inmo"
-                            class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
-                            <p class="text-gray-300 mb-4">
-                                Gestión integral de instalaciones eléctricas y automatización para desarrollos
-                                inmobiliarios
-                                de gran escala. Garantizamos eficiencia energética y confort desde el diseño.
-                            </p>
-                            <div class="bg-gray-900/50 p-4 rounded-lg border border-tesla-gold/20 mb-4">
-                                <h4 class="text-tesla-gold font-bold mb-2 text-sm">✓ Alcance</h4>
-                                <ul class="text-gray-300 space-y-1 text-sm">
-                                    <li>• Redes eléctricas de baja y media tensión</li>
-                                    <li>• Automatización de áreas comunes</li>
-                                    <li>• Sistemas de seguridad electrónica integrada</li>
-                                </ul>
-                            </div>
-                            <button onclick="openChat()"
-                                class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-sm font-bold hover:scale-105 transition-all">
-                                Solicitar Evaluación
-                            </button>
+                        <div id="accordion-p1" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Gestión integral de instalaciones eléctricas y automatización para desarrollos inmobiliarios de gran escala.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
                         </div>
                     </div>
 
-                    <!-- Proyecto 2: Instalaciones Eléctricas -->
-                    <div
-                        class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
-                        <div onclick="toggleAccordion('accordion-proyecto2')"
-                            class="group relative h-72 cursor-pointer">
-                            <img src="assets/project_bms.png" alt="Instalaciones Eléctricas"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                    <!-- Proyecto 2: Grandes Contratistas -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p2')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_2.png" alt="Grandes Contratistas" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                                 <div class="absolute bottom-0 left-0 right-0 p-4">
-                                    <h3 class="text-base font-bold mb-2">Grandes Contratistas</h3>
-                                    <p class="text-gray-400 text-xs flex items-center gap-2">
-                                        Click para ver más <i class="fas fa-chevron-down"></i>
-                                    </p>
+                                    <h3 class="text-base font-bold mb-1 text-white">Grandes Contratistas</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">🏗️ Suministros & Montaje</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
                                 </div>
                             </div>
                         </div>
-                        <!-- Contenido expandible -->
-                        <div id="accordion-proyecto2" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
-                            <p class="text-gray-300 mb-4">
-                                Socio estratégico de grandes contratistas del mercado inmobiliario. Aprovisionamiento de
-                                suministros, instalación en obra, pruebas eléctricas y entrega de certificados.
-                            </p>
-                            <div class="bg-gray-900/50 p-4 rounded-lg border border-tesla-gold/20 mb-4">
-                                <h4 class="text-tesla-gold font-bold mb-2 text-sm">✓ Servicios</h4>
-                                <ul class="text-gray-300 space-y-1 text-sm">
-                                    <li>• Suministro de materiales eléctricos certificados</li>
-                                    <li>• Instalaciones eléctricas completas</li>
-                                    <li>• Pruebas y certificaciones normadas</li>
-                                </ul>
-                            </div>
-                            <button onclick="openChat()"
-                                class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-sm font-bold hover:scale-105 transition-all">
-                                Solicitar Evaluación
-                            </button>
+                        <div id="accordion-p2" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Socio estratégico para proyectos de construcción civil, aprovisionamiento e ingeniería normada.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
                         </div>
                     </div>
 
                     <!-- Proyecto 3: Puesta a Tierra Industrial -->
-                    <div
-                        class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
-                        <div onclick="toggleAccordion('accordion-proyecto3')"
-                            class="group relative h-72 cursor-pointer">
-                            <img src="assets/project_fire.png" alt="Puesta a Tierra"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p3')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_3.png" alt="Puesta a Tierra Industrial" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                                 <div class="absolute bottom-0 left-0 right-0 p-4">
-                                    <h3 class="text-base font-bold mb-2">Puesta a Tierra Industrial</h3>
-                                    <p class="text-gray-400 text-xs flex items-center gap-2">
-                                        Click para ver más <i class="fas fa-chevron-down"></i>
-                                    </p>
+                                    <h3 class="text-base font-bold mb-1 text-white">Puesta a Tierra Industrial</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">📜 Medición & Protocolos CNE</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
                                 </div>
                             </div>
                         </div>
-                        <!-- Contenido expandible -->
-                        <div id="accordion-proyecto3" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
-                            <p class="text-gray-300 mb-4">
-                                Diseño, instalación y certificación de sistemas de puesta a tierra para protección de
-                                instalaciones industriales y edificaciones.
-                            </p>
-                            <div class="bg-gray-900/50 p-4 rounded-lg border border-tesla-gold/20 mb-4">
-                                <h4 class="text-tesla-gold font-bold mb-2 text-sm">✓ Incluye</h4>
-                                <ul class="text-gray-300 space-y-1 text-sm">
-                                    <li>• Cálculo y diseño de sistemas de puesta a tierra</li>
-                                    <li>• Instalación de pozos y mallas de tierra</li>
-                                    <li>• Medición y certificación por ingeniero colegiado</li>
-                                </ul>
-                            </div>
-                            <button onclick="openChat()"
-                                class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-sm font-bold hover:scale-105 transition-all">
-                                Solicitar Evaluación
-                            </button>
+                        <div id="accordion-p3" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Diseño, instalación y certificación de sistemas de puesta a tierra y mallas de baja resistencia para plantas industriales.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
                         </div>
                     </div>
 
-                    <!-- Proyecto 4: Domótica e IoT -->
-                    <div
-                        class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
-                        <div onclick="toggleAccordion('accordion-proyecto4')"
-                            class="group relative h-72 cursor-pointer">
-                            <img src="assets/project_integration.png" alt="Domótica IoT"
-                                class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent">
+                    <!-- Proyecto 4: Domótica e IoT Edificios -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p4')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_4.png" alt="Domótica e IoT Edificios" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                                 <div class="absolute bottom-0 left-0 right-0 p-4">
-                                    <h3 class="text-base font-bold mb-2">Domótica e IoT</h3>
-                                    <p class="text-gray-400 text-xs flex items-center gap-2">
-                                        Click para ver más <i class="fas fa-chevron-down"></i>
-                                    </p>
+                                    <h3 class="text-base font-bold mb-1 text-white">Edificios Inteligentes & IoT</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">🤖 SCADA & Control BMS</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
                                 </div>
                             </div>
                         </div>
-                        <!-- Contenido expandible -->
-                        <div id="accordion-proyecto4" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
-                            <p class="text-gray-300 mb-4">
-                                Edificios inteligentes completos con integración total de sistemas. SCADA para gestión
-                                de consumo energético, domótica, CCTV, fibra óptica, cableado estructurado y tecnología
-                                IoT.
-                            </p>
-                            <div class="bg-gray-900/50 p-4 rounded-lg border border-tesla-gold/20 mb-4">
-                                <h4 class="text-tesla-gold font-bold mb-2 text-sm">✓ Tecnologías</h4>
-                                <ul class="text-gray-300 space-y-1 text-sm">
-                                    <li>• Sistemas SCADA y gestión energética</li>
-                                    <li>• Domótica y automatización de edificios</li>
-                                    <li>• CCTV, fibra óptica y cableado estructurado</li>
-                                    <li>• Integración IoT para edificios inteligentes</li>
-                                </ul>
+                        <div id="accordion-p4" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Integración total de consumo energético, domótica, HVAC y fibra óptica para torres corporativas inteligentes.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 5: Minera & Plantas Industriales -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p5')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_5.png" alt="Minera & Plantas Industriales" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Planta Minera & Industrial</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">🚨 Protección NFPA & Motores</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
                             </div>
-                            <button onclick="openChat()"
-                                class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-sm font-bold hover:scale-105 transition-all">
-                                Solicitar Evaluación
-                            </button>
+                        </div>
+                        <div id="accordion-p5" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Automatización e instrumentación de motores, bombas y sistemas de detección de incendios en minería y plantas de proceso.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 6: Data Centers Críticos -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p6')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_6.png" alt="Data Centers Críticos" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Data Centers & Racks IT</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">⚡ Energía Ininterrumpida UPS</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion-p6" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Infraestructura eléctrica redundante Tier III, gabinetes IT, fibra óptica y climatización de precisión.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 7: Centros Comerciales & Malls -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p7')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_7.png" alt="Centros Comerciales & Malls" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Centros Comerciales & Malls</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">❄️ Ductos HVAC & Bandejas</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion-p7" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Instalaciones mecánicas y eléctricas integradas para tiendas retail y pasillos comerciales de alto tránsito.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 8: Almacenes Logísticos -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p8')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_8.png" alt="Almacenes Logísticos" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Almacenes Logísticos</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">🚨 Detección de Humo por Haz</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion-p8" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Sistemas de iluminación LED de gran altura, detección de incendios por haz óptico y tableros de distribución.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 9: Hospitales & Clínicas -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p9')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_9.png" alt="Hospitales & Clínicas" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Hospitales & Clínicas</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">🏥 Sistemas Médicos Aislados</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion-p9" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Redes eléctricas críticas con transformadores de aislamiento, tableros de transferencia automática y gases medicinales.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 10: Subestaciones Eléctricas -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p10')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_10.png" alt="Subestaciones Eléctricas" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Subestaciones Eléctricas</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">⚡ Media & Alta Tensión</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion-p10" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Montaje de transformadores de potencia, celdas de media tensión en SF6 y protecciones de subestación exterior.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 11: Coordinación BIM / MEP 3D -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p11')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_11.png" alt="Coordinación BIM / MEP 3D" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Ingeniería BIM / MEP 3D</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">📐 Navisworks & Revit 3D</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion-p11" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Modelado 3D y detección de interferencias e choques en campo antes de construir, asegurando cero reprocesos.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
+                        </div>
+                    </div>
+
+                    <!-- Proyecto 12: Infraestructura Llave en Mano -->
+                    <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-tesla-gold transition-all duration-300">
+                        <div onclick="toggleAccordion('accordion-p12')" class="group relative h-72 cursor-pointer">
+                            <img src="assets/project_12.png" alt="Infraestructura Llave en Mano" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                <div class="absolute bottom-0 left-0 right-0 p-4">
+                                    <h3 class="text-base font-bold mb-1 text-white">Solución Llave en Mano 360°</h3>
+                                    <p class="text-tesla-gold text-xs font-semibold mb-1">🔑 Responsabilidad Técnica Total</p>
+                                    <p class="text-gray-400 text-xs flex items-center gap-2">Click para ver más <i class="fas fa-chevron-down"></i></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion-p12" class="hidden bg-gray-800/50 p-6 border-t border-tesla-gold/30">
+                            <p class="text-gray-300 mb-4 text-sm">Entrega integral de proyectos técnicos llave en mano con puesta en marcha y garantía unificada.</p>
+                            <button onclick="openChat()" class="w-full px-4 py-2 bg-gradient-to-r from-tesla-red to-tesla-red-glow border border-tesla-gold rounded-full text-xs font-bold hover:scale-105 transition-all">Solicitar Evaluación</button>
                         </div>
                     </div>
                 </div>
@@ -1429,9 +1503,9 @@
         <span>Contactar por WhatsApp</span>
     </a>
 
-    <!-- PILI Chat Sidebar (Hidden by default, slides in from right) -->
+    <!-- PILI Chat Sidebar (Responsive: adaptativo a teclados móviles) -->
     <aside id="chat-sidebar"
-        class="fixed right-0 top-0 h-screen w-full md:w-96 bg-gray-900 border-l-4 border-tesla-gold flex flex-col z-50 transform translate-x-full transition-transform duration-300 shadow-2xl">
+        class="fixed right-0 top-0 h-[100dvh] max-h-[100dvh] w-full md:w-96 bg-gray-900 border-l-4 border-tesla-gold flex flex-col z-50 transform translate-x-full transition-transform duration-300 shadow-2xl">
 
         <!-- Chat Header -->
         <div
@@ -2072,6 +2146,42 @@
 
     <!-- TESLA Analytics - Lightweight Tracker -->
     <script src="tesla-analytics.js"></script>
+
+    <!-- Gestor de Catálogo Visual Dinámico TESLA -->
+    <script src="assets/catalog-manager.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.TeslaCatalog) {
+                const catalog = window.TeslaCatalog.getCatalog();
+                const container = document.getElementById('projects-grid-container');
+                if (container && catalog.projects && catalog.projects.length > 0) {
+                    container.innerHTML = catalog.projects.map((p, idx) => `
+                        <div class="rounded-xl overflow-hidden border border-gray-700 hover:border-yellow-500 transition-all duration-300 shadow-xl">
+                            <div onclick="toggleAccordion('accordion-p-${idx}')" class="group relative h-72 cursor-pointer overflow-hidden">
+                                <img id="proj_img_${p.id}" src="${p.image}" alt="${p.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent">
+                                    <div class="absolute bottom-0 left-0 right-0 p-4">
+                                        <h3 class="text-base font-bold mb-1 text-white">${p.title}</h3>
+                                        <p class="text-yellow-400 text-xs font-bold mb-1">${p.badge || '🏗️ Proyecto Realizado'}</p>
+                                        <p class="text-gray-400 text-xs flex items-center gap-2">Click para detalles técnicos <i class="fas fa-chevron-down"></i></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="accordion-p-${idx}" class="hidden bg-gray-800/80 p-6 border-t border-yellow-500/40">
+                                <p class="text-gray-200 mb-3 text-sm">${p.desc || ''}</p>
+                                <div class="bg-black/80 p-3.5 rounded-xl border border-yellow-500/60 mb-4 flex items-center gap-3 shadow-lg">
+                                    <img src="assets/logo.png" alt="TESLA Logo" class="w-10 h-10 rounded-full object-contain border-2 border-yellow-400 p-0.5 bg-black">
+                                    <span class="text-xs font-black text-yellow-400 tracking-wide uppercase">TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.</span>
+                                </div>
+                                <button onclick="openChat()" class="w-full px-4 py-2.5 bg-gradient-to-r from-red-700 via-red-600 to-amber-600 border border-yellow-400 rounded-full text-xs font-black text-white hover:scale-105 transition-all shadow-lg">Solicitar Evaluación Técnica</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+        });
+    </script>
 
     <!-- Cursor de fluido WebGL (React Bits: SplashCursor) -->
     <script src="splash-cursor.js"></script>

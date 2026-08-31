@@ -44,7 +44,7 @@ async function sendMessageToPILI(message) {
 }
 
 // Display message in chat
-function displayMessage(message, sender = 'pili') {
+function displayMessage(message, sender = 'pili', agentBadge = null) {
     const chatBody = document.getElementById('chatbot-messages');
     if (!chatBody) return;
 
@@ -53,9 +53,19 @@ function displayMessage(message, sender = 'pili') {
 
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
+
+    // Render Specialist Badge if provided
+    if (sender === 'pili' && agentBadge) {
+        const badgeDiv = document.createElement('div');
+        badgeDiv.style.cssText = 'font-size: 11px; font-weight: bold; color: #F59E0B; background: rgba(120, 53, 15, 0.4); border: 1px solid rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 2px 8px; margin-bottom: 6px; display: inline-block; box-shadow: 0 1px 3px rgba(0,0,0,0.3);';
+        badgeDiv.innerHTML = agentBadge;
+        messageContent.appendChild(badgeDiv);
+    }
+
     // Convert newlines to breaks
-    const formattedMessage = message.replace(/\n/g, '<br>');
-    messageContent.innerHTML = formattedMessage;
+    const textDiv = document.createElement('div');
+    textDiv.innerHTML = message.replace(/\n/g, '<br>');
+    messageContent.appendChild(textDiv);
 
     messageDiv.appendChild(messageContent);
     chatBody.appendChild(messageDiv);
@@ -138,14 +148,20 @@ function displaySolutionCard(data) {
         },
         "Acabados técnicos": {
             icon: "🏗️",
-            title: "ACABADOS TÉCNICOS",
-            desc: "Detalles finales que marcan la diferencia. Drywall, pintura y estructuras metálicas de soporte.",
-            bullets: ["✔ Estructuras Metálicas", "✔ Drywall y Pintura", "✔ Remodelación"]
+            title: "ACABADOS TÉCNICOS INTEGRADOS",
+            desc: "Detalles finales que marcan la diferencia. DrywallRF cortafuego, cielos rasos y estructuras metálicas de soporte.",
+            bullets: ["✔ Drywall Cortafuego RF", "✔ Estructuras Metálicas", "✔ Cielos Rasos Acústicos"]
+        },
+        "ITSE": {
+            icon: "📜",
+            title: "INSPECCIÓN TÉCNICA ITSE / INDECI",
+            desc: "Obtención integral de tu Certificado ITSE de Defensa Civil para licencias municipales sin observaciones ni multas.",
+            bullets: ["✔ Planos de Evacuación y Aforo", "✔ Protocolos de Pozo a Tierra", "✔ Gestión Municipal Completa"]
         },
         "Solución integral TESLA": {
-            icon: "🧩",
+            icon: "🔑",
             title: "SOLUCIÓN LLAVE EN MANO",
-            desc: "Nos encargamos de TODO. Un solo proveedor para Electricidad, Seguridad y Automatización.",
+            desc: "Nos encargamos de TODO. Un solo proveedor para Electricidad, Seguridad, Incendios y Automatización.",
             bullets: ["✔ Gestión de Proyecto", "✔ Un solo responsable", "✔ Entrega Lista para Usar"]
         }
     };
@@ -325,7 +341,10 @@ function displaySolutionCard(data) {
 
         // Re-attach WhatsApp
         const waZ = zoomedCard.querySelector('#btn-whatsapp-card');
-        if (waZ) waZ.onclick = () => window.open(`https://wa.me/51906315961?text=Hola,%20consulta%20sobre%20${encodeURIComponent(info.title)}`, '_blank');
+        if (waZ) waZ.onclick = () => {
+            const msg = encodeURIComponent(`Estimados TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.\n\nDeseo solicitar información técnica sobre el proyecto: *${info.title}*.\n\n🌐 Portal Web: https://web-tesla-electricidad-y-autoamtiza-psi.vercel.app/`);
+            window.open(`https://wa.me/51906315961?text=${msg}`, '_blank');
+        };
 
         // Re-attach Download (Active in Zoom!)
         const downZ = zoomedCard.querySelector('#btn-download-card');
@@ -342,7 +361,8 @@ function displaySolutionCard(data) {
     const waBtn = body.querySelector('#btn-whatsapp-card');
     if (waBtn) {
         waBtn.onclick = () => {
-            window.open(`https://wa.me/51906315961?text=Hola,%20consulta%20sobre%20${encodeURIComponent(info.title)}`, '_blank');
+            const msg = encodeURIComponent(`Estimados TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.\n\nDeseo solicitar información técnica sobre el proyecto: *${info.title}*.\n\n🌐 Portal Web: https://web-tesla-electricidad-y-autoamtiza-psi.vercel.app/`);
+            window.open(`https://wa.me/51906315961?text=${msg}`, '_blank');
         };
     }
 
@@ -380,7 +400,7 @@ async function handleUserMessage(message, loadingElement = null) {
     }
 
     // Display PILI's response
-    displayMessage(response.message, 'pili');
+    displayMessage(response.message, 'pili', response.agentBadge);
 
     // CHECK FOR VISUAL CARD TRIGGER (V4)
     // If backend sends cardData, use it. Fallback to generic if text triggers it.
@@ -520,10 +540,22 @@ window.toggleChat = function (initialMessage = null) {
 
     if (isHidden) {
         sidebar.classList.remove('translate-x-full');
+        if (window.innerWidth < 768) {
+            document.body.style.overflow = 'hidden'; // Evitar scroll del fondo en móviles
+        }
+
         if (fabContainer) {
             fabContainer.classList.add('opacity-0', 'pointer-events-none'); // Smooth fade out
-            // Fallback for immediate hide if transition fails or matches user preference
             setTimeout(() => fabContainer.style.display = 'none', 300);
+        }
+
+        // Focus and scroll on mobile text input
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) {
+            setTimeout(() => {
+                chatInput.focus();
+                chatInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 300);
         }
 
         // Initialize PILI on first open
@@ -540,9 +572,9 @@ window.toggleChat = function (initialMessage = null) {
         }
     } else {
         sidebar.classList.add('translate-x-full');
+        document.body.style.overflow = '';
         if (fabContainer) {
             fabContainer.style.display = 'flex'; // Ensure flex first
-            // Small delay to allow display:flex to apply before opacity transition
             setTimeout(() => fabContainer.classList.remove('opacity-0', 'pointer-events-none'), 10);
         }
     }
@@ -557,6 +589,7 @@ window.openChat = window.toggleChat; // For Modal buttons
 window.closeChat = function () {
     const sidebar = document.getElementById('chat-sidebar');
     const fabContainer = document.getElementById('fab-container');
+    document.body.style.overflow = '';
     if (sidebar) sidebar.classList.add('translate-x-full');
     if (fabContainer) {
         fabContainer.style.display = 'flex';
