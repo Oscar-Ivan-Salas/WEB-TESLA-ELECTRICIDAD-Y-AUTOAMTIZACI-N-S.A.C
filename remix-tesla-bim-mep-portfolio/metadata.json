@@ -1,0 +1,8 @@
+{
+  "name": "Remix TESLA BIM MEP Portfolio",
+  "description": "Prototipo interactivo de portafolio para TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C. - Coordinación BIM MEP ISO 19650",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

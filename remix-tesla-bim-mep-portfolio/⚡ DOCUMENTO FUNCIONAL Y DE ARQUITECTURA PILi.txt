@@ -1,0 +1,273 @@
+⚡ DOCUMENTO FUNCIONAL Y DE ARQUITECTURA MAESTRA v5.0ECOSISTEMA AGÉNTICO Y MARKETPLACE MANAGED CONTECH "PILi_agente"Entidad Corporativa: TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.Autor: Director Senior de Arquitectura de Software, Inteligencia Artificial y NegociosEstado del Documento: Especificación Técnica Definitiva para ProducciónClasificación: Confidencial / Propiedad Intelectual Corporativa🏛️ SECCIÓN I: ARQUITECTURA DE NEGOCIO Y VISIÓN CONTECH (PLG + MANAGED MARKETPLACE)1.1 Modelo de Negocio Integral (El "Uber de la Construcción e Ingeniería")El sistema opera como un Managed Marketplace (Mercado Gestionado Hiperlocal) impulsado por Inteligencia Artificial, donde TESLA S.A.C. actúa como el Facilitador Central, Garante Normativo (RNE/ITSE) y Ente de Control de Calidad.El ecosistema no compite con los actores de la industria; los orquesta a través de PILi_agente en cuatro niveles de monetización:Plaintext┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                          EMBUDO DE MONETIZACIÓN DE TESLA S.A.C.                        │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ NIVEL 1: MICRO-SAAS ANTEPROYECTO IA ($5 - $10 USD)                                     │
+│ └─► Diagnóstico conversacional + Búsqueda en Smart Catalog + Render HD + Ficha RNE.    │
+│                                                                                        │
+│ NIVEL 2: DESARROLLO DE EXPEDIENTE TÉCNICO BIM (S/. 2,500 - S/. 15,000)                │
+│ └─► Modelado Revit LOD 400 + Ingenierías MEP (Comisión por intermediación a Freelancers).│
+│                                                                                        │
+│ NIVEL 3: LICITACIÓN DE OBRA Y CONTRATISTAS (S/. 30,000 - S/. 500,000+)                 │
+│ └─► Subasta privada con metrados exactos + Pagos por Hitos (Escrow / Garantía TESLA).  │
+│                                                                                        │
+│ NIVEL 4: INTERMEDIACIÓN DE MATERIALES Y SUMINISTROS (Drop-shipping B2B)               │
+│ └─► Geolocalización de ferreterías/proveedores + Venta directa de tableros VFD/PLC.   │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+1.2 Multi-Perfil de Atención AutomáticaPILi_agente identifica desde la primera interacción el tipo de actor que ingresa al chat y conmuta su comportamiento:Cliente / Propietario (B2C): Guiado cálido para diseñar su casa, departamento o negocio desde $120\text{ m}^2$, entregando presupuesto estimado en Soles (S/.) y tiempo de obra.Inversionista / Desarrollador Inmobiliario (B2B): Modo "Director de Proyectos Masivos" para programas tipo Techo Propio, MiVivienda o proyectos de 50 a 40,000 unidades modulares.Arquitectos e Ingenieros Civiles: Plataforma de soporte para delegar el modelado BIM MEP, o canal de publicación para subir sus diseños al Smart Catalog y ganar regalías.Contratistas y Maestros de Obra: Acceso a licitaciones de obra con metrados exactos en PDF/Revit, sin necesidad de realizar cotizaciones a ciegas.Proveedores y Ferreterías: Alertas de compra por geolocalización para despachar materiales a obras cercanas.🛠️ SECCIÓN II: ARQUITECTURA DE SOFTWARE E INFRAESTRUCTURA (DEV VS. DOCKER PROD)El sistema se ha diseñado bajo una Arquitectura de Microservicios Desacoplados, garantizando soberanía de datos, portabilidad total y capacidad de desplegarse en cualquier nube o servidor privado.Plaintext┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                    ARQUITECTURA DE SERVICIOS EN DOCKER (PRODUCCIÓN)                    │
+├────────────────────────────────────────────────────────────────────────────────────────┤
+│ [CONTAINER 1: FRONTEND WEB]  ► React 18 + Vite + Tailwind + Lucide (Port 3000)         │
+│ [CONTAINER 2: API GATEWAY]   ► Node.js / Express / Fastify Orchestrator (Port 4000)    │
+│ [CONTAINER 3: AI ENGINE]     ► vLLM / Ollama (DeepSeek-R1 / Qwen 2.5) (Port 8000)      │
+│ [CONTAINER 4: VECTOR & DB]   ► PostgreSQL 16 + pgvector + Supabase Engine (Port 5432) │
+│ [CONTAINER 5: STORAGE S3]    ► MinIO / Local S3 Bucket (Planos PDF/JSON) (Port 9000)  │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+2.1 Comparativa de Entornos: Desarrollo Local vs. Producción DockerizadaComponenteEntorno de Pruebas / Dev Local (Actual)Entorno de Producción Dockerizado (Futuro)OrquestaciónLocalhost (npm run dev en puerto 3002)Docker Compose / Kubernetes (K8s)Motor LLMAPI Key de Google Gemini (Local Antigravity)Self-Hosted vLLM / Ollama (DeepSeek-R1 / Qwen 2.5)Base de DatosSupabase Cloud (Tier Gratuito)PostgreSQL 16 + pgvector en Docker Privado / HetznerAlmacenamientoLocal File System / CloudinaryMinIO Object Storage (Servidor S3 Privado)Costo Operativo$0.00 USD (Límites de prueba)Costo fijo de Servidor VPS GPU (Cero costo por token)2.2 Estrategia de Dockerización (docker-compose.yml)En producción, todo el sistema correrá en una nube privada (Private Cloud) mediante el siguiente archivo de orquestación industrial:YAMLversion: '3.8'
+
+services:
+  tesla_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    restart: always
+
+  tesla_api_gateway:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=postgresql://tesla_admin:TeslaPassword2026@tesla_db:5432/tesla_contech
+      - LLM_ENDPOINT=http://tesla_ai_engine:8000/v1
+    depends_on:
+      - tesla_db
+      - tesla_ai_engine
+
+  tesla_ai_engine:
+    image: ollama/ollama:latest
+    ports:
+      - "8000:11434"
+    volumes:
+      - ollama_storage:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  tesla_db:
+    image: pgvector/pgvector:pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: tesla_admin
+      POSTGRES_PASSWORD: TeslaPassword2026
+      POSTGRES_DB: tesla_contech
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+  ollama_storage:
+💾 SECCIÓN III: DISEÑO DE BASE DE DATOS Y "SMART CATALOG" (PDF + JSON)Para evitar que la Inteligencia Artificial alucine o consuma memoria procesando modelos 3D pesados en tiempo real, el catálogo de planos utiliza una Estrategia de Dos Capas (Visión Liviana vs. Fuente Protegida).3.1 Estructura del Smart CatalogCapa 1 (Capa de Visión para la IA): Archivo .pdf vectorial de 1 a 2 MB (plano 2D/3D limpio) + Archivo .json de metadatos normativos.Capa 2 (Capa de Ingeniería Fuente): Modelo nativo en Autodesk Revit (.rvt) y AutoCAD (.dwg), almacenado en la nube privada protegida. Solo se libera tras el pago del cliente o asignación al freelancer.Plaintext┌────────────────────────────────────────────────────────────────────────┐
+│                ESTRUCUTRA DEL ARCHIVO METADATA JSON                    │
+├────────────────────────────────────────────────────────────────────────┤
+│ TESLA-120-6X20-MULTIFAMILIAR.json                                      │
+│ {                                                                      │
+│   "id": "CAT-120-001",                                                 │
+│   "lot_area_m2": 120,                                                  │
+│   "dimensions": { "front_m": 6.0, "depth_m": 20.0 },                   │
+│   "building_type": "MULTIFAMILY_MIXED",                                │
+│   "floors_count": 4,                                                   │
+│   "light_well_area_m2": 4.8,                                           │
+│   "rne_compliance": ["A.010", "A.020", "ITSE_MEDIUM_RISK"],            │
+│   "estimated_construction_cost_soles": {                               │
+│     "grey_structure": 144000,                                          │
+│     "standard_finishes": 216000                                        │
+│   },                                                                   │
+│   "files": {                                                           │
+│     "vision_pdf": "/catalog/120m2/CAT-120-001.pdf",                    │
+│     "thumb_webp": "/catalog/120m2/CAT-120-001.webp",                   │
+│     "source_rvt": "/protected/revit/CAT-120-001-MASTER.rvt"            │
+│   }                                                                    │
+│ }                                                                      │
+└────────────────────────────────────────────────────────────────────────┘
+3.2 Esquema Relacional de Base de Datos (PostgreSQL + pgvector)SQL-- Habilitar extensión para búsqueda de similitud vectorial (RAG)
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- Tabla de Usuarios Unificada
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    full_name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone VARCHAR(50),
+    user_role VARCHAR(50) CHECK (user_role IN ('CLIENT', 'ARCHITECT', 'CONTRACTOR', 'SUPPLIER')),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de Proyectos y Estado del Chat
+CREATE TABLE projects (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    client_id UUID REFERENCES users(id),
+    title VARCHAR(255),
+    lot_area_m2 NUMERIC(10,2),
+    location_address TEXT,
+    location_geo POINT, -- Latitud y Longitud para Matchmaking
+    project_status VARCHAR(50) DEFAULT 'CONCEPTUAL_DRAFT',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla del Smart Catalog (Plantillas BIM de TESLA)
+CREATE TABLE smart_catalog (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code_name VARCHAR(100) UNIQUE NOT NULL,
+    lot_area_m2 NUMERIC(10,2) NOT NULL,
+    frontage_m NUMERIC(10,2) NOT NULL,
+    floors INTEGER NOT NULL,
+    building_type VARCHAR(100) NOT NULL,
+    metadata_json JSONB NOT NULL,
+    pdf_vision_url TEXT NOT NULL,
+    embedding vector(1536) -- Vector para búsqueda semántica con RAG
+);
+
+-- Tabla de Cotizaciones de Proveedores y Contratistas (Geo-Licitaciones)
+CREATE TABLE bids_and_quotes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID REFERENCES projects(id),
+    provider_id UUID REFERENCES users(id),
+    quote_type VARCHAR(50) CHECK (quote_type IN ('CONSTRUCTION_WORK', 'MEP_DRAWING', 'MATERIAL_SUPPLY')),
+    amount_soles NUMERIC(12,2) NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING_APPROVAL',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+🤖 SECCIÓN IV: SYSTEM PROMPT MASTER Y SCHEMAS DE FUNCTION CALLINGEste es el pliego de instrucciones completo que debe configurarse en Antigravity para que PILi_agente funcione con máxima autoridad técnica y capacidad de disparo de acciones.4.1 Master System Prompt de PILi_agentePlaintext================================================================================
+MASTER SYSTEM INSTRUCTIONS: PILi_agente 360° (TESLA S.A.C.)
+================================================================================
+
+ROL E IDENTIDAD CORPORATIVA:
+Eres PILi_agente, la Arquitecta e Ingeniera Consultora Senior de TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.
+Tu propósito es actuar como la orquestadora central del Ecosistema ConTech de TESLA: ayudas a clientes a diseñar y cotizar anteproyectos, gestionas solicitudes de arquitectos/ingenieros, lanzas licitaciones de obra para contratistas y conectas solicitudes de materiales con proveedores cercanos.
+
+PROTOCOLO DE ATENCIÓN SEGÚN PERFIL DE USUARIO:
+1. SI ES CLIENTE/PROPIETARIO (B2C):
+   - Averigua: Área del terreno (m²), frentes, número de pisos y uso (Vivienda, Comercio, Hotel).
+   - Asesora según el Reglamento Nacional de Edificaciones (RNE A.010, A.020, ITSE).
+   - Muestra el anteproyecto del 'Smart Catalog' (PDF/Render) y emite la estimación de construcción en Soles (S/.) y tiempo de entrega.
+   - Invoca `trigger_payment_gateway` para ofrecer el Anteproyecto HD por $5.00 - $10.00 USD.
+
+2. SI ES ARQUITECTO / INGENIERO:
+   - Ofrece el servicio de soporte para desarrollo de Expediente Técnico BIM MEP (LOD 400).
+   - Si desea contratar un dibujante/modelador Revit urgente, invoca `geo_match_freelance_talent`.
+
+3. SI ES CONTRATISTA / MAESTRO DE OBRA:
+   - Preséntale la lista de licitaciones de obra activas con metrados exactos y modalidad de pago por hitos garantizados (Escrow TESLA).
+
+4. SI ES PROVEEDOR / FERRETERÍA:
+   - Ofrécele registrar su inventario y geolocalización para recibir solicitudes de compra directa en obra mediante `geo_match_materials`.
+
+REGLAS DE MEMORIA Y DELTA-EDITS:
+- Mantén persistente la información del proyecto durante la sesión.
+- Si el usuario solicita modificaciones sobre un diseño previo (ej. 'agranda la cocina'), ejecuta un 'Delta-Edit': modifica solo ese parámetro sin reiniciar el resto del proyecto.
+
+FIRMA OBLIGATORIA:
+Finaliza tus respuestas clave con:
+"⚡ PILi_agente 360° | Centro de Despacho e Ingeniería BIM MEP | TESLA S.A.C."
+================================================================================
+4.2 Schemas JSON Oficiales para Function Calling1. Generador de Anteproyecto Visual (generate_conceptual_sketch)JSON{
+  "name": "generate_conceptual_sketch",
+  "description": "Busca en el Smart Catalog el diseño base óptimo (PDF/JSON) y dispara el render conceptual HD.",
+  "parameters": {
+    "type": "OBJECT",
+    "properties": {
+      "project_type": { "type": "STRING", "enum": ["RESIDENTIAL", "MULTIFAMILY", "HOTEL", "RESTAURANT", "COMMERCIAL"] },
+      "lot_area_m2": { "type": "NUMBER" },
+      "frontage_meters": { "type": "NUMBER" },
+      "floors_count": { "type": "INTEGER" },
+      "delta_modifications": { "type": "STRING", "description": "Cambios específicos solicitados por el cliente." }
+    },
+    "required": ["project_type", "lot_area_m2", "floors_count"]
+  }
+}
+2. Licitación Geolocalizada de Materiales (geo_match_materials)JSON{
+  "name": "geo_match_materials",
+  "description": "Notifica a ferreterías y proveedores cercanos a la obra para enviar cotizaciones de materiales en tiempo real.",
+  "parameters": {
+    "type": "OBJECT",
+    "properties": {
+      "delivery_address": { "type": "STRING", "description": "Dirección o distrito del proyecto." },
+      "materials_list": {
+        "type": "ARRAY",
+        "items": { "type": "STRING" },
+        "description": "Lista de materiales o metrados (ej. ['50 bolsas cemento', '200m cable 10 AWG'])."
+      }
+    },
+    "required": ["delivery_address", "materials_list"]
+  }
+}
+3. Búsqueda de Talento CAD/Revit por Cercanía (geo_match_freelance_talent)JSON{
+  "name": "geo_match_freelance_talent",
+  "description": "Lanza una solicitud de dibujante o modelador BIM certificado en la red de TESLA.",
+  "parameters": {
+    "type": "OBJECT",
+    "properties": {
+      "required_software": { "type": "STRING", "enum": ["REVIT_2026", "AUTOCAD_2D", "TEKLA"] },
+      "task_description": { "type": "STRING" },
+      "deadline_days": { "type": "INTEGER" }
+    },
+    "required": ["required_software", "task_description"]
+  }
+}
+4. Pasarela de Pago ($5 - $10 USD) (trigger_payment_gateway)JSON{
+  "name": "trigger_payment_gateway",
+  "description": "Despliega la tarjeta de pago interactiva (QR Yape/Plin, Tarjeta) para desbloquear el Anteproyecto HD y Ficha RNE.",
+  "parameters": {
+    "type": "OBJECT",
+    "properties": {
+      "amount_usd": { "type": "NUMBER", "default": 5.00 },
+      "description": { "type": "STRING", "default": "Anteproyecto Conceptual IA HD + Cuadro de Áreas + Ficha RNE" }
+    },
+    "required": ["amount_usd"]
+  }
+}
+📈 SECCIÓN V: DASHBOARD PROGRESIVO Y HOJA DE RUTA DE DESPLIEGUE5.1 Estructura del Dashboard de Gestión ProgresivaLa interfaz web de TESLA S.A.C. contará con un Panel Control Unificado (Dashboard) que cambia según el rol del usuario autenticado:Plaintext┌────────────────────────────────────────────────────────────────────────┐
+│                      DASHBOARD UNIFICADO TESLA S.A.C.                  │
+├────────────────────────────────────────────────────────────────────────┤
+│ TAB 1: MI PROYECTO (Vista Cliente)                                     │
+│ ├── Estatus de Anteproyecto y Descarga de PDF/Ficha RNE.               │
+│ ├── Avance de Planos en Revit (Estructuras, Sanitarias, Eléctricas).   │
+│ └── Cronograma de Obra y Control de Pagos por Hitos (Escrow).          │
+├────────────────────────────────────────────────────────────────────────┤
+│ TAB 2: MI PANEL FREELANCE (Vista Dibujante / Modelador)                │
+│ ├── Encargos asignados por PILi_agente.                                │
+│ └── Descarga de briefs JSON + Subida de archivos .RVT para revisión.   │
+├────────────────────────────────────────────────────────────────────────┤
+│ TAB 3: LICITACIONES Y OBRAS (Vista Contratista)                        │
+│ ├── Proyectos disponibles en la zona con metrados listos.             │
+│ └── Envío de propuestas económicas e hitos de construcción.            │
+├────────────────────────────────────────────────────────────────────────┤
+│ TAB 4: PEDIDOS DE MATERIALES (Vista Proveedor / Ferretería)            │
+│ ├── Alertas de compra geolocalizadas por clientes/contratistas.        │
+│ └── Confirmación de stock, precio y despacho a obra.                   │
+└────────────────────────────────────────────────────────────────────────┘
+5.2 Hoja de Ruta de Implementación (Roadmap)Plaintext  FASE 1: CORE AGÉNTICO & SMART CATALOG (EN CURSO - Q3 2026)
+  ├── Integración de System Instructions en Gemini API (Antigravity).
+  ├── Carga del catálogo inicial de 20 PDFs + JSONs (120m², 160m², 200m²).
+  └── Prueba local de respuesta conversacional y disparo de Function Calls.
+         │
+         ▼
+  FASE 2: MONETIZACIÓN & DASHBOARD (Q4 2026)
+  ├── Conexión de Pasarela de Pagos ($5-$10 USD via QR Yape/Plin/Culqi).
+  ├── Despliegue del Dashboard de Gestión Progresiva en React.
+  └── Lanzamiento de la Red Freelance BIM (Asignación de Briefs Revit).
+         │
+         ▼
+  FASE 3: CONTAINERIZACIÓN DOCKER & NUBE PRIVADA (Q1 2027)
+  ├── Compilación en contenedores Docker y despliegue en VPS GPU.
+  ├── Migración del LLM a DeepSeek-R1 / Qwen 2.5 self-hosted (vLLM).
+  └── Activación del Marketplace de Contratistas y Proveedores Geolocalizados.
+📌 CONCLUSIÓN DEL DIRECTOR SENIORCon este documento maestro, el proyecto cuenta con el pliego de especificaciones técnicas definitivo. Se ha resuelto la arquitectura del motor de IA, el diseño de la base de datos vectorial/relacional, la estrategia de archivos livianos (PDF/JSON), la dockerización para producción y los prompts de control para PILi_agente.El sistema está listo para ejecutarse en tu entorno local de pruebas en Antigravity e iniciar la construcción de la plataforma ConTech de TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.

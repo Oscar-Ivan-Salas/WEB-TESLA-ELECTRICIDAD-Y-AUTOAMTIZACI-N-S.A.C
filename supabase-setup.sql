@@ -6,7 +6,7 @@
 -- recuperación de contraseña por email funcione.
 --
 --   Correo:   oyp.solucionesdeingenieria@gmail.com
---   Clave:    admin1234   (CAMBIALA luego de entrar por primera vez)
+--   Clave:    <CONTRASEÑA_ADMIN_SEGURO>   (Configurar en Supabase Dashboard)
 -- ============================================================
 
 -- 1) Crear tabla leads (si no existe)
@@ -48,7 +48,7 @@ CREATE POLICY "leads_auth_update" ON public.leads
 
 -- 4) Crear o resetear el ADMIN con tu correo real
 UPDATE auth.users
-SET encrypted_password = crypt('admin1234', gen_salt('bf')),
+SET encrypted_password = crypt('<CONTRASEÑA_ADMIN_SEGURO>', gen_salt('bf')),
     email_confirmed_at = COALESCE(email_confirmed_at, now()),
     updated_at = now()
 WHERE email = 'oyp.solucionesdeingenieria@gmail.com';
@@ -59,7 +59,7 @@ SELECT '00000000-0000-0000-0000-000000000000',
        'authenticated',
        'authenticated',
        'oyp.solucionesdeingenieria@gmail.com',
-       crypt('admin1234', gen_salt('bf')),
+       crypt('<CONTRASEÑA_ADMIN_SEGURO>', gen_salt('bf')),
        now(),
        '{"provider":"email","providers":["email"]}',
        '{}',
@@ -95,5 +95,6 @@ WHERE u.email = 'oyp.solucionesdeingenieria@gmail.com'
 --    Si el SQL del paso 4/5 falla por la versión de Supabase, hazlo por UI:
 --    Authentication > Users > Add User
 --    Email: oyp.solucionesdeingenieria@gmail.com
---    Password: admin1234
+--    Password: <CONTRASEÑA_ADMIN_SEGURO>
+--    Marca "Auto-confirm user" > Create User.
 --    Marca "Auto-confirm user" > Create User.

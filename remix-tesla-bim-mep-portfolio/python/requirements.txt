@@ -1,0 +1,6 @@
+flask>=3.0,<4
+ezdxf>=1.4,<2
+trimesh>=5.0,<6
+numpy>=2.0
+ifcopenshell>=0.8,<0.9
+pymupdf>=1.28,<2

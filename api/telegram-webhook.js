@@ -9,9 +9,17 @@ const { buildTelegramKeyboardPayload } = require('../lib/whatsapp-interactive-ca
 
 export default async function handler(req, res) {
     const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+    const TELEGRAM_SECRET_TOKEN = process.env.TELEGRAM_SECRET_TOKEN;
 
     if (req.method === 'POST') {
         try {
+            // 🛡️ Validación de Secret Token de Telegram
+            const secretHeader = req.headers['x-telegram-bot-api-secret-token'];
+            if (TELEGRAM_SECRET_TOKEN && secretHeader !== TELEGRAM_SECRET_TOKEN) {
+                console.error('🚫 Token Secreto de Telegram inválido');
+                return res.status(403).json({ error: 'Token secreto inválido' });
+            }
+
             const update = req.body;
 
             let chatId = null;

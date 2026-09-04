@@ -1,0 +1,5 @@
+python/__pycache__
+python/outputs
+node_modules
+dist
+.git

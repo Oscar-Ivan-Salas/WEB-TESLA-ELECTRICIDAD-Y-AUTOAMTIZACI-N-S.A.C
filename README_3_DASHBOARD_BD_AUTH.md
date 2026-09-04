@@ -125,10 +125,10 @@ Archivo principal: **`login.html`**.
 | Campo | Valor |
 |---|---|
 | Correo | `oyp.solucionesdeingenieria@gmail.com` |
-| Contraseña | `admin1234` |
+| Contraseña | `<CONFIGURADA_EN_SUPABASE_DASHBOARD>` |
 | ID (auth.users) | `48c5895d-0c5b-450f-a60d-549604f0f627` |
 
-> ⚠️ **IMPORTANTE**: la contraseña en producción es **`admin1234`** (confirmada y verificada en login). Cámbiala luego de la etapa de pruebas.
+> ⚠️ **IMPORTANTE**: La contraseña debe gestionarse de forma privada directamente desde la consola de Supabase Auth.
 
 ### Flujo del login
 1. El usuario ingresa correo + contraseña.

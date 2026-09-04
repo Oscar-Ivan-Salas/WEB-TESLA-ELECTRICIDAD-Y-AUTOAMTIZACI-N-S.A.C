@@ -62,9 +62,12 @@ function displayMessage(message, sender = 'pili', agentBadge = null) {
         messageContent.appendChild(badgeDiv);
     }
 
-    // Convert newlines to breaks
+    // Convert newlines to breaks safely without innerHTML
     const textDiv = document.createElement('div');
-    textDiv.innerHTML = message.replace(/\n/g, '<br>');
+    message.split('\n').forEach((line, idx) => {
+        if (idx > 0) textDiv.appendChild(document.createElement('br'));
+        textDiv.appendChild(document.createTextNode(line));
+    });
     messageContent.appendChild(textDiv);
 
     messageDiv.appendChild(messageContent);

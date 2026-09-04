@@ -57,15 +57,13 @@ module.exports = async (req, res) => {
 
         if (error) {
             console.error('Error Supabase:', error);
-            // No fallar visiblemente al usuario si es error de BD, pero registrarlo
-            return res.status(500).json({ error: 'Error guardando lead', details: error.message });
+            return res.status(500).json({ error: 'Error procesando solicitud' });
         }
 
         return res.status(200).json({ success: true, lead: data });
 
     } catch (err) {
         console.error('Error interno saving lead:', err);
-        // RETURNING 200 TO SEE THE ERROR IN STRESS TEST RESPONSE
-        return res.status(200).json({ error: 'Internal Server Error (Debug)', details: err.message, stack: err.stack });
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

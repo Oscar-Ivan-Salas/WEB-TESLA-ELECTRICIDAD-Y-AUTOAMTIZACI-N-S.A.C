@@ -28,6 +28,18 @@ export default async function handler(req, res) {
     // 2. Recepción de Eventos de Mensajes POST
     if (req.method === 'POST') {
         try {
+            // 🛡️ Verificación de firma HMAC (X-Hub-Signature-256)
+            const appSecret = process.env.WHATSAPP_APP_SECRET;
+            const signature = req.headers['x-hub-signature-256'];
+            if (appSecret && signature) {
+                const crypto = require('crypto');
+                const expectedSignature = 'sha256=' + crypto.createHmac('sha256', appSecret).update(JSON.stringify(req.body)).digest('hex');
+                if (signature !== expectedSignature) {
+                    console.error('🚫 Firma HMAC de Meta WhatsApp inválida');
+                    return res.status(403).json({ error: 'Firma de seguridad inválida' });
+                }
+            }
+
             const body = req.body;
 
             if (body.object && body.entry) {

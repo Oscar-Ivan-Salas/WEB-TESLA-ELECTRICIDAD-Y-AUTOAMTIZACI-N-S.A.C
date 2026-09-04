@@ -1,0 +1,82 @@
+/* Tailwind CSS se carga vía CDN en index.html (ver script cdn.tailwindcss.com)
+   Esto elimina el escaneo recursivo de node_modules que saturaba los 16GB de RAM */
+
+@layer base {
+  body {
+    font-family: 'Hanken Grotesk', sans-serif;
+    background-color: #0b0f17;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    color: #dde3ea;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .font-code, .font-label {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+.glass-panel {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(17, 24, 39, 0.90);
+  border: 1px solid #1F2937;
+}
+
+.active-glow {
+  box-shadow: 0 0 20px rgba(255, 184, 0, 0.2);
+}
+
+.glow-red {
+  box-shadow: 0 0 15px rgba(230, 57, 70, 0.4);
+}
+
+.glow-gold {
+  box-shadow: 0 0 15px rgba(255, 184, 0, 0.4);
+}
+
+.technical-border {
+  border-image: linear-gradient(to right, #FFB800, transparent) 1;
+}
+
+.custom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #1E293B;
+  outline: none;
+  border-radius: 2px;
+}
+
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 28px;
+  background: #FFB800;
+  cursor: pointer;
+  border-radius: 0;
+  box-shadow: 0 0 8px #FFB800;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0f17;
+}
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FFB800;
+}
+
