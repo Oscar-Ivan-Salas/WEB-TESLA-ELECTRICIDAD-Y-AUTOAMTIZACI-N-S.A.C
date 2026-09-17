@@ -61,7 +61,7 @@ export default async function handler(req, res) {
                             }
 
                             const { getAgentForMessage, generatePiliResponse } = require('../lib/pili-multi-agent-rag.js');
-                            const { buildWhatsAppListPayload, buildWhatsAppCtaButtonPayload } = require('../lib/whatsapp-interactive-catalog.js');
+                            const { buildWhatsAppWelcomeTextPayload, buildWhatsAppListPayload, buildWhatsAppCtaButtonPayload } = require('../lib/whatsapp-interactive-catalog.js');
 
                             // Extraer texto o selección interactiva del cliente
                             let incomingQuery = textBody;
@@ -73,14 +73,14 @@ export default async function handler(req, res) {
                                 }
                             }
 
-                            // Si el cliente pide "catalogo", "menu", "servicios" o saluda por primera vez -> Enviar Menú Desplegable
+                            // Si el cliente pide "catalogo", "menu", "servicios" o saluda por primera vez -> Enviar Mensaje con Preview Card + Menú
                             const isCatalogRequest = !textBody || ['hola', 'menu', 'catálogo', 'catalogo', 'servicios', 'inicio'].some(kw => incomingQuery.toLowerCase().includes(kw));
 
                             let payloadToMeta = null;
 
                             if (isCatalogRequest) {
-                                // 1. Despachar Menú Desplegable de la Lista de 8 Servicios
-                                payloadToMeta = buildWhatsAppListPayload(fromNumber);
+                                // 1. Despachar Mensaje Corporativo con preview_url: true para cargar la tarjeta con el Logo oficial de TESLA S.A.C.
+                                payloadToMeta = buildWhatsAppWelcomeTextPayload(fromNumber);
                             } else {
                                 // 2. Despachar Respuesta RAG de Especialista con Botón CTA directo a la Web
                                 const agente = getAgentForMessage(incomingQuery);
