@@ -226,7 +226,7 @@ function displaySolutionCard(data) {
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 10px; margin-bottom: 12px;">
-            <a href="https://tesla-landing-self.vercel.app" target="_blank" style="text-decoration: none; display: flex;">
+            <a href="https://web-tesla-electricidad-y-autoamtiza-psi.vercel.app" target="_blank" style="text-decoration: none; display: flex;">
                 <button class="option-button" style="width:100%; font-size: 0.9rem; background: #374151; border-color: #4B5563; display: flex; align-items: center; justify-content: center;">
                     🌐 Web
                 </button>

@@ -1,7 +1,7 @@
 
 const https = require('https');
 
-const PI_API_URL = 'https://tesla-landing-self.vercel.app/api/chat';
+const PI_API_URL = 'https://web-tesla-electricidad-y-autoamtiza-psi.vercel.app/api/chat';
 
 const USERS = [
     { name: 'Usuario Prueba 1', phone: '+51900000001', service: 'Automatización' },
