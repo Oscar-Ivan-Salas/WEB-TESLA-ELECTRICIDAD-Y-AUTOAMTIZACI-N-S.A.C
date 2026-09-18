@@ -203,7 +203,7 @@ async function callGemini(
 
   const contents: ConvTurn[] = [
     { role: 'user', parts: [{ text: systemWithRAG + '\n\nEntendido.' }] },
-    { role: 'model', parts: [{ text: 'Entendido. Soy PILi_agente de TESLA S.A.C. ¿Cómo puedo ayudarte hoy?' }] },
+    { role: 'model', parts: [{ text: 'Entendido. Soy PILi_agente de TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C. ¿Cómo puedo ayudarte hoy?' }] },
     ...history,
     { role: 'user', parts: userParts },
   ];
@@ -464,7 +464,7 @@ function MarketplaceModal({ onClose, onInject }: { onClose: () => void; onInject
       <div style={{ background: '#0D1422', border: '1px solid rgba(255,184,0,0.25)', borderRadius: 20, padding: 28, width: 420, maxWidth: '92vw' }} onClick={e => e.stopPropagation()}>
         <div style={{ fontFamily: 'monospace', fontSize: 12, color: '#FFB800', marginBottom: 16, letterSpacing: 1 }}>📐 MARKETPLACE BIM (CONTECH)</div>
         <div style={{ fontSize: 12, color: '#E8E8E8', marginBottom: 16, lineHeight: 1.6 }}>
-          Únete a la red hiperlocal de TESLA S.A.C. conectando tu perfil profesional o stock ferretero directamente a nuestras obras y clientes.
+          Únete a la red hiperlocal de TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C. conectando tu perfil profesional o stock ferretero directamente a nuestras obras y clientes.
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 20 }}>
            <button onClick={injectFreelance} style={{ textAlign: 'left', padding: '14px', borderRadius: 10, background: 'rgba(79,195,247,0.1)', border: '1px solid rgba(79,195,247,0.3)', color: '#4FC3F7', fontWeight: 700, cursor: 'pointer', fontSize: 13 }}>👨‍💻 Soy Dibujante / Modelador BIM</button>
@@ -510,7 +510,7 @@ export default function PILi_agente() {
 
   useEffect(() => {
     const welcomes: Record<AgentMode, string> = {
-      cotizar: '¡Bienvenido! Soy **PILi_agente** 👷‍♀️\n\nArquitecta e Ingeniera Consultora Senior de **TESLA S.A.C.**\n\nDime: ¿qué tipo de proyecto tienes? (vivienda, hotel, comercial, industrial). Con el área (m²) estimaremos **sistemas MEP, normativas y costos**.\n\n¿Empezamos?',
+      cotizar: '¡Bienvenido! Soy **PILi_agente** 👷‍♀️\n\nArquitecta e Ingeniera Consultora Senior de **TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.**\n\nDime: ¿qué tipo de proyecto tienes? (vivienda, hotel, comercial, industrial). Con el área (m²) estimaremos **sistemas MEP, normativas y costos**.\n\n¿Empezamos?',
       obra: '¡Hola! Soy **PILi_agente**, supervisora de terreno 🏗️\n\nAsignaré cuadrillas mecánicas y subcontratas eléctricas verificadas. ¿Estás buscando contratistas, o eres uno queriendo asociarse a TESLA?',
       planos: '¡Hola! Estoy lista para analizar tu plano con **IA de Precisión Técnica** 🔍\n\nAdjunta tu plano (CAD o PDF) con el botón **＋**. Examinaré cruces, instalaciones defectuosas y requisitos requeridos por INDECI (ITSE).',
       freelance: '¡Hola! Soy coordinadora de la **Red de Talento BIM** 📐\n\nSi eres Arquitecto, Modelador Revit o Gestor BIM, puedes aplicar aquí mismo para unirte a nuestros proyectos remotos.',

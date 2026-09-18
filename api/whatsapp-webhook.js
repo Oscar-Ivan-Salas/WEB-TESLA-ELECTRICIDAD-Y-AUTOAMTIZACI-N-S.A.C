@@ -79,7 +79,7 @@ export default async function handler(req, res) {
                             let payloadToMeta = null;
 
                             if (isCatalogRequest) {
-                                // 1. Despachar Mensaje Corporativo con preview_url: true para cargar la tarjeta con el Logo oficial de TESLA S.A.C.
+                                // 1. Despachar Mensaje Corporativo con preview_url: true para cargar la tarjeta con el Logo oficial de TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.
                                 payloadToMeta = buildWhatsAppWelcomeTextPayload(fromNumber);
                             } else {
                                 // 2. Despachar Respuesta RAG de Especialista con Botón CTA directo a la Web

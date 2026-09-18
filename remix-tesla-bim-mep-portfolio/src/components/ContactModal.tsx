@@ -37,7 +37,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
     ].filter(Boolean).join(', ');
 
     const lines = [
-      'Hola TESLA S.A.C., les escribo desde el portafolio web para solicitar una cotización de Coordinación BIM MEP:',
+      'Hola TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C., les escribo desde el portafolio web para solicitar una cotización de Coordinación BIM MEP:',
       '',
       `*Nombre:* ${formData.name}`,
       `*Empresa:* ${formData.company}`,

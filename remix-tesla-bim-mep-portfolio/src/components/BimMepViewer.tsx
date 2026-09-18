@@ -947,7 +947,7 @@ export const BimMepViewer: React.FC<BimMepViewerProps> = ({ onOpenContact }) => 
               {/* Tarea 3: Garantías de cierre de venta */}
               <div className="p-3 bg-[#0B0F17] border border-[#1F2937] space-y-2.5">
                 <span className="font-code text-[10px] text-[#FFB800] uppercase font-bold tracking-wider flex items-center gap-1.5">
-                  <ShieldCheck className="w-3 h-3" /> Garantías TESLA S.A.C.
+                  <ShieldCheck className="w-3 h-3" /> Garantías TESLA ELECTRICIDAD Y AUTOMATIZACIÓN S.A.C.
                 </span>
                 <div className="flex items-start gap-2.5 border border-[#FFB800]/40 bg-[#FFB800]/5 p-2.5">
                   <CheckCircle2 className="w-4 h-4 text-[#FFB800] shrink-0 mt-0.5" />
