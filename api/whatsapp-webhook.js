@@ -90,7 +90,9 @@ export default async function handler(req, res) {
 
                             // 📤 Enviar mensaje a través de Meta API
                             if (process.env.WHATSAPP_PHONE_NUMBER_ID && process.env.WHATSAPP_ACCESS_TOKEN) {
-                                await fetch(`https://graph.facebook.com/v19.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`, {
+                                const metaUrl = `https://graph.facebook.com/v19.0/${process.env.WHATSAPP_PHONE_NUMBER_ID}/messages`;
+                                console.log(`📤 Enviando mensaje a Meta WhatsApp (${fromNumber})...`);
+                                const metaResponse = await fetch(metaUrl, {
                                     method: 'POST',
                                     headers: {
                                         'Authorization': `Bearer ${process.env.WHATSAPP_ACCESS_TOKEN}`,
@@ -98,6 +100,14 @@ export default async function handler(req, res) {
                                     },
                                     body: JSON.stringify(payloadToMeta)
                                 });
+                                const metaData = await metaResponse.json();
+                                if (!metaResponse.ok) {
+                                    console.error('❌ Error de Meta WhatsApp API:', JSON.stringify(metaData));
+                                } else {
+                                    console.log('✅ Mensaje despachado con éxito por Meta:', JSON.stringify(metaData));
+                                }
+                            } else {
+                                console.warn('⚠️ No se encontraron WHATSAPP_PHONE_NUMBER_ID o WHATSAPP_ACCESS_TOKEN en las variables de entorno de Vercel.');
                             }
                         }
                     }
