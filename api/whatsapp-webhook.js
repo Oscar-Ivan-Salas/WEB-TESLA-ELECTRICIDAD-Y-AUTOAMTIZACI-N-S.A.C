@@ -60,6 +60,28 @@ export default async function handler(req, res) {
                                 continue;
                             }
 
+                            // 🎯 FILTRO DE CLIENTE NUEVO vs. CLIENTE EXISTENTE (Supabase)
+                            // Si el número ya existe en Supabase (lead guardado/atendido), se omite para permitir atención manual personal.
+                            const supabase = require('./supabaseClient');
+                            let isExistingCustomer = false;
+                            if (supabase) {
+                                try {
+                                    const { data: existingLead } = await supabase
+                                        .from('leads')
+                                        .select('id, telefono')
+                                        .eq('telefono', fromNumber)
+                                        .limit(1);
+
+                                    if (existingLead && existingLead.length > 0) {
+                                        isExistingCustomer = true;
+                                        console.log(`ℹ️ Cliente registrado/conocido (${fromNumber}). Omitiendo respuesta automática para atención personal.`);
+                                        continue; // Pasar al siguiente mensaje sin responder automáticamente
+                                    }
+                                } catch (dbErr) {
+                                    console.warn('⚠️ No se pudo verificar cliente en Supabase, se continuará con flujo normal:', dbErr.message);
+                                }
+                            }
+
                             const { getAgentForMessage, generatePiliResponse } = require('../lib/pili-multi-agent-rag.js');
                             const { buildWhatsAppWelcomeTextPayload, buildWhatsAppListPayload, buildWhatsAppCtaButtonPayload } = require('../lib/whatsapp-interactive-catalog.js');
 
@@ -105,6 +127,25 @@ export default async function handler(req, res) {
                                     console.error('❌ Error de Meta WhatsApp API:', JSON.stringify(metaData));
                                 } else {
                                     console.log('✅ Mensaje despachado con éxito por Meta:', JSON.stringify(metaData));
+                                    
+                                    // 📝 Registrar el nuevo número en Supabase para que las siguientes interacciones sean atendidas manualmente
+                                    if (supabase) {
+                                        try {
+                                            const customerName = (value.contacts && value.contacts[0] && value.contacts[0].profile) ? value.contacts[0].profile.name : 'Cliente WhatsApp';
+                                            await supabase.from('leads').insert([
+                                                {
+                                                    nombre: customerName,
+                                                    telefono: fromNumber,
+                                                    origen: 'WhatsApp Cloud API',
+                                                    especialidad: incomingQuery || 'Contacto Inicial',
+                                                    mensaje: textBody || 'Primer contacto por WhatsApp'
+                                                }
+                                            ]);
+                                            console.log(`📌 Nuevo cliente (${fromNumber}) registrado en Supabase para atención manual posterior.`);
+                                        } catch (insertErr) {
+                                            console.warn('⚠️ No se pudo registrar el lead en Supabase:', insertErr.message);
+                                        }
+                                    }
                                 }
                             } else {
                                 console.warn('⚠️ No se encontraron WHATSAPP_PHONE_NUMBER_ID o WHATSAPP_ACCESS_TOKEN en las variables de entorno de Vercel.');
