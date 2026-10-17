@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerebro PILi | Admin - TESLA</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'tesla-red': '#DC2626',
+                        'tesla-gold': '#F59E0B',
+                        'tesla-dark': '#1A202C',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: #05070d;
+            overflow: hidden;
+        }
+
+        #scene-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        #scene-container canvas {
+            display: block;
+        }
+
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .ui-layer a,
+        .ui-layer button,
+        .ui-layer .pointer-auto {
+            pointer-events: auto;
+        }
+
+        .glass {
+            background: rgba(10, 13, 23, 0.72);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.35;
+            }
+        }
+
+        .live-dot {
+            animation: blink 1.4s infinite;
+        }
+
+        .agent-row.active {
+            background: rgba(245, 158, 11, 0.12);
+            border-color: rgba(245, 158, 11, 0.6);
+        }
+    </style>
+</head>
+
+<body class="text-white font-sans">
+
+    <!-- Auth gate -->
+    <div id="authGate" class="fixed inset-0 z-50 bg-[#05070d] flex items-center justify-center">
+        <p class="text-tesla-gold text-sm tracking-widest animate-pulse">VERIFICANDO ACCESO...</p>
+    </div>
+
+    <div id="scene-container"></div>
+
+    <div class="ui-layer min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="glass pointer-auto flex items-center justify-between px-5 py-3 m-4 rounded-xl">
+            <div class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="TESLA" class="w-9 h-9 rounded-full border border-tesla-gold/60">
+                <div>
+                    <h1 class="text-sm md:text-base font-bold tracking-wide">Cerebro PILi <span
+                            class="text-tesla-gold">· Monitor Multi-Agente</span></h1>
+                    <p class="text-[11px] text-gray-400">Panel interno — solo administradores</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span
+                    class="hidden sm:flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 live-dot"></span>
+                    MODO DEMO — datos simulados
+                </span>
+                <a href="/dashboard.html"
+                    class="text-xs px-3 py-1.5 rounded-lg border border-gray-600 hover:border-tesla-gold hover:text-tesla-gold transition-colors">
+                    ← Dashboard
+                </a>
+                <button id="logoutBtn"
+                    class="text-xs px-3 py-1.5 rounded-lg border border-tesla-red/60 text-tesla-red hover:bg-tesla-red/10 transition-colors">
+                    Salir
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 flex flex-col lg:flex-row gap-4 px-4 pb-4">
+            <!-- Spacer so the 3D scene is visible -->
+            <div class="flex-1"></div>
+
+            <!-- Side panel -->
+            <aside class="glass pointer-auto w-full lg:w-80 rounded-xl p-4 flex flex-col gap-4 h-fit lg:sticky lg:top-4">
+                <div>
+                    <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Agente activo</p>
+                    <p id="activeAgentName" class="text-xl font-bold text-tesla-gold">—</p>
+                    <p id="activeAgentDesc" class="text-xs text-gray-400">—</p>
+                </div>
+                <div>
+                    <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Última intención detectada</p>
+                    <p id="lastIntent" class="text-sm text-gray-200 italic">"—"</p>
+                    <p id="lastTimestamp" class="text-[11px] text-gray-500 mt-1">—</p>
+                </div>
+                <div class="h-px bg-white/10"></div>
+                <div>
+                    <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-2">Agentes especialistas</p>
+                    <div id="agentList" class="flex flex-col gap-1.5"></div>
+                </div>
+                <div class="h-px bg-white/10"></div>
+                <p class="text-[11px] text-gray-500 leading-relaxed">
+                    Esta vista simula el enrutamiento de <span class="text-gray-300">lib/pili-multi-agent-rag.js</span>
+                    entre los 6 especialistas de PILi. Para conectar datos reales se necesita registrar el evento de
+                    enrutamiento por sesión (p. ej. en Supabase) y leerlo aquí en vivo.
+                </p>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // ===================== AUTH GATE (igual patrón que dashboard.html) =====================
+        const SUPABASE_URL = 'https://fckbbohlxfqoyiomyxqm.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_lbRx3jVpe9P7gzl3B5gFEg_5GbQXXF0';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            document.getElementById('authGate').remove();
+            return true;
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabaseClient.auth.signOut();
+            window.location.href = '/login.html';
+        });
+
+        checkAuth();
+
+        // ===================== DATOS DE LOS AGENTES =====================
+        const AGENTS = [
+            { id: 'COORDINADORA', name: 'Coordinadora', desc: 'Asesora de Visitas · Llave en mano', color: 0xF59E0B, core: true },
+            { id: 'ELECTRICIDAD', name: 'Electricidad', desc: 'Infraestructura Eléctrica · CNE', color: 0xFBBF24 },
+            { id: 'INCENDIOS', name: 'Contra Incendios', desc: 'NFPA 72 · ITSE / Defensa Civil', color: 0xDC2626 },
+            { id: 'AUTOMATIZACION', name: 'Automatización', desc: 'Domótica & BMS · BACnet/Modbus', color: 0x38BDF8 },
+            { id: 'BIM_MEP', name: 'BIM / MEP 3D', desc: 'Clash Detection · Cómputos métricos', color: 0xA855F7 },
+            { id: 'ACABADOS_SEGURIDAD', name: 'Acabados & Seguridad', desc: 'CCTV IP 4K · Monitoreo 24/7', color: 0x22C55E },
+        ];
+        const SAMPLE_INTENTS = {
+            ELECTRICIDAD: 'Necesito cotizar un tablero NEMA para una obra industrial',
+            INCENDIOS: '¿Qué necesito para el expediente técnico de Defensa Civil?',
+            AUTOMATIZACION: 'Quiero integrar control de accesos con BMS Schneider',
+            BIM_MEP: 'Tenemos clashes entre MEP y estructura en Navisworks',
+            ACABADOS_SEGURIDAD: 'Busco cámaras CCTV 4K para un condominio',
+            COORDINADORA: 'Quiero una solución llave en mano, ¿cuándo pueden visitar la obra?',
+        };
+
+        const specialists = AGENTS.filter(a => !a.core);
+        const core = AGENTS.find(a => a.core);
+
+        // ===================== PANEL LATERAL =====================
+        const agentListEl = document.getElementById('agentList');
+        AGENTS.forEach(agent => {
+            const row = document.createElement('div');
+            row.className = 'agent-row flex items-center gap-2 px-2 py-1.5 rounded-lg border border-transparent transition-colors';
+            row.id = `row-${agent.id}`;
+            row.innerHTML = `
+                <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" style="background:#${agent.color.toString(16).padStart(6, '0')}"></span>
+                <span class="text-xs text-gray-200">${agent.name}</span>
+            `;
+            agentListEl.appendChild(row);
+        });
+
+        function setActiveAgent(agent) {
+            document.querySelectorAll('.agent-row').forEach(el => el.classList.remove('active'));
+            document.getElementById(`row-${agent.id}`)?.classList.add('active');
+            document.getElementById('activeAgentName').textContent = agent.name;
+            document.getElementById('activeAgentDesc').textContent = agent.desc;
+            document.getElementById('lastIntent').textContent = `"${SAMPLE_INTENTS[agent.id] || ''}"`;
+            document.getElementById('lastTimestamp').textContent = new Date().toLocaleTimeString('es-PE');
+        }
+
+        // ===================== ESCENA 3D =====================
+        const container = document.getElementById('scene-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x05070d, 0.025);
+
+        const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 2.5, 13);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.06;
+        controls.autoRotate = true;
+        controls.autoRotateSpeed = 0.5;
+        controls.minDistance = 6;
+        controls.maxDistance = 26;
+
+        scene.add(new THREE.AmbientLight(0x404060, 1.2));
+        const keyLight = new THREE.PointLight(0xF59E0B, 2.2, 40);
+        keyLight.position.set(0, 4, 6);
+        scene.add(keyLight);
+
+        // Fondo de partículas
+        {
+            const count = 600;
+            const positions = new Float32Array(count * 3);
+            for (let i = 0; i < count; i++) {
+                const r = 20 + Math.random() * 30;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+                positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+                positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+                positions[i * 3 + 2] = r * Math.cos(phi);
+            }
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const mat = new THREE.PointsMaterial({ color: 0x334155, size: 0.08, transparent: true, opacity: 0.6 });
+            scene.add(new THREE.Points(geo, mat));
+        }
+
+        function glowSprite(color, size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+            const hex = '#' + color.toString(16).padStart(6, '0');
+            gradient.addColorStop(0, hex + 'ff');
+            gradient.addColorStop(0.4, hex + '55');
+            gradient.addColorStop(1, hex + '00');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 128, 128);
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+            const sprite = new THREE.Sprite(material);
+            sprite.scale.set(size, size, 1);
+            return sprite;
+        }
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        // Nodo central (Coordinadora / PILi)
+        const coreGroup = new THREE.Group();
+        const coreMesh = new THREE.Mesh(
+            new THREE.IcosahedronGeometry(1.1, 2),
+            new THREE.MeshStandardMaterial({ color: core.color, emissive: core.color, emissiveIntensity: 0.6, metalness: 0.3, roughness: 0.35, wireframe: false })
+        );
+        coreGroup.add(coreMesh);
+        const coreWire = new THREE.Mesh(
+            new THREE.IcosahedronGeometry(1.35, 1),
+            new THREE.MeshBasicMaterial({ color: core.color, wireframe: true, transparent: true, opacity: 0.35 })
+        );
+        coreGroup.add(coreWire);
+        coreGroup.add(glowSprite(core.color, 5));
+        group.add(coreGroup);
+
+        // Nodos especialistas en anillo
+        const nodeObjs = {};
+        const radius = 4.6;
+        specialists.forEach((agent, i) => {
+            const angle = (i / specialists.length) * Math.PI * 2;
+            const y = Math.sin(i * 1.7) * 0.8;
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+
+            const nodeGroup = new THREE.Group();
+            nodeGroup.position.set(x, y, z);
+
+            const mesh = new THREE.Mesh(
+                new THREE.SphereGeometry(0.55, 24, 24),
+                new THREE.MeshStandardMaterial({ color: agent.color, emissive: agent.color, emissiveIntensity: 0.4, metalness: 0.2, roughness: 0.4 })
+            );
+            nodeGroup.add(mesh);
+            const glow = glowSprite(agent.color, 2.6);
+            nodeGroup.add(glow);
+            group.add(nodeGroup);
+
+            // Línea sináptica hacia el centro
+            const lineGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(x, y, z)]);
+            const lineMat = new THREE.LineBasicMaterial({ color: agent.color, transparent: true, opacity: 0.25 });
+            const line = new THREE.Line(lineGeo, lineMat);
+            group.add(line);
+
+            // Partícula viajera (pulso) sobre la línea
+            const pulse = new THREE.Mesh(
+                new THREE.SphereGeometry(0.09, 8, 8),
+                new THREE.MeshBasicMaterial({ color: agent.color, transparent: true, opacity: 0 })
+            );
+            group.add(pulse);
+
+            nodeObjs[agent.id] = { agent, mesh, glow, nodeGroup, line, lineMat, pulse, target: new THREE.Vector3(x, y, z), baseScale: 1 };
+        });
+
+        // ===================== CICLO DE ENRUTAMIENTO SIMULADO =====================
+        let activeId = null;
+        let pulseT = 0;
+        let pulseActive = null;
+
+        function routeTo(agentId) {
+            activeId = agentId;
+            pulseT = 0;
+            pulseActive = nodeObjs[agentId];
+            const agent = AGENTS.find(a => a.id === agentId);
+            setActiveAgent(agent);
+        }
+
+        function demoLoop() {
+            const pool = specialists.map(a => a.id);
+            const next = pool[Math.floor(Math.random() * pool.length)];
+            routeTo(Math.random() < 0.15 ? 'COORDINADORA' : next);
+            const delay = 2800 + Math.random() * 2200;
+            setTimeout(demoLoop, delay);
+        }
+        routeTo('COORDINADORA');
+        setTimeout(demoLoop, 1500);
+
+        // ===================== ANIMACIÓN =====================
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const t = clock.getElapsedTime();
+            const dt = clock.getDelta();
+
+            coreGroup.rotation.y += dt * 0.25;
+            coreWire.rotation.y -= dt * 0.15;
+            const corePulse = 1 + Math.sin(t * 2) * 0.04 + (activeId === 'COORDINADORA' ? Math.sin(t * 6) * 0.05 : 0);
+            coreGroup.scale.setScalar(corePulse);
+
+            Object.values(nodeObjs).forEach(n => {
+                const isActive = n.agent.id === activeId;
+                const targetScale = isActive ? 1.35 : 1;
+                n.baseScale += (targetScale - n.baseScale) * 0.08;
+                n.nodeGroup.scale.setScalar(n.baseScale + Math.sin(t * 1.5 + n.target.x) * 0.03);
+                n.mesh.material.emissiveIntensity = isActive ? 0.95 : 0.35;
+                n.lineMat.opacity = isActive ? 0.9 : 0.2;
+
+                // Pulso viajero
+                if (pulseActive === n && pulseT <= 1) {
+                    pulseT += dt * 0.7;
+                    n.pulse.position.lerpVectors(new THREE.Vector3(0, 0, 0), n.target, Math.min(pulseT, 1));
+                    n.pulse.material.opacity = 1 - Math.abs(pulseT - 0.5) * 1.2;
+                } else {
+                    n.pulse.material.opacity = 0;
+                }
+            });
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
