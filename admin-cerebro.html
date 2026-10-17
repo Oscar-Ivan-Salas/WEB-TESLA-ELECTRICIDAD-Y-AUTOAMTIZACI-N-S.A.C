@@ -92,6 +92,13 @@
 
     <div id="scene-container"></div>
 
+    <!-- Notificación de evento real (aparece y se desvanece cada vez que llega un mensaje de verdad) -->
+    <div id="eventToast"
+        class="fixed top-24 left-1/2 -translate-x-1/2 z-30 opacity-0 pointer-events-none transition-opacity duration-500 glass px-5 py-2.5 rounded-full border-2 border-emerald-400 flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 live-dot"></span>
+        <span id="eventToastText" class="text-sm font-semibold text-emerald-300">—</span>
+    </div>
+
     <div class="ui-layer min-h-screen flex flex-col">
         <!-- Header -->
         <header class="glass pointer-auto flex items-center justify-between px-5 py-3 m-4 rounded-xl">
@@ -502,19 +509,66 @@
         let pulseT = 0;
         let pulseActive = null;
 
-        function routeTo(agentId, intentText, timestamp) {
+        function routeTo(agentId, intentText, timestamp, isNewRealEvent) {
             const agent = AGENTS.find(a => a.id === agentId);
             if (!agent) return;
             activeId = agentId;
             pulseT = 0;
             pulseActive = nodeObjs[agentId];
             setActiveAgent(agent, intentText, timestamp);
+
+            if (isNewRealEvent) {
+                showEventToast(`PILi enrutó a ${agent.name} ahora mismo`);
+                const targetPos = agent.core ? new THREE.Vector3(0, 0, 0) : nodeObjs[agentId].nodeGroup.position;
+                triggerActivationBurst(targetPos, agent.color);
+            }
+        }
+
+        // ===================== SEÑAL VISIBLE DE "ESTO ES REAL, AHORA" =====================
+        // La animación ambiente (rotación, pulso suave) siempre se ve "viva", así que un evento
+        // real necesita algo mucho más notorio: un anillo que explota en el nodo + un aviso arriba.
+        function showEventToast(text) {
+            const toast = document.getElementById('eventToast');
+            document.getElementById('eventToastText').textContent = text;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            clearTimeout(showEventToast._t);
+            showEventToast._t = setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 3500);
+        }
+
+        function ringTexture(color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = '#' + color.toString(16).padStart(6, '0');
+            ctx.lineWidth = 7;
+            ctx.beginPath();
+            ctx.arc(64, 64, 56, 0, Math.PI * 2);
+            ctx.stroke();
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const activeBursts = [];
+        function triggerActivationBurst(position, color) {
+            const material = new THREE.SpriteMaterial({
+                map: ringTexture(color), transparent: true, opacity: 1,
+                blending: THREE.AdditiveBlending, depthWrite: false
+            });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.copy(position);
+            sprite.scale.set(0.5, 0.5, 1);
+            group.add(sprite);
+            activeBursts.push({ sprite, material, start: clock.getElapsedTime() });
         }
 
         // ===================== DATOS REALES (routing_events en Supabase) =====================
         // api/chat.js inserta una fila cada vez que PILi enruta un mensaje a un especialista.
         // Aquí solo leemos (política RLS: authenticated → SELECT); el admin ya está logueado.
         let lastRoutingEventId = null;
+        let hasPolledOnce = false;
 
         function setPollStatus(text, isError) {
             const el = document.getElementById('pollStatus');
@@ -543,8 +597,10 @@
                 const evt = data[0];
                 setPollStatus('Última lectura OK · ' + new Date().toLocaleTimeString('es-PE'), false);
                 if (evt.id === lastRoutingEventId) return;
+                const isNewRealEvent = hasPolledOnce; // no "explotar" con el historial al cargar la página
                 lastRoutingEventId = evt.id;
-                routeTo(evt.agent_id, evt.message_snippet, evt.created_at);
+                hasPolledOnce = true;
+                routeTo(evt.agent_id, evt.message_snippet, evt.created_at, isNewRealEvent);
             } catch (err) {
                 console.error('[Cerebro PILi] Error de conexión a routing_events:', err.message);
                 setPollStatus('⚠️ ' + err.message, true);
@@ -595,6 +651,23 @@
                     n.pulse.material.opacity = 0;
                 }
             });
+
+            // Anillos de activación: crecen y se desvanecen rápido, bien distinto del movimiento ambiente.
+            const BURST_DURATION = 1.1;
+            for (let i = activeBursts.length - 1; i >= 0; i--) {
+                const b = activeBursts[i];
+                const elapsed = t - b.start;
+                if (elapsed >= BURST_DURATION) {
+                    group.remove(b.sprite);
+                    b.material.dispose();
+                    activeBursts.splice(i, 1);
+                    continue;
+                }
+                const progress = elapsed / BURST_DURATION;
+                const scale = 0.6 + progress * 3.2;
+                b.sprite.scale.set(scale, scale, 1);
+                b.material.opacity = 1 - progress;
+            }
 
             controls.update();
             renderer.render(scene, camera);
