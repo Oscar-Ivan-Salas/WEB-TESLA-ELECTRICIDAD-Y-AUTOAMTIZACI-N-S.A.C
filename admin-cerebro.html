@@ -120,35 +120,31 @@
             </div>
         </header>
 
-        <div class="flex-1 flex flex-col lg:flex-row gap-4 px-4 pb-4">
-            <!-- Spacer so the 3D scene is visible -->
-            <div class="flex-1"></div>
-
-            <!-- Side panel -->
-            <aside class="glass pointer-auto w-full lg:w-80 rounded-xl p-4 flex flex-col gap-4 h-fit lg:sticky lg:top-4">
-                <div>
-                    <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Agente activo</p>
-                    <p id="activeAgentName" class="text-xl font-bold text-tesla-gold">—</p>
-                    <p id="activeAgentDesc" class="text-xs text-gray-400">—</p>
-                </div>
-                <div>
-                    <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Última intención detectada</p>
-                    <p id="lastIntent" class="text-sm text-gray-200 italic">"—"</p>
-                    <p id="lastTimestamp" class="text-[11px] text-gray-500 mt-1">—</p>
-                </div>
-                <div class="h-px bg-white/10"></div>
-                <div>
-                    <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-2">Agentes especialistas</p>
-                    <div id="agentList" class="flex flex-col gap-1.5"></div>
-                </div>
-                <div class="h-px bg-white/10"></div>
-                <p class="text-[11px] text-gray-500 leading-relaxed">
-                    Esta vista simula el enrutamiento de <span class="text-gray-300">lib/pili-multi-agent-rag.js</span>
-                    entre los 6 especialistas de PILi. Para conectar datos reales se necesita registrar el evento de
-                    enrutamiento por sesión (p. ej. en Supabase) y leerlo aquí en vivo.
-                </p>
-            </aside>
-        </div>
+        <!-- Side panel: ancho fijo, nunca cubre toda la pantalla ni tapa la escena 3D -->
+        <aside
+            class="glass pointer-auto fixed top-24 right-4 bottom-4 w-[320px] max-w-[80vw] rounded-xl p-4 flex flex-col gap-4 overflow-y-auto">
+            <div>
+                <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Agente activo</p>
+                <p id="activeAgentName" class="text-xl font-bold text-tesla-gold">—</p>
+                <p id="activeAgentDesc" class="text-xs text-gray-400">—</p>
+            </div>
+            <div>
+                <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Última intención detectada</p>
+                <p id="lastIntent" class="text-sm text-gray-200 italic">"—"</p>
+                <p id="lastTimestamp" class="text-[11px] text-gray-500 mt-1">—</p>
+            </div>
+            <div class="h-px bg-white/10"></div>
+            <div>
+                <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-2">Agentes especialistas</p>
+                <div id="agentList" class="flex flex-col gap-1.5"></div>
+            </div>
+            <div class="h-px bg-white/10"></div>
+            <p class="text-[11px] text-gray-500 leading-relaxed">
+                Esta vista simula el enrutamiento de <span class="text-gray-300">lib/pili-multi-agent-rag.js</span>
+                entre los 6 especialistas de PILi. Para conectar datos reales se necesita registrar el evento de
+                enrutamiento por sesión (p. ej. en Supabase) y leerlo aquí en vivo.
+            </p>
+        </aside>
     </div>
 
     <script>
@@ -279,6 +275,54 @@
             return sprite;
         }
 
+        function labelSprite(text, color) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const fontSize = 42;
+            ctx.font = `bold ${fontSize}px Arial`;
+            const textWidth = ctx.measureText(text).width;
+            canvas.width = textWidth + 48;
+            canvas.height = fontSize + 32;
+            ctx.font = `bold ${fontSize}px Arial`;
+            const hex = '#' + color.toString(16).padStart(6, '0');
+
+            // Píldora de fondo
+            const r = canvas.height / 2;
+            ctx.fillStyle = 'rgba(5, 7, 13, 0.75)';
+            ctx.strokeStyle = hex;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.roundRect(1.5, 1.5, canvas.width - 3, canvas.height - 3, r);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, canvas.width / 2, canvas.height / 2 + 2);
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.minFilter = THREE.LinearFilter;
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true, depthTest: false });
+            const sprite = new THREE.Sprite(material);
+            const aspect = canvas.width / canvas.height;
+            const h = 0.62;
+            sprite.scale.set(h * aspect, h, 1);
+            sprite.renderOrder = 999;
+            return sprite;
+        }
+
+        function connectionTube(start, end, color, radius) {
+            const dir = new THREE.Vector3().subVectors(end, start);
+            const length = dir.length();
+            const geo = new THREE.CylinderGeometry(radius, radius, length, 10, 1, true);
+            const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.position.copy(start).add(end).multiplyScalar(0.5);
+            mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
+            return { mesh, mat };
+        }
+
         const group = new THREE.Group();
         scene.add(group);
 
@@ -296,6 +340,9 @@
         coreGroup.add(coreWire);
         coreGroup.add(glowSprite(core.color, 5));
         group.add(coreGroup);
+        const coreLabel = labelSprite('PILi · ' + core.name, core.color);
+        coreLabel.position.set(0, 1.9, 0);
+        group.add(coreLabel);
 
         // Nodos especialistas en anillo
         const nodeObjs = {};
@@ -316,22 +363,24 @@
             nodeGroup.add(mesh);
             const glow = glowSprite(agent.color, 2.6);
             nodeGroup.add(glow);
+            const label = labelSprite(agent.name, agent.color);
+            label.position.set(0, 0.95, 0);
+            nodeGroup.add(label);
             group.add(nodeGroup);
 
-            // Línea sináptica hacia el centro
-            const lineGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(x, y, z)]);
-            const lineMat = new THREE.LineBasicMaterial({ color: agent.color, transparent: true, opacity: 0.25 });
-            const line = new THREE.Line(lineGeo, lineMat);
-            group.add(line);
+            // Conexión sináptica hacia el centro (tubo 3D, visible desde cualquier ángulo)
+            const target = new THREE.Vector3(x, y, z);
+            const { mesh: tube, mat: tubeMat } = connectionTube(new THREE.Vector3(0, 0, 0), target, agent.color, 0.035);
+            group.add(tube);
 
-            // Partícula viajera (pulso) sobre la línea
+            // Partícula viajera (pulso) sobre la conexión
             const pulse = new THREE.Mesh(
-                new THREE.SphereGeometry(0.09, 8, 8),
-                new THREE.MeshBasicMaterial({ color: agent.color, transparent: true, opacity: 0 })
+                new THREE.SphereGeometry(0.14, 12, 12),
+                new THREE.MeshBasicMaterial({ color: agent.color, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
             );
             group.add(pulse);
 
-            nodeObjs[agent.id] = { agent, mesh, glow, nodeGroup, line, lineMat, pulse, target: new THREE.Vector3(x, y, z), baseScale: 1 };
+            nodeObjs[agent.id] = { agent, mesh, glow, nodeGroup, tube, tubeMat, pulse, target, baseScale: 1 };
         });
 
         // ===================== CICLO DE ENRUTAMIENTO SIMULADO =====================
@@ -376,7 +425,8 @@
                 n.baseScale += (targetScale - n.baseScale) * 0.08;
                 n.nodeGroup.scale.setScalar(n.baseScale + Math.sin(t * 1.5 + n.target.x) * 0.03);
                 n.mesh.material.emissiveIntensity = isActive ? 0.95 : 0.35;
-                n.lineMat.opacity = isActive ? 0.9 : 0.2;
+                n.tubeMat.opacity = isActive ? 0.85 : 0.4;
+                n.tube.scale.x = n.tube.scale.z = isActive ? 1.8 : 1;
 
                 // Pulso viajero
                 if (pulseActive === n && pulseT <= 1) {
