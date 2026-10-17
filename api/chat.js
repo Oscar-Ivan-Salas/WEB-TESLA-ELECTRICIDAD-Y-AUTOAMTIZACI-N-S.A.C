@@ -313,6 +313,30 @@ const { getAgentForMessage } = require('../lib/pili-multi-agent-rag');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "";
 
+// Registra en Supabase qué agente especialista atendió el mensaje, para que
+// admin-cerebro.html pueda mostrar el enrutamiento real en vivo. No bloquea
+// la respuesta al cliente: si falla (tabla no creada, red, etc.) solo se loguea.
+function logRoutingEvent(sessionId, agent, messageSnippet) {
+    if (!agent) return;
+    try {
+        const supabase = require('./supabaseClient');
+        supabase
+            .from('routing_events')
+            .insert({
+                session_id: sessionId,
+                agent_id: agent.id,
+                agent_name: agent.name,
+                message_snippet: (messageSnippet || '').toString().slice(0, 200)
+            })
+            .then(({ error }) => {
+                if (error) console.error('>>> [PILI] Error logging routing event:', error.message);
+            })
+            .catch((err) => console.error('>>> [PILI] Error logging routing event:', err.message));
+    } catch (err) {
+        console.error('>>> [PILI] Error logging routing event:', err.message);
+    }
+}
+
 async function callGeminiAI(userPrompt, session) {
     return new Promise((resolve) => {
         const agent = getAgentForMessage(userPrompt, session ? session.agentId : null);
@@ -417,6 +441,7 @@ module.exports = async (req, res) => {
             const aiResult = await callGeminiAI(msgStr, session);
             if (aiResult && aiResult.text) {
                 console.log(`>>> [PILI IA] Respuesta de ${aiResult.agent.name} obtenida con éxito.`);
+                logRoutingEvent(sessionId, aiResult.agent, msgStr);
                 return res.status(200).json({
                     message: aiResult.text,
                     agentName: aiResult.agent.name,
@@ -432,6 +457,7 @@ module.exports = async (req, res) => {
         const agent = getAgentForMessage(msgStr, session.agentId);
         session.agentId = agent.id;
         session.agentName = agent.name;
+        logRoutingEvent(sessionId, agent, msgStr);
 
         const response = processMessage(session, message);
         response.agentName = agent.name;

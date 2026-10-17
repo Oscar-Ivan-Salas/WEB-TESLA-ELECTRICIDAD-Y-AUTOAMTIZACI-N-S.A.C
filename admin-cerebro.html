@@ -105,9 +105,9 @@
             </div>
             <div class="flex items-center gap-3">
                 <span
-                    class="hidden sm:flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/40 text-amber-400">
-                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 live-dot"></span>
-                    MODO DEMO — datos simulados
+                    class="hidden sm:flex items-center gap-1.5 text-[11px] px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/40 text-emerald-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 live-dot"></span>
+                    EN VIVO — conversaciones reales de PILi
                 </span>
                 <a href="/dashboard.html"
                     class="text-xs px-3 py-1.5 rounded-lg border border-gray-600 hover:border-tesla-gold hover:text-tesla-gold transition-colors">
@@ -120,30 +120,34 @@
             </div>
         </header>
 
-        <!-- Side panel: ancho fijo, nunca cubre toda la pantalla ni tapa la escena 3D -->
+        <!-- Side panel: angosto, nunca cubre toda la pantalla ni tapa la escena 3D. La lista completa
+             de agentes es opcional/colapsable, ya que cada nodo ya tiene su propia etiqueta en el 3D. -->
         <aside
-            class="glass pointer-auto fixed top-24 right-4 bottom-4 w-[320px] max-w-[80vw] rounded-xl p-4 flex flex-col gap-4 overflow-y-auto">
+            class="glass pointer-auto fixed top-24 right-4 w-[240px] max-w-[70vw] rounded-xl p-4 flex flex-col gap-3">
             <div>
                 <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Agente activo</p>
-                <p id="activeAgentName" class="text-xl font-bold text-tesla-gold">—</p>
+                <p id="activeAgentName" class="text-lg font-bold text-tesla-gold leading-tight">—</p>
                 <p id="activeAgentDesc" class="text-xs text-gray-400">—</p>
             </div>
             <div>
-                <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Última intención detectada</p>
-                <p id="lastIntent" class="text-sm text-gray-200 italic">"—"</p>
+                <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-1">Última intención</p>
+                <p id="lastIntent" class="text-xs text-gray-200 italic leading-snug">"—"</p>
                 <p id="lastTimestamp" class="text-[11px] text-gray-500 mt-1">—</p>
             </div>
-            <div class="h-px bg-white/10"></div>
-            <div>
-                <p class="text-[11px] uppercase tracking-widest text-gray-400 mb-2">Agentes especialistas</p>
+            <button id="toggleAgentListBtn"
+                class="text-[11px] text-left text-tesla-gold/80 hover:text-tesla-gold flex items-center gap-1">
+                <span id="toggleAgentListIcon">▸</span> Ver los 8 agentes
+            </button>
+            <div id="agentListWrap" class="hidden flex-col gap-3 max-h-[50vh] overflow-y-auto">
+                <div class="h-px bg-white/10"></div>
                 <div id="agentList" class="flex flex-col gap-1.5"></div>
+                <div class="h-px bg-white/10"></div>
+                <p class="text-[11px] text-gray-500 leading-relaxed">
+                    Lee en vivo (cada 3s) <span class="text-gray-300">routing_events</span> en Supabase, donde
+                    <span class="text-gray-300">api/chat.js</span> registra a qué especialista se enruta cada
+                    mensaje real del chat de PILi.
+                </p>
             </div>
-            <div class="h-px bg-white/10"></div>
-            <p class="text-[11px] text-gray-500 leading-relaxed">
-                Esta vista simula el enrutamiento de <span class="text-gray-300">lib/pili-multi-agent-rag.js</span>
-                entre los 6 especialistas de PILi. Para conectar datos reales se necesita registrar el evento de
-                enrutamiento por sesión (p. ej. en Supabase) y leerlo aquí en vivo.
-            </p>
         </aside>
     </div>
 
@@ -171,22 +175,19 @@
         checkAuth();
 
         // ===================== DATOS DE LOS AGENTES =====================
+        // Debe coincidir exactamente con los 8 agentes reales de lib/pili-multi-agent-rag.js (PILI_AGENTS).
+        // INTEGRAL es la Coordinadora Senior y actúa como nodo central (core).
         const AGENTS = [
-            { id: 'COORDINADORA', name: 'Coordinadora', desc: 'Asesora de Visitas · Llave en mano', color: 0xF59E0B, core: true },
-            { id: 'ELECTRICIDAD', name: 'Electricidad', desc: 'Infraestructura Eléctrica · CNE', color: 0xFBBF24 },
-            { id: 'INCENDIOS', name: 'Contra Incendios', desc: 'NFPA 72 · ITSE / Defensa Civil', color: 0xDC2626 },
-            { id: 'AUTOMATIZACION', name: 'Automatización', desc: 'Domótica & BMS · BACnet/Modbus', color: 0x38BDF8 },
-            { id: 'BIM_MEP', name: 'BIM / MEP 3D', desc: 'Clash Detection · Cómputos métricos', color: 0xA855F7 },
-            { id: 'ACABADOS_SEGURIDAD', name: 'Acabados & Seguridad', desc: 'CCTV IP 4K · Monitoreo 24/7', color: 0x22C55E },
+            { id: 'INTEGRAL', name: 'Coordinadora', desc: 'Solución Llave en Mano TESLA', color: 0xF59E0B, core: true },
+            { id: 'ELECTRICIDAD', name: 'Eléctrica', desc: 'Infraestructura Eléctrica · CNE', color: 0xFBBF24 },
+            { id: 'AUTOMATIZACION', name: 'Automatización', desc: 'BMS & Domótica · BACnet/Modbus', color: 0x38BDF8 },
+            { id: 'INCENDIOS', name: 'Contra Incendios', desc: 'NFPA 72 / NFPA 13', color: 0xDC2626 },
+            { id: 'SEGURIDAD', name: 'Seguridad 24/7', desc: 'CCTV IP 4K · Monitoreo', color: 0x14B8A6 },
+            { id: 'ACABADOS', name: 'Acabados Técnicos', desc: 'Drywall · Estructuras metálicas', color: 0xF97316 },
+            { id: 'ITSE', name: 'ITSE / INDECI', desc: 'Certificación Defensa Civil', color: 0x6366F1 },
+            { id: 'BIM_MEP', name: 'BIM / MEP 3D', desc: 'Clash Detection · Revit', color: 0xA855F7 },
         ];
-        const SAMPLE_INTENTS = {
-            ELECTRICIDAD: 'Necesito cotizar un tablero NEMA para una obra industrial',
-            INCENDIOS: '¿Qué necesito para el expediente técnico de Defensa Civil?',
-            AUTOMATIZACION: 'Quiero integrar control de accesos con BMS Schneider',
-            BIM_MEP: 'Tenemos clashes entre MEP y estructura en Navisworks',
-            ACABADOS_SEGURIDAD: 'Busco cámaras CCTV 4K para un condominio',
-            COORDINADORA: 'Quiero una solución llave en mano, ¿cuándo pueden visitar la obra?',
-        };
+        const DEFAULT_INTENT_LABEL = 'Esperando actividad real del chat de PILi…';
 
         const specialists = AGENTS.filter(a => !a.core);
         const core = AGENTS.find(a => a.core);
@@ -204,13 +205,26 @@
             agentListEl.appendChild(row);
         });
 
-        function setActiveAgent(agent) {
+        const agentListWrap = document.getElementById('agentListWrap');
+        const toggleAgentListBtn = document.getElementById('toggleAgentListBtn');
+        const toggleAgentListIcon = document.getElementById('toggleAgentListIcon');
+        toggleAgentListBtn.addEventListener('click', () => {
+            const isHidden = agentListWrap.classList.contains('hidden');
+            agentListWrap.classList.toggle('hidden', !isHidden);
+            agentListWrap.classList.toggle('flex', isHidden);
+            toggleAgentListIcon.textContent = isHidden ? '▾' : '▸';
+            toggleAgentListBtn.lastChild.textContent = isHidden ? ' Ocultar lista de agentes' : ' Ver los 8 agentes';
+        });
+
+        function setActiveAgent(agent, intentText, timestamp) {
             document.querySelectorAll('.agent-row').forEach(el => el.classList.remove('active'));
             document.getElementById(`row-${agent.id}`)?.classList.add('active');
             document.getElementById('activeAgentName').textContent = agent.name;
             document.getElementById('activeAgentDesc').textContent = agent.desc;
-            document.getElementById('lastIntent').textContent = `"${SAMPLE_INTENTS[agent.id] || ''}"`;
-            document.getElementById('lastTimestamp').textContent = new Date().toLocaleTimeString('es-PE');
+            document.getElementById('lastIntent').textContent = intentText ? `"${intentText}"` : DEFAULT_INTENT_LABEL;
+            document.getElementById('lastTimestamp').textContent = timestamp
+                ? new Date(timestamp).toLocaleTimeString('es-PE')
+                : new Date().toLocaleTimeString('es-PE');
         }
 
         // ===================== ESCENA 3D =====================
@@ -255,6 +269,67 @@
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             const mat = new THREE.PointsMaterial({ color: 0x334155, size: 0.08, transparent: true, opacity: 0.6 });
             scene.add(new THREE.Points(geo, mat));
+        }
+
+        // ===================== MALLA NEURONAL (envoltura tipo "cerebro de neuronas") =====================
+        // Nube de puntos distribuida en una capa esférica irregular, conectada a sus vecinos más
+        // cercanos: da el efecto de telaraña/red neuronal en vez de esferas sólidas sueltas.
+        const neuralMesh = new THREE.Group();
+        {
+            const COUNT = 220;
+            const INNER_R = 2.4;
+            const OUTER_R = 6.4;
+            const MAX_LINK_DIST = 1.35;
+            const MAX_LINKS_PER_NODE = 3;
+
+            // Distribución tipo esfera de Fibonacci (uniforme) + ruido radial para dar grosor/volumen.
+            const pts = [];
+            const golden = Math.PI * (3 - Math.sqrt(5));
+            for (let i = 0; i < COUNT; i++) {
+                const y = 1 - (i / (COUNT - 1)) * 2;
+                const radiusAtY = Math.sqrt(1 - y * y);
+                const theta = golden * i;
+                const r = INNER_R + Math.random() * (OUTER_R - INNER_R);
+                const x = Math.cos(theta) * radiusAtY * r;
+                const z = Math.sin(theta) * radiusAtY * r;
+                pts.push(new THREE.Vector3(x, y * r, z));
+            }
+
+            // Nodos (puntos brillantes)
+            const nodePositions = new Float32Array(COUNT * 3);
+            pts.forEach((p, i) => { nodePositions[i * 3] = p.x; nodePositions[i * 3 + 1] = p.y; nodePositions[i * 3 + 2] = p.z; });
+            const nodeGeo = new THREE.BufferGeometry();
+            nodeGeo.setAttribute('position', new THREE.BufferAttribute(nodePositions, 3));
+            const nodeMat = new THREE.PointsMaterial({
+                color: 0xF59E0B, size: 0.06, transparent: true, opacity: 0.85,
+                blending: THREE.AdditiveBlending, depthWrite: false
+            });
+            const neuralPoints = new THREE.Points(nodeGeo, nodeMat);
+            neuralMesh.add(neuralPoints);
+
+            // Conexiones: cada punto se une a sus ~3 vecinos más cercanos dentro de un radio máximo.
+            const linkPositions = [];
+            for (let i = 0; i < pts.length; i++) {
+                const distances = [];
+                for (let j = 0; j < pts.length; j++) {
+                    if (i === j) continue;
+                    const d = pts[i].distanceTo(pts[j]);
+                    if (d < MAX_LINK_DIST) distances.push([d, j]);
+                }
+                distances.sort((a, b) => a[0] - b[0]);
+                for (let k = 0; k < Math.min(MAX_LINKS_PER_NODE, distances.length); k++) {
+                    const j = distances[k][1];
+                    if (j > i) { // evita duplicar la misma línea en ambos sentidos
+                        linkPositions.push(pts[i].x, pts[i].y, pts[i].z, pts[j].x, pts[j].y, pts[j].z);
+                    }
+                }
+            }
+            const linkGeo = new THREE.BufferGeometry();
+            linkGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linkPositions), 3));
+            const linkMat = new THREE.LineBasicMaterial({ color: 0xF59E0B, transparent: true, opacity: 0.12 });
+            neuralMesh.add(new THREE.LineSegments(linkGeo, linkMat));
+
+            scene.add(neuralMesh);
         }
 
         function glowSprite(color, size) {
@@ -312,15 +387,43 @@
             return sprite;
         }
 
+        // Textura de "guiones" que se repite a lo largo del tubo; animando su offset.y se ve como
+        // un flujo de datos corriendo por la conexión, en vez de una línea sólida estática.
+        function flowTexture(color) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 16;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            const hex = '#' + color.toString(16).padStart(6, '0');
+            ctx.fillStyle = 'rgba(0,0,0,0)';
+            ctx.fillRect(0, 0, 16, 64);
+            const grad = ctx.createLinearGradient(0, 0, 0, 64);
+            grad.addColorStop(0.00, hex + '00');
+            grad.addColorStop(0.35, hex + 'ff');
+            grad.addColorStop(0.65, hex + 'ff');
+            grad.addColorStop(1.00, hex + '00');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 16, 64);
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(1, 4);
+            return texture;
+        }
+
         function connectionTube(start, end, color, radius) {
             const dir = new THREE.Vector3().subVectors(end, start);
             const length = dir.length();
             const geo = new THREE.CylinderGeometry(radius, radius, length, 10, 1, true);
-            const mat = new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false });
+            const texture = flowTexture(color);
+            const mat = new THREE.MeshBasicMaterial({
+                color, map: texture, transparent: true, opacity: 0.55,
+                blending: THREE.AdditiveBlending, depthWrite: false
+            });
             const mesh = new THREE.Mesh(geo, mat);
             mesh.position.copy(start).add(end).multiplyScalar(0.5);
             mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir.clone().normalize());
-            return { mesh, mat };
+            return { mesh, mat, texture };
         }
 
         const group = new THREE.Group();
@@ -356,11 +459,21 @@
             const nodeGroup = new THREE.Group();
             nodeGroup.position.set(x, y, z);
 
+            // Núcleo translúcido (da volumen/legibilidad) + capa wireframe (look "malla neuronal"),
+            // mismo tratamiento que el nodo central para que todo el cerebro se vea consistente.
             const mesh = new THREE.Mesh(
-                new THREE.SphereGeometry(0.55, 24, 24),
-                new THREE.MeshStandardMaterial({ color: agent.color, emissive: agent.color, emissiveIntensity: 0.4, metalness: 0.2, roughness: 0.4 })
+                new THREE.IcosahedronGeometry(0.52, 1),
+                new THREE.MeshStandardMaterial({
+                    color: agent.color, emissive: agent.color, emissiveIntensity: 0.45,
+                    metalness: 0.2, roughness: 0.4, transparent: true, opacity: 0.35
+                })
             );
             nodeGroup.add(mesh);
+            const wire = new THREE.Mesh(
+                new THREE.IcosahedronGeometry(0.62, 1),
+                new THREE.MeshBasicMaterial({ color: agent.color, wireframe: true, transparent: true, opacity: 0.8 })
+            );
+            nodeGroup.add(wire);
             const glow = glowSprite(agent.color, 2.6);
             nodeGroup.add(glow);
             const label = labelSprite(agent.name, agent.color);
@@ -370,7 +483,7 @@
 
             // Conexión sináptica hacia el centro (tubo 3D, visible desde cualquier ángulo)
             const target = new THREE.Vector3(x, y, z);
-            const { mesh: tube, mat: tubeMat } = connectionTube(new THREE.Vector3(0, 0, 0), target, agent.color, 0.035);
+            const { mesh: tube, mat: tubeMat, texture: tubeTexture } = connectionTube(new THREE.Vector3(0, 0, 0), target, agent.color, 0.035);
             group.add(tube);
 
             // Partícula viajera (pulso) sobre la conexión
@@ -380,7 +493,7 @@
             );
             group.add(pulse);
 
-            nodeObjs[agent.id] = { agent, mesh, glow, nodeGroup, tube, tubeMat, pulse, target, baseScale: 1 };
+            nodeObjs[agent.id] = { agent, mesh, wire, glow, nodeGroup, tube, tubeMat, tubeTexture, pulse, target, baseScale: 1 };
         });
 
         // ===================== CICLO DE ENRUTAMIENTO SIMULADO =====================
@@ -388,23 +501,45 @@
         let pulseT = 0;
         let pulseActive = null;
 
-        function routeTo(agentId) {
+        function routeTo(agentId, intentText, timestamp) {
+            const agent = AGENTS.find(a => a.id === agentId);
+            if (!agent) return;
             activeId = agentId;
             pulseT = 0;
             pulseActive = nodeObjs[agentId];
-            const agent = AGENTS.find(a => a.id === agentId);
-            setActiveAgent(agent);
+            setActiveAgent(agent, intentText, timestamp);
         }
 
-        function demoLoop() {
-            const pool = specialists.map(a => a.id);
-            const next = pool[Math.floor(Math.random() * pool.length)];
-            routeTo(Math.random() < 0.15 ? 'COORDINADORA' : next);
-            const delay = 2800 + Math.random() * 2200;
-            setTimeout(demoLoop, delay);
+        // ===================== DATOS REALES (routing_events en Supabase) =====================
+        // api/chat.js inserta una fila cada vez que PILi enruta un mensaje a un especialista.
+        // Aquí solo leemos (política RLS: authenticated → SELECT); el admin ya está logueado.
+        let lastRoutingEventId = null;
+
+        async function pollRoutingEvents() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('routing_events')
+                    .select('id, agent_id, message_snippet, created_at')
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (error) {
+                    console.error('[Cerebro PILi] Error leyendo routing_events:', error.message);
+                    return;
+                }
+                if (!data || data.length === 0) return;
+
+                const evt = data[0];
+                if (evt.id === lastRoutingEventId) return;
+                lastRoutingEventId = evt.id;
+                routeTo(evt.agent_id, evt.message_snippet, evt.created_at);
+            } catch (err) {
+                console.error('[Cerebro PILi] Error de conexión a routing_events:', err.message);
+            }
         }
-        routeTo('COORDINADORA');
-        setTimeout(demoLoop, 1500);
+
+        pollRoutingEvents();
+        setInterval(pollRoutingEvents, 3000);
 
         // ===================== ANIMACIÓN =====================
         const clock = new THREE.Clock();
@@ -416,8 +551,14 @@
 
             coreGroup.rotation.y += dt * 0.25;
             coreWire.rotation.y -= dt * 0.15;
-            const corePulse = 1 + Math.sin(t * 2) * 0.04 + (activeId === 'COORDINADORA' ? Math.sin(t * 6) * 0.05 : 0);
+            const corePulse = 1 + Math.sin(t * 2) * 0.04 + (activeId === 'INTEGRAL' ? Math.sin(t * 6) * 0.05 : 0);
             coreGroup.scale.setScalar(corePulse);
+
+            // La malla neuronal gira a su propio ritmo (ligeramente distinto al resto) para dar
+            // sensación de profundidad y vida, como una red de neuronas respirando.
+            neuralMesh.rotation.y += dt * 0.07;
+            neuralMesh.rotation.x += dt * 0.025;
+            neuralMesh.children[0].material.opacity = 0.65 + Math.sin(t * 1.3) * 0.2;
 
             Object.values(nodeObjs).forEach(n => {
                 const isActive = n.agent.id === activeId;
@@ -425,8 +566,12 @@
                 n.baseScale += (targetScale - n.baseScale) * 0.08;
                 n.nodeGroup.scale.setScalar(n.baseScale + Math.sin(t * 1.5 + n.target.x) * 0.03);
                 n.mesh.material.emissiveIntensity = isActive ? 0.95 : 0.35;
-                n.tubeMat.opacity = isActive ? 0.85 : 0.4;
+                n.wire.rotation.y += dt * (isActive ? 0.9 : 0.3);
+                n.wire.rotation.x += dt * 0.15;
+                n.tubeMat.opacity = isActive ? 0.9 : 0.35;
                 n.tube.scale.x = n.tube.scale.z = isActive ? 1.8 : 1;
+                // Flujo de datos corriendo por la conexión: lento en reposo, rápido cuando atiende de verdad.
+                n.tubeTexture.offset.y -= dt * (isActive ? 1.8 : 0.35);
 
                 // Pulso viajero
                 if (pulseActive === n && pulseT <= 1) {
