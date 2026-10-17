@@ -494,14 +494,28 @@
             const { mesh: tube, mat: tubeMat, texture: tubeTexture } = connectionTube(new THREE.Vector3(0, 0, 0), target, agent.color, 0.035);
             group.add(tube);
 
-            // Partícula viajera (pulso) sobre la conexión
+            // Partícula viajera (pulso) sobre la conexión — para el evento de activación puntual
             const pulse = new THREE.Mesh(
                 new THREE.SphereGeometry(0.14, 12, 12),
                 new THREE.MeshBasicMaterial({ color: agent.color, transparent: true, opacity: 0, blending: THREE.AdditiveBlending })
             );
             group.add(pulse);
 
-            nodeObjs[agent.id] = { agent, mesh, wire, glow, nodeGroup, tube, tubeMat, tubeTexture, pulse, target, baseScale: 1 };
+            // "Electrones" viajando siempre por la conexión (como impulsos neuronales/señales),
+            // no solo en el evento de activación: dan la sensación de que algo fluye constantemente.
+            const ELECTRONS_PER_LINK = 3;
+            const electrons = [];
+            for (let e = 0; e < ELECTRONS_PER_LINK; e++) {
+                const elMesh = new THREE.Mesh(
+                    new THREE.SphereGeometry(0.055, 8, 8),
+                    new THREE.MeshBasicMaterial({ color: agent.color, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending })
+                );
+                elMesh.add(glowSprite(agent.color, 0.5));
+                group.add(elMesh);
+                electrons.push({ mesh: elMesh, phase: e / ELECTRONS_PER_LINK });
+            }
+
+            nodeObjs[agent.id] = { agent, mesh, wire, glow, nodeGroup, tube, tubeMat, tubeTexture, pulse, electrons, target, baseScale: 1 };
         });
 
         // ===================== CICLO DE ENRUTAMIENTO SIMULADO =====================
@@ -610,6 +624,43 @@
         pollRoutingEvents();
         setInterval(pollRoutingEvents, 3000);
 
+        // ===================== INTERACCIÓN CON EL MOUSE (hover + clic para enfocar) =====================
+        const raycaster = new THREE.Raycaster();
+        const mouseNDC = new THREE.Vector2();
+        const hitTargets = [{ mesh: coreMesh, agentId: core.id }];
+        Object.values(nodeObjs).forEach(n => hitTargets.push({ mesh: n.mesh, agentId: n.agent.id }));
+
+        let hoveredId = null;
+        let focusTarget = null;
+        let focusCameraPos = null;
+
+        function pickAgentAt(clientX, clientY) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouseNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+            mouseNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouseNDC, camera);
+            const hits = raycaster.intersectObjects(hitTargets.map(h => h.mesh));
+            if (hits.length === 0) return null;
+            const hitMesh = hits[0].object;
+            return hitTargets.find(h => h.mesh === hitMesh) || null;
+        }
+
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            const hit = pickAgentAt(e.clientX, e.clientY);
+            hoveredId = hit ? hit.agentId : null;
+            renderer.domElement.style.cursor = hoveredId ? 'pointer' : 'grab';
+        });
+
+        renderer.domElement.addEventListener('click', (e) => {
+            const hit = pickAgentAt(e.clientX, e.clientY);
+            if (!hit) return;
+            const worldPos = hit.agentId === core.id ? new THREE.Vector3(0, 0, 0) : nodeObjs[hit.agentId].nodeGroup.position;
+            const viewDir = camera.position.clone().sub(controls.target).normalize();
+            const viewDist = hit.agentId === core.id ? 5.5 : 3.2;
+            focusTarget = worldPos.clone();
+            focusCameraPos = worldPos.clone().add(viewDir.multiplyScalar(viewDist));
+        });
+
         // ===================== ANIMACIÓN =====================
         const clock = new THREE.Clock();
 
@@ -620,7 +671,8 @@
 
             coreGroup.rotation.y += dt * 0.25;
             coreWire.rotation.y -= dt * 0.15;
-            const corePulse = 1 + Math.sin(t * 2) * 0.04 + (activeId === 'INTEGRAL' ? Math.sin(t * 6) * 0.05 : 0);
+            const coreHoverBoost = hoveredId === core.id ? 1.12 : 1;
+            const corePulse = (1 + Math.sin(t * 2) * 0.04 + (activeId === 'INTEGRAL' ? Math.sin(t * 6) * 0.05 : 0)) * coreHoverBoost;
             coreGroup.scale.setScalar(corePulse);
 
             // La malla neuronal gira a su propio ritmo (ligeramente distinto al resto) para dar
@@ -631,16 +683,26 @@
 
             Object.values(nodeObjs).forEach(n => {
                 const isActive = n.agent.id === activeId;
-                const targetScale = isActive ? 1.35 : 1;
-                n.baseScale += (targetScale - n.baseScale) * 0.08;
+                const isHovered = n.agent.id === hoveredId;
+                const targetScale = (isActive ? 1.35 : 1) * (isHovered ? 1.15 : 1);
+                n.baseScale += (targetScale - n.baseScale) * 0.12;
                 n.nodeGroup.scale.setScalar(n.baseScale + Math.sin(t * 1.5 + n.target.x) * 0.03);
-                n.mesh.material.emissiveIntensity = isActive ? 0.95 : 0.35;
+                n.mesh.material.emissiveIntensity = isActive ? 0.95 : (isHovered ? 0.7 : 0.35);
                 n.wire.rotation.y += dt * (isActive ? 0.9 : 0.3);
                 n.wire.rotation.x += dt * 0.15;
                 n.tubeMat.opacity = isActive ? 0.9 : 0.35;
                 n.tube.scale.x = n.tube.scale.z = isActive ? 1.8 : 1;
                 // Flujo de datos corriendo por la conexión: lento en reposo, rápido cuando atiende de verdad.
                 n.tubeTexture.offset.y -= dt * (isActive ? 1.8 : 0.35);
+
+                // "Electrones"/señales viajando siempre del centro al nodo (como impulsos neuronales).
+                const electronSpeed = isActive ? 0.9 : 0.22;
+                n.electrons.forEach(el => {
+                    el.phase = (el.phase + dt * electronSpeed) % 1;
+                    el.mesh.position.lerpVectors(new THREE.Vector3(0, 0, 0), n.target, el.phase);
+                    el.mesh.material.opacity = isActive ? 0.95 : 0.4;
+                    el.mesh.scale.setScalar(isActive ? 1.4 : 1);
+                });
 
                 // Pulso viajero
                 if (pulseActive === n && pulseT <= 1) {
@@ -667,6 +729,16 @@
                 const scale = 0.6 + progress * 3.2;
                 b.sprite.scale.set(scale, scale, 1);
                 b.material.opacity = 1 - progress;
+            }
+
+            // Enfoque suave de cámara al hacer clic en un nodo.
+            if (focusTarget && focusCameraPos) {
+                controls.target.lerp(focusTarget, 0.06);
+                camera.position.lerp(focusCameraPos, 0.06);
+                if (camera.position.distanceTo(focusCameraPos) < 0.05) {
+                    focusTarget = null;
+                    focusCameraPos = null;
+                }
             }
 
             controls.update();
