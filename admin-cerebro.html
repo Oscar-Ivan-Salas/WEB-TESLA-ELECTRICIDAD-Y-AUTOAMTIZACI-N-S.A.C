@@ -134,6 +134,7 @@
                 <p id="lastIntent" class="text-xs text-gray-200 italic leading-snug">"—"</p>
                 <p id="lastTimestamp" class="text-[11px] text-gray-500 mt-1">—</p>
             </div>
+            <p id="pollStatus" class="text-[11px] leading-snug"></p>
             <button id="toggleAgentListBtn"
                 class="text-[11px] text-left text-tesla-gold/80 hover:text-tesla-gold flex items-center gap-1">
                 <span id="toggleAgentListIcon">▸</span> Ver los 8 agentes
@@ -515,6 +516,12 @@
         // Aquí solo leemos (política RLS: authenticated → SELECT); el admin ya está logueado.
         let lastRoutingEventId = null;
 
+        function setPollStatus(text, isError) {
+            const el = document.getElementById('pollStatus');
+            el.textContent = text;
+            el.className = 'text-[11px] leading-snug ' + (isError ? 'text-tesla-red' : 'text-gray-500');
+        }
+
         async function pollRoutingEvents() {
             try {
                 const { data, error } = await supabaseClient
@@ -525,16 +532,22 @@
 
                 if (error) {
                     console.error('[Cerebro PILi] Error leyendo routing_events:', error.message);
+                    setPollStatus('⚠️ ' + error.message, true);
                     return;
                 }
-                if (!data || data.length === 0) return;
+                if (!data || data.length === 0) {
+                    setPollStatus('Sin actividad registrada aún.', false);
+                    return;
+                }
 
                 const evt = data[0];
+                setPollStatus('Última lectura OK · ' + new Date().toLocaleTimeString('es-PE'), false);
                 if (evt.id === lastRoutingEventId) return;
                 lastRoutingEventId = evt.id;
                 routeTo(evt.agent_id, evt.message_snippet, evt.created_at);
             } catch (err) {
                 console.error('[Cerebro PILi] Error de conexión a routing_events:', err.message);
+                setPollStatus('⚠️ ' + err.message, true);
             }
         }
 
