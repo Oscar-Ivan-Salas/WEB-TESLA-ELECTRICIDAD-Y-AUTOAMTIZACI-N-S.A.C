@@ -59,6 +59,55 @@ function isValidOption(input, options) {
     return options.some(opt => opt.toLowerCase().includes(normalizedInput) || normalizedInput.includes(opt.toLowerCase()));
 }
 
+// Contenido profesional por categoría de proyecto — una entrada por cada opción real de OPTIONS.PROJECT_TYPE.
+// Mantener esta lista sincronizada con OPTIONS.PROJECT_TYPE: cada opción debe tener su propia entrada aquí.
+const PROJECT_TYPE_INFO = {
+    "⚡ Infraestructura Eléctrica": {
+        specialist: "Perfecto. En TESLA abordamos la electricidad como un sistema completo: desde la puesta a tierra y el diseño de tableros hasta la certificación final ante el CNE. No instalamos por partes sueltas, integramos todo para evitar fallas y sobrecostos futuros.",
+        technical: "Perfecto. En estos casos revisamos la carga instalada, las protecciones eléctricas y el estado de la puesta a tierra, para evitar reprocesos y garantizar la seguridad de la instalación."
+    },
+    "🤖 Automatización y BMS": {
+        specialist: "Excelente elección. Integramos sistemas de automatización y BMS (Schneider, Siemens, Honeywell) para climatización, iluminación y accesos, logrando ahorros de hasta 30% en consumo eléctrico con una gestión centralizada y confiable.",
+        technical: "Perfecto. En estos casos evaluamos la integración de protocolos (BACnet, Modbus, KNX) y la configuración de los equipos, para que aproveche al máximo el sistema."
+    },
+    "🚨 Sistemas Contra Incendios": {
+        specialist: "Perfecto. En TESLA diseñamos e instalamos sistemas de detección y extinción bajo normativa NFPA 72 / NFPA 13, asegurando que su edificación cumpla con todos los requisitos para proteger vidas y evitar observaciones municipales.",
+        technical: "Perfecto. En estos casos revisamos el cumplimiento normativo (NFPA/INDECI), el diseño de la red contra incendios y la documentación necesaria para su certificación."
+    },
+    "🛡️ Vigilancia y Control 24/7": {
+        specialist: "Perfecto. Implementamos videovigilancia IP 4K con analítica inteligente, control de accesos y monitoreo centralizado 24/7, para que su propiedad esté protegida en todo momento, incluso a distancia.",
+        technical: "Perfecto. En estos casos evaluamos la cobertura de cámaras, los puntos ciegos y la integración con su central de monitoreo, para una protección completa."
+    },
+    "🏗️ Acabados Funcionales": {
+        specialist: "Perfecto. Coordinamos acabados técnicos (drywall RF/RH, cielos rasos, estructuras metálicas) integrados con las instalaciones eléctricas y de seguridad, para un resultado funcional y estético sin reprocesos.",
+        technical: "Perfecto. En estos casos coordinamos las instalaciones técnicas junto con el acabado final, evitando retrabajos entre especialidades."
+    },
+    "📜 Inspección ITSE / INDECI": {
+        specialist: "Perfecto. Elaboramos el expediente técnico completo para su Certificado ITSE y acompañamos la inspección municipal, evitando observaciones, retrasos y multas.",
+        technical: "Perfecto. En estos casos revisamos los planos de evacuación, señalética y aforo, para asegurar que el expediente cumpla con todos los requisitos municipales."
+    },
+    "📐 Coordinación BIM / MEP 3D": {
+        specialist: "Excelente. Modelamos digitalmente en 3D (Revit / Navisworks) las instalaciones eléctricas, sanitarias y de climatización antes de construir, eliminando interferencias en obra y garantizando presupuestos exactos.",
+        technical: "Perfecto. En estos casos realizamos la detección de interferencias (clash detection) entre especialidades antes de iniciar la obra, evitando retrabajos costosos."
+    },
+    "🔑 Solución Llave en Mano TESLA": {
+        specialist: "Excelente decisión. Con la Solución Llave en Mano de TESLA usted tiene un solo contrato y un solo responsable para todo su proyecto — nosotros coordinamos cada especialidad para que usted no tenga que hacerlo.",
+        technical: "Perfecto. En estos casos coordinamos todas las especialidades bajo un solo equipo técnico, con un único responsable del proyecto de principio a fin."
+    }
+};
+
+// Encuentra la entrada de PROJECT_TYPE_INFO que corresponde al texto recibido (match exacto o parcial),
+// y si no encuentra ninguna, cae a la Solución Llave en Mano para nunca dejar la respuesta vacía.
+function getProjectTypeInfo(msg) {
+    const text = (msg || "").toLowerCase();
+    for (const key of Object.keys(PROJECT_TYPE_INFO)) {
+        if (key.toLowerCase().includes(text) || text.includes(key.toLowerCase())) {
+            return PROJECT_TYPE_INFO[key];
+        }
+    }
+    return PROJECT_TYPE_INFO["🔑 Solución Llave en Mano TESLA"];
+}
+
 function processMessage(session, message) {
     const state = session.estado || STATES.START;
     const msg = message ? message.toString().trim() : "";
@@ -66,7 +115,7 @@ function processMessage(session, message) {
     switch (state) {
         case STATES.START:
             return {
-                message: "Hola, soy PILI, asistente técnica de TESLA Electricidad y Automatización.\\nTe ayudo a evaluar tu proyecto y orientarte con la mejor solución técnica, sin que tengas que coordinar múltiples proveedores.\\n\\nPara comenzar, dime en qué área necesitas apoyo:",
+                message: "Hola, soy PILi, asistente técnica de TESLA Electricidad y Automatización.\nTe ayudo a evaluar tu proyecto y orientarte hacia la mejor solución técnica, sin que tengas que coordinar múltiples proveedores.\n\nPara comenzar, cuéntame en qué área necesitas apoyo:",
                 nextState: STATES.ASK_PROJECT_TYPE,
                 options: OPTIONS.PROJECT_TYPE
             };
@@ -81,26 +130,10 @@ function processMessage(session, message) {
             }
             session.tipo_proyecto = msg;
 
-            // Mensaje de especialista según servicio (DOCUMENTO FINAL)
-            let specialistMessage = "";
-            if (msg.includes("BIM") || msg.includes("MEP")) {
-                specialistMessage = "Excelente. En TESLA modelamos digitalmente en 3D (Navisworks / Revit) las instalaciones eléctricas, sanitarias y ductos antes de construir.\\nEliminamos al 100% las interferencias e imprevistos en campo, garantizando presupuestos exactos.\\n\\n";
-            } else if (msg.includes("Obra en ejecución") || msg.includes("eléctrica")) {
-                specialistMessage = "Perfecto. En TESLA abordamos la electricidad como un sistema completo, desde puesta a tierra y tableros hasta tomacorrientes, iluminación y certificación final.\\nNo instalamos por partes sueltas, integramos todo correctamente para evitar fallas futuras.\\n\\n";
-            } else if (msg.includes("incendios")) {
-                specialistMessage = "Perfecto. En TESLA gestionamos detección, alarma y cumplimiento normativo para proteger vidas y activos.\\nNo solo instalamos equipos, aseguramos que el sistema cumpla con todas las normativas vigentes.\\n\\n";
-            } else if (msg.includes("Automatización") || msg.includes("Domótica")) {
-                specialistMessage = "Perfecto. En TESLA implementamos control inteligente de iluminación, accesos y energía para viviendas y edificios.\\nNo solo conectamos dispositivos, creamos sistemas que realmente funcionen de forma integrada.\\n\\n";
-            } else if (msg.includes("Mantenimiento") || msg.includes("Remodelación")) {
-                specialistMessage = "Perfecto. En TESLA no solo corregimos fallas, identificamos la causa raíz y solucionamos el problema de forma definitiva.\\nEvitamos que los mismos problemas se repitan.\\n\\n";
-            } else if (msg.includes("Acabados")) {
-                specialistMessage = "Perfecto. En TESLA coordinamos amoblados y acabados técnicos alineados al diseño del proyecto.\\nIntegramos la parte técnica con la estética para un resultado profesional.\\n\\n";
-            } else if (msg.includes("integral") || msg.includes("TESLA")) {
-                specialistMessage = "Perfecto. Con la solución integral TESLA obtienes un solo contrato, un solo responsable y todo resuelto.\\nNosotros coordinamos todo para que tú no tengas que hacerlo.\\n\\n";
-            }
+            const specialistMessage = getProjectTypeInfo(msg).specialist;
 
             return {
-                message: specialistMessage + "¿En qué etapa se encuentra tu proyecto?",
+                message: specialistMessage + "\n\n¿En qué etapa se encuentra tu proyecto?",
                 nextState: STATES.ASK_STAGE,
                 options: OPTIONS.STAGE
             };
@@ -115,25 +148,10 @@ function processMessage(session, message) {
             }
             session.etapa = msg;
 
-            // Validación técnica según servicio
-            let technicalContext = "";
-            const projectType = session.tipo_proyecto || "";
-            if (projectType.includes("eléctrica") || projectType.includes("Obra")) {
-                technicalContext = "Perfecto. En estos casos revisamos carga, protecciones, puesta a tierra y el estado real de la instalación para evitar reprocesos.\\n\\n";
-            } else if (projectType.includes("incendios")) {
-                technicalContext = "Perfecto. En estos casos revisamos normativa INDECI, diseño de red y certificación para evitar observaciones.\\n\\n";
-            } else if (projectType.includes("Automatización") || projectType.includes("Domótica")) {
-                technicalContext = "Perfecto. En estos casos revisamos integración de sistemas, protocolos y configuración para garantizar aprovechamiento completo.\\n\\n";
-            } else if (projectType.includes("Mantenimiento") || projectType.includes("Remodelación")) {
-                technicalContext = "Perfecto. En estos casos realizamos diagnóstico de causa raíz y plan preventivo para soluciones duraderas.\\n\\n";
-            } else if (projectType.includes("Acabados")) {
-                technicalContext = "Perfecto. En estos casos coordinamos instalaciones técnicas y acabado final para evitar retrabajos.\\n\\n";
-            } else if (projectType.includes("integral") || projectType.includes("TESLA")) {
-                technicalContext = "Perfecto. En estos casos gestionamos el proyecto completo con un solo responsable técnico.\\n\\n";
-            }
+            const technicalContext = getProjectTypeInfo(session.tipo_proyecto).technical;
 
             return {
-                message: technicalContext + "¿Qué necesitas resolver principalmente ahora? 👇",
+                message: technicalContext + "\n\n¿Qué necesitas resolver principalmente ahora? 👇",
                 nextState: STATES.ASK_NEED,
                 options: OPTIONS.NEED
             };
@@ -148,7 +166,7 @@ function processMessage(session, message) {
             }
             session.necesidad = msg;
             return {
-                message: "Con esta información podemos orientarte correctamente y evitar reprocesos o sobrecostos.\\nPara continuar, necesito registrar tus datos y que un especialista continúe el proceso.\\n\\n¿Cuál es tu nombre completo?",
+                message: "Con esta información puedo orientarte correctamente y evitar reprocesos o sobrecostos.\nPara continuar, necesito registrar tus datos para que un especialista de TESLA te contacte.\n\n¿Cuál es tu nombre completo?",
                 nextState: STATES.ASK_NAME
             };
 
@@ -188,7 +206,7 @@ function processMessage(session, message) {
 
             session.nombre = msg;
             return {
-                message: `Gracias ${msg}.\\n\\n¿Cuál es tu número de *WhatsApp*? (para confirmación de evaluación técnica)`,
+                message: `Gracias, ${msg}.\n\n¿Cuál es tu número de *WhatsApp*? (para confirmar la evaluación técnica)`,
                 nextState: STATES.ASK_PHONE
             };
 
@@ -234,7 +252,7 @@ function processMessage(session, message) {
             // Guardar con prefijo +51
             session.telefono = `+51${cleanPhone}`;
             return {
-                message: "Perfecto.\\n\\n¿En qué *ciudad o región* se ubica el proyecto? (ejemplo: Huancayo, Lima, Junín)",
+                message: "Perfecto.\n\n¿En qué *ciudad o región* se ubica el proyecto? (ejemplo: Huancayo, Lima, Junín)",
                 nextState: STATES.ASK_LOCATION
             };
 
@@ -272,7 +290,7 @@ function processMessage(session, message) {
             // (Background save removed - moved to sync handler below)
 
             return {
-                message: `Gracias. Un especialista de TESLA continuará contigo para definir la mejor solución.\\n\\n*Resumen de tu solicitud:*\\n• Proyecto: ${session.tipo_proyecto}\\n• Etapa: ${session.etapa}\\n• Necesidad: ${session.necesidad}\\n• Ubicación: ${session.ubicacion}\\n• Contacto: ${session.telefono}\\n• Cita preferida: ${session.cita}\\n\\nEstás en buenas manos.`,
+                message: `Gracias. Un especialista de TESLA se pondrá en contacto contigo para definir la mejor solución.\n\n*Resumen de tu solicitud:*\n• Proyecto: ${session.tipo_proyecto}\n• Etapa: ${session.etapa}\n• Necesidad: ${session.necesidad}\n• Ubicación: ${session.ubicacion}\n• Contacto: ${session.telefono}\n• Cita preferida: ${session.cita}\n\nEstás en buenas manos.`,
                 nextState: STATES.END,
                 whatsappLink: whatsappLink,
                 cardData: {
