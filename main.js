@@ -602,15 +602,7 @@ window.closeChat = function () {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-    // Chatbot FAB Click
-    const chatbotFab = document.getElementById('chatbot-fab');
-    if (chatbotFab) {
-        chatbotFab.addEventListener('click', (e) => {
-            // Prevent default if it's a link (just in case)
-            e.preventDefault();
-            window.toggleChat();
-        });
-    }
+    // Note: chatbot-fab already has an inline onclick="toggleChat()" in index.html
 
     // Send message button
     const sendButton = document.getElementById('send-button');
